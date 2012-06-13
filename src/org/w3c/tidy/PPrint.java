@@ -1391,7 +1391,7 @@ public class PPrint
 
             }
         }
-        else
+        else if (! isBRinsidePRE(node, mode))
         {
             condFlushLine(fout, indent);
         }
@@ -1784,6 +1784,23 @@ public class PPrint
     }
 
     /**
+     * Is the current node a BR tag inside a PRE section? This is important to know because we want to avoid inserting
+     * pretty-printing linefeeds before and after BR tags inside PRE so as to avoid generating unwanted blank lines.
+     * @param node Node to be tested
+     * @param mode Lexer mode
+     * @return <code>true</code> if node is a BR tag inside PRE
+     */
+    private boolean isBRinsidePRE(Node node, short mode)
+    {
+        if (node.tag == configuration.tt.tagBr && TidyUtils.toBoolean(mode & PREFORMATTED))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Is text node and already ends w/ a newline? Used to pretty print CDATA/PRE text content. If it already ends on a
      * newline, it is not necessary to print another before printing end tag.
      * @param lexer Lexer
@@ -2149,7 +2166,8 @@ public class PPrint
             if (node.tag == tt.tagBr
                 && node.prev != null
                 && node.prev.tag != tt.tagBr
-                && this.configuration.breakBeforeBR)
+                && this.configuration.breakBeforeBR
+                && ! isBRinsidePRE(node, mode))
             {
                 flushLine(fout, indent);
             }
@@ -2167,7 +2185,7 @@ public class PPrint
             {
                 condFlushLine(fout, indent);
             }
-            else if (node.tag == tt.tagBr || node.tag == tt.tagHr)
+            else if (node.tag == tt.tagBr && ! isBRinsidePRE(node, mode) || node.tag == tt.tagHr)
             {
                 flushLine(fout, indent);
             }
