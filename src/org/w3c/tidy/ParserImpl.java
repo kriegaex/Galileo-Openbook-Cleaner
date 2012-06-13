@@ -513,8 +513,7 @@ public final class ParserImpl
                 if (node.type == Node.TEXT_NODE)
                 {
                     lexer.report.warning(lexer, head, node, Report.TAG_NOT_ALLOWED_IN);
-                    lexer.ungetToken();
-                    break;
+                    continue;
                 }
 
                 // deal with comments etc.
