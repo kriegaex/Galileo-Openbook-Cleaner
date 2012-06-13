@@ -33,11 +33,7 @@ public class XOMClutterRemover extends BasicConverter
 	private static final XPathContext context = // XOM XPath context for HTML
 		new XPathContext("html", "http://www.w3.org/1999/xhtml");
 	private static final Pattern REGEX_HREF =   // Find subchapter no. in TOC link target
-<<<<<<< OURS
 		Pattern.compile("(.*_[0-9a-h]+_(?:[a-z0-9]+_)*)([0-9]+)(\\.htm.*)");
-=======
-		Pattern.compile("(.*_[0-9a-h]+_)([0-9]+)(\\.htm.*)");
->>>>>>> THEIRS
 	private static final Pattern REGEX_TEXT =   // Find subchapter no. in TOC linkt title
 		Pattern.compile("^([0-9A-H]+\\.)([0-9]+)(.*)");
 

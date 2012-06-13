@@ -11,7 +11,6 @@ public class AllOpenbooksCleaner
 		"apps_entwickeln_iphone_ipad",  // OK
 		"c_von_a_bis_z",                // OK
 		"dreamweaver8",                 // OK
-<<<<<<< OURS
 		"einstieg_vb_2008",             // OK
 		"excel_2007",                   // OK
 		"hdr_fotografie",               // OK
@@ -26,22 +25,6 @@ public class AllOpenbooksCleaner
 		"oop",                          // OK
 		"photoshop_cs2",                // OK
 		"photoshop_cs4",                // OK
-=======
-		"einstieg_vb_2008",             // TOC links *.4 -> *.3 for appendices
-		"excel_2007",                   // OK
-		"hdr_fotografie",               // OK
-		"it_handbuch",                  // OK
-		"java7",                        // OK
-		"javainsel",                    // OK
-		"javascript_ajax",              // Fix small images
-		"joomla15",                     // OK
-		"linux",                        // OK
-		"linux_unix_programmierung",    // OK
-		"microsoft_netzwerk",           // Fix small images
-		"oop",                          // OK
-		"photoshop_cs2",                // OK
-		"photoshop_cs4",                // TOC links *.4 -> *.3 (special naming scheme)
->>>>>>> THEIRS
 		"php_pear",                     // OK
 		"python",                       // OK
 		"ruby_on_rails",                // OK
