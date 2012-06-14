@@ -26,6 +26,7 @@ public class XOMClutterRemover extends BasicConverter
 	private XMLReader tagsoup;                    // plug-in XML reader for XOM
 	private Builder   builder;                    // XOM document builder
 	private Document  document;                   // XOM document (XML DOM structure)
+	private Element   headTag;                    // XOM element pointing to HTML <head> tag
 	private Element   bodyTag;                    // XOM element pointing to HTML <body> tag
 	private String    pageTitle;                  // Content of HTML <title> tag 
 	private boolean  hasStandardLayout = true;  // Known exception: "UNIX guru" book
@@ -36,9 +37,14 @@ public class XOMClutterRemover extends BasicConverter
 		Pattern.compile("(.*_[0-9a-h]+_(?:[a-z0-9]+_)*)([0-9]+)(\\.htm.*)");
 	private static final Pattern REGEX_TEXT =   // Find subchapter no. in TOC linkt title
 		Pattern.compile("^([0-9A-H]+\\.)([0-9]+)(.*)");
+	private static final String nonStandardCSS =  // CSS style overrides for "UNIX guru" book
+		"body { font-size: 13px; }" +
+		"h1 a, h2 a, h3 a, h4 a { font-size: 16px; }" +
+		"pre { font-size: 12px; }";
 
 	private static enum XPath                   // XPath query strings mapped to symbolic names
 	{
+		HEAD                           ("//html:head"),
 		TITLE                          ("//html:head/html:title"),
 		SCRIPTS                        ("//html:script"),
 
@@ -107,6 +113,7 @@ public class XOMClutterRemover extends BasicConverter
 	private void parseDocument() throws Exception
 	{
 		document = builder.build(in);
+		headTag = (Element) xPathQuery(XPath.HEAD.query).get(0);
 		bodyTag = (Element) xPathQuery(XPath.BODY.query).get(0);
 		pageTitle = xPathQuery(XPath.TITLE.query).get(0).getValue();
 	}
@@ -121,7 +128,7 @@ public class XOMClutterRemover extends BasicConverter
 	private void fixStructure()
 	{
 		if (!hasStandardLayout) {
-			bodyTag.addAttribute(new Attribute("style", "font-size: 13px"));
+			fixFontSizesForNonStandardLayout();
 			return;
 		}
 
@@ -226,6 +233,18 @@ public class XOMClutterRemover extends BasicConverter
 	private void removeRedundantGreyTable()
 	{
 		deleteNodes(XPath.GREY_TABLE.query);
+	}
+
+	/*
+	 * Font sizes for non-standard layout book "UNIX guru" are too small in general and
+	 * for page heading in particular. Fix it by adding a custom CSS style tag to each page.
+	 */
+	private void fixFontSizesForNonStandardLayout()
+	{
+		Element styleTag = new Element("style");
+		styleTag.addAttribute(new Attribute("type", "text/css"));
+		styleTag.appendChild(nonStandardCSS);
+		headTag.appendChild(styleTag);
 	}
 
 	/*

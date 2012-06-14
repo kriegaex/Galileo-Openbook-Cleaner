@@ -31,7 +31,7 @@ public class AllOpenbooksCleaner
 		"shell_programmierung",         // OK
 		"ubuntu",                       // OK
 		"ubuntu_1004",                  // OK
-		"unix_guru",                    // Fix font sizes (too small) => stylesheets
+		"unix_guru",                    // OK
 		"visual_csharp",                // OK
 		"visual_csharp_2010",           // OK
 		"vmware",                       // OK
