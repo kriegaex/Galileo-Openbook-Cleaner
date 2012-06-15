@@ -72,6 +72,7 @@ public class XOMClutterRemover extends BasicConverter
 		FEEDBACK_FORM                  (LAST_HR_TAG.query + "|" + AFTER_LAST_HR_TAG.query), 
 		FEEDBACK_FORM_URL_FIELD        (AFTER_LAST_HR_TAG.query + "//html:input[@name='openbookurl']"),
 
+		IMAGE_SMALL                    ("//html:img[contains(@src,'klein/klein')]"),
 		IMAGE_1                        ("//html:div[@class='bildbox']//html:img"),
 		IMAGE_2                        ("//html:td[@class='tabellentext']//html:img"),
 		IMAGE_3                        ("//html:a[@href='#bild']/html:img"),
@@ -211,22 +212,12 @@ public class XOMClutterRemover extends BasicConverter
 
 	private void fixImages()
 	{
-		Nodes images1 = xPathQuery(XPath.IMAGE_1.query);
-		replaceByBigImages(images1);
-		Nodes images2 = xPathQuery(XPath.IMAGE_2.query);
-		replaceByBigImages(images2);
-		Nodes images3 = xPathQuery(XPath.IMAGE_3.query);
-		replaceByBigImages(images3);
-		Nodes images4 = xPathQuery(XPath.IMAGE_4.query);
-		replaceByBigImages(images4);
-		Nodes images5 = xPathQuery(XPath.IMAGE_5.query);
-		replaceByBigImages(images5);
-
-		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_1.query), images1);
-		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_2.query), images2);
-		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_3.query), images3);
-		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_4.query), images4);
-		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_5.query), images5);
+		replaceByBigImages(xPathQuery(XPath.IMAGE_SMALL.query));
+		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_1.query), xPathQuery(XPath.IMAGE_1.query));
+		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_2.query), xPathQuery(XPath.IMAGE_2.query));
+		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_3.query), xPathQuery(XPath.IMAGE_3.query));
+		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_4.query), xPathQuery(XPath.IMAGE_4.query));
+		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_5.query), xPathQuery(XPath.IMAGE_5.query));
 	}
 
 	/*
