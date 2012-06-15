@@ -17,11 +17,11 @@ public class AllOpenbooksCleaner
 		"it_handbuch",                  // OK
 		"java7",                        // OK
 		"javainsel",                    // OK
-		"javascript_ajax",              // Fix small images
+		"javascript_ajax",              // OK
 		"joomla15",                     // OK
 		"linux",                        // OK
 		"linux_unix_programmierung",    // OK
-		"microsoft_netzwerk",           // Fix small images
+		"microsoft_netzwerk",           // OK
 		"oop",                          // OK
 		"photoshop_cs2",                // OK
 		"photoshop_cs4",                // OK

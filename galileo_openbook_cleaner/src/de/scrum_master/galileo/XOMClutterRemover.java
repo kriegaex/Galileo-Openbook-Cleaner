@@ -76,10 +76,12 @@ public class XOMClutterRemover extends BasicConverter
 		IMAGE_2                        ("//html:td[@class='tabellentext']//html:img"),
 		IMAGE_3                        ("//html:a[@href='#bild']/html:img"),
 		IMAGE_4                        ("//html:a[@rel='lightbox']/html:img"),
+		IMAGE_5                        ("//html:a[contains(@onclick,'OpenWin')]/html:img"),
 		IMAGE_BOX_1                    ("//html:div[@class='bildbox']"),
 		IMAGE_BOX_2                    ("//html:td[@class='tabellentext']//html:img/../.."),
 		IMAGE_BOX_3                    ("//html:a[@href='#bild']/html:img/../.."),
 		IMAGE_BOX_4                    ("//html:a[@rel='lightbox']"),
+		IMAGE_BOX_5                    ("//html:a[contains(@onclick,'OpenWin')]/html:img/.."),
 
 		TOC_HEADING_2                  ("//html:h2/html:a/.."),
 		INDEX_LINK                     ("//html:a[contains(@href,'stichwort.htm')]"),
@@ -217,11 +219,14 @@ public class XOMClutterRemover extends BasicConverter
 		replaceByBigImages(images3);
 		Nodes images4 = xPathQuery(XPath.IMAGE_4.query);
 		replaceByBigImages(images4);
+		Nodes images5 = xPathQuery(XPath.IMAGE_5.query);
+		replaceByBigImages(images5);
 
 		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_1.query), images1);
 		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_2.query), images2);
 		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_3.query), images3);
 		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_4.query), images4);
+		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_5.query), images5);
 	}
 
 	/*
