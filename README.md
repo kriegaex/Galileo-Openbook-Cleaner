@@ -45,9 +45,6 @@ __To do:__
   and [software craftsmanship](http://en.wikipedia.org/wiki/Software_craftsmanship) perspective. See
   also the book [Clean Code](http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882)
   by Robert C. Martin.
-* There are a few known bugs, mostly minor annoyances concerning parsing and cleaning up structural
-  specialties in some openbooks. Even though the tool already handles a lot of specialties, there
-  still are a few left at the time of writing this (2012-06-12).
 * I am not sure about it, but I might start writing *unit tests* for the tool if I ever feel like it.
   Practicing a bit of TDD is something I have not done in a long time, except for recommending and
   introducing it to my clients as an agile coach. I would not consider myself a professional developer
