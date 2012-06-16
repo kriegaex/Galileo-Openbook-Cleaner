@@ -305,7 +305,7 @@ public class XOMClutterRemover extends BasicConverter
 	{
 		SimpleLogger.verbose("    Checking for faulty TOC link targets...");
 
-		SimpleLogger.verbose("      Book title = " + pageTitle);
+		SimpleLogger.verbose("      Page title = " + pageTitle);
 
 		// Exclude the 3 know exceptions and immediately return if one is found
 		if (pageTitle.matches(".*(ActionScript 1 und 2|Microsoft-Netzwerk|Shell-Programmierung).*")) {
