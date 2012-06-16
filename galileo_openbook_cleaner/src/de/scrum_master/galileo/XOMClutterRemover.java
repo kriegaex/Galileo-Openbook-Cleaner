@@ -97,7 +97,16 @@ public class XOMClutterRemover extends BasicConverter
 		// Subchapter no. in TOC link target
 		SUBCHAPTER_HREF          ("(.*_[0-9a-h]+_(?:[a-z0-9]+_)*)([0-9]+)(\\.htm.*)"),
 		// Subchapter no. in TOC link title
-		SUBCHAPTER_TEXT          ("^([0-9A-H]+\\.)([0-9]+)(.*)");
+		SUBCHAPTER_TEXT          ("^([0-9A-H]+\\.)([0-9]+)(.*)"),
+
+		// "Kapitel: " between book title and chapter
+		TITLE_INFIX              ("^(.*)(?:Kapitel: )(.*)$"),
+		// "Galileo Computing/Design" prefix and " openbook/index" postfix
+		TITLE_PREFIX_POSTFIX     ("^(?:Galileo (?:Computing|Design)(?: ::|:| [-–]) )?(.*?)(?: (?:[-–]|&ndash;|::)( openbook| index|))?$"),
+		// Text before dash for some books with " - " or " &ndash; " within the book title
+		TITLE_DASHED_BOOK_PREFIX ("^((?:Excel 2007|Java 7|Adobe.+CS4|Joomla! 1.5|Objektor.*mierung) [-–] )(.*)"),
+		// Get book chapter after title and separator
+		TITLE_CHAPTER            ("^(?:.+?) (?:[-–]|&ndash;|&#8211;) (.*)");
 
 		private final Pattern pattern;
 
@@ -130,7 +139,7 @@ public class XOMClutterRemover extends BasicConverter
 		document = builder.build(in);
 		headTag = (Element) xPathQuery(XPath.HEAD.query).get(0);
 		bodyTag = (Element) xPathQuery(XPath.BODY.query).get(0);
-		pageTitle = xPathQuery(XPath.TITLE.query).get(0).getValue();
+		initialiseTitle(true);
 	}
 
 	private void removeClutter()
@@ -138,6 +147,51 @@ public class XOMClutterRemover extends BasicConverter
 		fixNode429();
 		removeClutterAroundMainContent();
 		removeClutterWithinMainContent();
+	}
+
+	private void initialiseTitle(boolean removeBookTitle)
+	{
+		SimpleLogger.debug("      Initialising page title...");
+		Element titleTag = (Element) xPathQuery(XPath.TITLE.query).get(0);
+		pageTitle = titleTag.getValue();
+		SimpleLogger.debug("        Original page title: " + pageTitle);
+
+		Matcher matcher;
+
+		// Remove "Kapitel: " between book title and chapter
+		matcher = Regex.TITLE_INFIX.pattern.matcher(pageTitle);
+		if (matcher.matches())
+			pageTitle = matcher.group(1) + matcher.group(2);
+		SimpleLogger.debug("          Step 1 In:         " + pageTitle);
+
+		// Remove "Galileo Computing/Design" prefix and " openbook/index" postfix
+		matcher = Regex.TITLE_PREFIX_POSTFIX.pattern.matcher(pageTitle);
+		if (matcher.matches())
+			pageTitle = matcher.group(1);
+		SimpleLogger.debug("          Step 2 PrePost:    " + pageTitle);
+
+		if (removeBookTitle) {
+			// Get text before dash for some books with " - " or " &ndash; " within the book title
+			matcher = Regex.TITLE_DASHED_BOOK_PREFIX.pattern.matcher(pageTitle);
+			String titlePrefix = "";
+			if (matcher.matches()) {
+				titlePrefix = matcher.group(1);
+				pageTitle = matcher.group(2);
+			}
+			SimpleLogger.debug("          Step 3 DashedBook: " + pageTitle);
+
+			// Remove book title, only chapter number + name remain 
+			matcher = Regex.TITLE_CHAPTER.pattern.matcher(pageTitle);
+			if (matcher.matches())
+				pageTitle = matcher.group(1);
+			else
+				pageTitle = titlePrefix + pageTitle;
+			SimpleLogger.debug("          Step 4 Chapter:    " + pageTitle);
+		}
+		SimpleLogger.debug("        Clean page title:    " + pageTitle);
+
+		titleTag.removeChildren();
+		titleTag.appendChild(pageTitle);
 	}
 
 	private void fixStructure()
