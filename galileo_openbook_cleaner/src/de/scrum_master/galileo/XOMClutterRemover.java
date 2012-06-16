@@ -94,10 +94,10 @@ public class XOMClutterRemover extends BasicConverter
 
 	private static enum Regex                       // Regex patterns mapped to symbolic names
 	{
-		// Find subchapter no. in TOC link target
-		HREF    ("(.*_[0-9a-h]+_(?:[a-z0-9]+_)*)([0-9]+)(\\.htm.*)"),
-		// Find subchapter no. in TOC link title
-		TEXT    ("^([0-9A-H]+\\.)([0-9]+)(.*)");
+		// Subchapter no. in TOC link target
+		SUBCHAPTER_HREF          ("(.*_[0-9a-h]+_(?:[a-z0-9]+_)*)([0-9]+)(\\.htm.*)"),
+		// Subchapter no. in TOC link title
+		SUBCHAPTER_TEXT          ("^([0-9A-H]+\\.)([0-9]+)(.*)");
 
 		private final Pattern pattern;
 
@@ -329,8 +329,8 @@ public class XOMClutterRemover extends BasicConverter
 			Element link = (Element) links.get(i);
 			String href = link.getAttributeValue("href");
 			String text = link.getValue();
-			Matcher hrefMatcher = Regex.HREF.pattern.matcher(href);
-			Matcher textMatcher = Regex.TEXT.pattern.matcher(text);
+			Matcher hrefMatcher = Regex.SUBCHAPTER_HREF.pattern.matcher(href);
+			Matcher textMatcher = Regex.SUBCHAPTER_TEXT.pattern.matcher(text);
 			if (hrefMatcher.matches() && textMatcher.matches()) {
 				int hrefNumber = Integer.parseInt(hrefMatcher.group(2));
 				int textNumber = Integer.parseInt(textMatcher.group(2));
