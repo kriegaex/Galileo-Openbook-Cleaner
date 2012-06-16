@@ -34,11 +34,6 @@ public class XOMClutterRemover extends BasicConverter
 	private static final XPathContext context =     // XOM XPath context for HTML
 		new XPathContext("html", "http://www.w3.org/1999/xhtml");
 	
-	private static final Pattern REGEX_HREF =       // Find subchapter no. in TOC link target
-		Pattern.compile("(.*_[0-9a-h]+_(?:[a-z0-9]+_)*)([0-9]+)(\\.htm.*)");
-	private static final Pattern REGEX_TEXT =       // Find subchapter no. in TOC linkt title
-		Pattern.compile("^([0-9A-H]+\\.)([0-9]+)(.*)");
-
 	private static final String nonStandardCSS =    // CSS style overrides for "UNIX guru" book
 		"body { font-size: 13px; }" +
 		"h1 a, h2 a, h3 a, h4 a { font-size: 16px; }" +
@@ -94,6 +89,21 @@ public class XOMClutterRemover extends BasicConverter
 		private XPath(String query)
 		{
 			this.query = query;
+		}
+	}
+
+	private static enum Regex                       // Regex patterns mapped to symbolic names
+	{
+		// Find subchapter no. in TOC link target
+		HREF    ("(.*_[0-9a-h]+_(?:[a-z0-9]+_)*)([0-9]+)(\\.htm.*)"),
+		// Find subchapter no. in TOC link title
+		TEXT    ("^([0-9A-H]+\\.)([0-9]+)(.*)");
+
+		private final Pattern pattern;
+
+		private Regex(String regex)
+		{
+			pattern = Pattern.compile(regex);
 		}
 	}
 
@@ -319,8 +329,8 @@ public class XOMClutterRemover extends BasicConverter
 			Element link = (Element) links.get(i);
 			String href = link.getAttributeValue("href");
 			String text = link.getValue();
-			Matcher hrefMatcher = REGEX_HREF.matcher(href);
-			Matcher textMatcher = REGEX_TEXT.matcher(text);
+			Matcher hrefMatcher = Regex.HREF.pattern.matcher(href);
+			Matcher textMatcher = Regex.TEXT.pattern.matcher(text);
 			if (hrefMatcher.matches() && textMatcher.matches()) {
 				int hrefNumber = Integer.parseInt(hrefMatcher.group(2));
 				int textNumber = Integer.parseInt(textMatcher.group(2));
