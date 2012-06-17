@@ -1,12 +1,10 @@
 package de.scrum_master.galileo;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,6 +31,8 @@ public class OpenbookCleaner
 		"  -s  single-threaded mode with intermediate files (for diagnostics)\n\n" +
 		"Parameters:\n"+
 		"  book_path  base path containing the book to be cleaned";
+
+	private static final String REGEX_TOC_RUBY = ".*ruby_on_rails.index.htm";
 
 	public static void main(String[] args) throws Exception
 	{
@@ -120,81 +120,65 @@ public class OpenbookCleaner
 	private static void createBackupIfNotExists(File origFile, File backupFile)
 		throws IOException
 	{
-		if (backupFile.exists())
-			return;
-		if (origFile.getAbsolutePath().matches(".*ruby_on_rails.index.htm.?"))
-			createFilteredBackupForRubyOnRailsTOC(origFile, backupFile);
-		else
+		if (!backupFile.exists())
 			origFile.renameTo(backupFile);
-	}
-
-	private static void createFilteredBackupForRubyOnRailsTOC(File origFile, File backupFile)
-		throws FileNotFoundException, IOException
-	{
-		SimpleLogger.debug("    Special case for Ruby on Rails book: insert missing </table> tag");
-		BufferedReader input = null;
-		PrintStream output = null;
-		try {
-			input = new BufferedReader(new FileReader(origFile));
-			output = new PrintStream(backupFile);
-			String line;
-			while (input.ready()) {
-				line = input.readLine();
-				if (line.toLowerCase().matches("<table .*bgcolor=.#eeeeee.*")) {
-					SimpleLogger.debug("    Found main content table, inserting missing </table> tag before it");
-					output.println("</table>");
-				}
-				output.println(line);
-			}
-		}
-		finally {
-			if (input != null) {
-				try {
-					input.close();
-				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (output != null) {
-				output.close();
-			}
-		}
 	}
 
 	private static void doConversion(File origFile, InputStream rawInput, OutputStream finalOutput)
 		throws FileNotFoundException, SAXException, IOException
 	{
 		// Conversion steps for both modes (single-/multi-threaded):
-		//   1. Convert raw HTML into valid XHTML using JTidy
-		//   2. Remove clutter (header, footer, navigation, ads) using XOM
-		//   3. Pretty-print XOM output again using JTidy (optional)
+		//   1. Clean up raw HTML where necessary to make it parseable by JTidy
+		//   2. Convert raw HTML into valid XHTML using JTidy
+		//   3. Remove clutter (header, footer, navigation, ads) using XOM
+		//   4. Pretty-print XOM output again using JTidy (optional)
+
+		final boolean needsPreTidy = origFile.getAbsolutePath().matches(REGEX_TOC_RUBY) ? true : false;
 
 		if (SINGLE_THREADED_WITH_INTERMEDIATE_FILES) {
 			// Single-threaded mode is slower (~40%), but good for diagnostic purposes:
 			//   - It creates files for each intermediate processing step.
 			//   - Log output is in (chrono)logical order.
 
-			File tidyFile = new File(origFile + ".tidy");
-			File xomFile  = new File(origFile + ".xom");
+			// Set up intermediate files
+			File preTidyFile = new File(origFile + ".pretidy");
+			File tidyFile    = new File(origFile + ".tidy");
+			File xomFile     = new File(origFile + ".xom");
 
-			new TidyXHTMLConverter(rawInput, new FileOutputStream(tidyFile), origFile).run();
-			new XOMClutterRemover(new FileInputStream(tidyFile), new FileOutputStream(xomFile), origFile).run();
-			new TidyXHTMLConverter(new FileInputStream(xomFile), finalOutput, origFile).run();
+			// Run conversion steps, using output of step (n) as input of step (n+1)
+			if (needsPreTidy) {
+				new PreTidyHTMLFixer (rawInput, new FileOutputStream(preTidyFile), origFile).run();
+				new TidyXHTMLConverter(new FileInputStream(preTidyFile), new FileOutputStream(tidyFile), origFile).run();
+			}
+			else {
+				new TidyXHTMLConverter(rawInput, new FileOutputStream(tidyFile), origFile).run();
+			}
+			new XOMClutterRemover (new FileInputStream(tidyFile), new FileOutputStream(xomFile), origFile).run();
+			new TidyXHTMLConverter (new FileInputStream(xomFile), finalOutput, origFile).run();
 		}
 		else {
 			// Multi-threaded mode is faster, but not so good for diagnostic purposes:
 			//   - There are no files for intermediate processing steps.
 			//   - Log output is garbled because of multi-threading.
 
-			PipedOutputStream tidyOutput = new PipedOutputStream();
-			PipedInputStream tidyInput = new PipedInputStream((PipedOutputStream) tidyOutput);
+			// Set up pipes
+			PipedOutputStream preTidyOutput     = new PipedOutputStream();
+			PipedInputStream  preTidyInput      = new PipedInputStream(preTidyOutput);
+			PipedOutputStream tidyOutput        = new PipedOutputStream();
+			PipedInputStream  tidyInput         = new PipedInputStream(tidyOutput);
 			PipedOutputStream unclutteredOutput = new PipedOutputStream();
-			PipedInputStream unclutteredInput = new PipedInputStream((PipedOutputStream) unclutteredOutput);
+			PipedInputStream  unclutteredInput  = new PipedInputStream(unclutteredOutput);
 
-			new Thread(new TidyXHTMLConverter(rawInput, tidyOutput, origFile)).start();
-			new Thread(new XOMClutterRemover(tidyInput, unclutteredOutput, origFile)).start();
-			new Thread(new TidyXHTMLConverter(unclutteredInput, finalOutput, origFile)).start();
+			// Run threads, piping output of thread (n) into input of thread (n+1)
+			if (needsPreTidy) {
+				new Thread(new PreTidyHTMLFixer (rawInput, preTidyOutput, origFile)).start();
+				new Thread(new TidyXHTMLConverter(preTidyInput, tidyOutput, origFile)).start();
+			}
+			else {
+				new Thread(new TidyXHTMLConverter(rawInput, tidyOutput, origFile)).start();
+			}
+			new Thread (new XOMClutterRemover (tidyInput, unclutteredOutput, origFile)).start();
+			new Thread (new TidyXHTMLConverter(unclutteredInput, finalOutput, origFile)).start();
 		}
 	}
 }
