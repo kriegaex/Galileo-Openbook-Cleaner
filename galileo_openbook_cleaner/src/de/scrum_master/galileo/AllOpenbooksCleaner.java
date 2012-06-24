@@ -12,6 +12,7 @@ public class AllOpenbooksCleaner
 		"c_von_a_bis_z",                // OK
 		"dreamweaver8",                 // OK
 		"einstieg_vb_2008",             // OK
+		"einstieg_vb_2010",             // OK
 		"excel_2007",                   // OK
 		"hdr_fotografie",               // OK
 		"it_handbuch",                  // OK
@@ -32,6 +33,7 @@ public class AllOpenbooksCleaner
 		"ubuntu",                       // OK
 		"ubuntu_1004",                  // OK
 		"unix_guru",                    // OK
+		"visualbasic_2008",             // OK
 		"visual_csharp",                // OK
 		"visual_csharp_2010",           // OK
 		"vmware",                       // OK
