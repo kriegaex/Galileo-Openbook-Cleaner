@@ -24,6 +24,7 @@ import de.scrum_master.util.SimpleLogger;
 public class OpenbookCleaner
 {
 	private static File   baseDir;
+	private static BookInfo bookInfo;
 	private static File[] htmlFiles;
 	private static boolean SINGLE_THREADED_WITH_INTERMEDIATE_FILES = false;
 
@@ -84,10 +85,17 @@ public class OpenbookCleaner
 			}
 			baseDir = new File(options.getCmdArgs()[0]);
 			SimpleLogger.debug("Option parser: book_path = " + baseDir);
-			if (! baseDir.isDirectory()) {
-				SimpleLogger.error("Error: book base directory '" + baseDir + "' not found\n");
-				displayUsageAndExit(1);
+
+			// Check if given name corresponds to any predefined BookInfo 
+			try {
+				bookInfo = BookInfo.valueOf(baseDir.getName().toUpperCase());
 			}
+			catch (IllegalArgumentException e) {
+				displayUsageAndExit(1, "book_path " + e.getMessage().replaceFirst(".*[.]", "") + " not found.");
+			}
+
+			if (! baseDir.isDirectory())
+				displayUsageAndExit(1, "book base directory '" + baseDir + "' not found\n");
 		}
 		catch (Exception e) {
 			displayUsageAndExit(1);
@@ -108,8 +116,20 @@ public class OpenbookCleaner
 
 	private static void displayUsageAndExit(int exitCode)
 	{
+		displayUsageAndExit(exitCode, null);
+	}
+
+	private static void displayUsageAndExit(int exitCode, String errorMessage)
+	{
 		PrintStream out = (exitCode == 0) ? System.out : System.err;
-		out.println(USAGE_TEXT);
+		out.println(
+			USAGE_TEXT + "\n\n" +
+			"List of legal book_path values (case-insensitive):"
+		);
+		for (BookInfo md : BookInfo.values())
+			out.println("  " + md.name().toLowerCase());
+		if (exitCode != 0 && errorMessage != null)
+			out.println("\nError: " + errorMessage);
 		System.exit(exitCode);
 	}
 
