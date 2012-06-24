@@ -138,7 +138,7 @@ public class OpenbookCleaner
 		//   3. Remove clutter (header, footer, navigation, ads) using XOM
 		//   4. Pretty-print XOM output again using JTidy (optional)
 
-		final boolean needsPreTidy = origFile.getAbsolutePath().matches(REGEX_TOC_RUBY) ? true : false;
+		final boolean needsPreJTidy = origFile.getAbsolutePath().matches(REGEX_TOC_RUBY) ? true : false;
 
 		if (SINGLE_THREADED_WITH_INTERMEDIATE_FILES) {
 			// Single-threaded mode is slower (~40%), but good for diagnostic purposes:
@@ -146,19 +146,19 @@ public class OpenbookCleaner
 			//   - Log output is in (chrono)logical order.
 
 			// Set up intermediate files
-			File preTidyFile = new File(origFile + ".pretidy");
-			File tidyFile    = new File(origFile + ".tidy");
-			File xomFile     = new File(origFile + ".xom");
+			File preJTidyFile = new File(origFile + ".pretidy");
+			File jTidyFile    = new File(origFile + ".tidy");
+			File xomFile      = new File(origFile + ".xom");
 
 			// Run conversion steps, using output of step (n) as input of step (n+1)
-			if (needsPreTidy) {
-				new PreJTidyFilter(rawInput, new FileOutputStream(preTidyFile), origFile).run();
-				new JTidyFilter(new FileInputStream(preTidyFile), new FileOutputStream(tidyFile), origFile).run();
+			if (needsPreJTidy) {
+				new PreJTidyFilter(rawInput, new FileOutputStream(preJTidyFile), origFile).run();
+				new JTidyFilter(new FileInputStream(preJTidyFile), new FileOutputStream(jTidyFile), origFile).run();
 			}
 			else {
-				new JTidyFilter(rawInput, new FileOutputStream(tidyFile), origFile).run();
+				new JTidyFilter(rawInput, new FileOutputStream(jTidyFile), origFile).run();
 			}
-			new XOMUnclutterFilter(new FileInputStream(tidyFile), new FileOutputStream(xomFile), origFile).run();
+			new XOMUnclutterFilter(new FileInputStream(jTidyFile), new FileOutputStream(xomFile), origFile).run();
 			new JTidyFilter(new FileInputStream(xomFile), finalOutput, origFile).run();
 		}
 		else {
@@ -167,22 +167,22 @@ public class OpenbookCleaner
 			//   - Log output is garbled because of multi-threading.
 
 			// Set up pipes
-			PipedOutputStream preTidyOutput     = new PipedOutputStream();
-			PipedInputStream  preTidyInput      = new PipedInputStream(preTidyOutput);
-			PipedOutputStream tidyOutput        = new PipedOutputStream();
-			PipedInputStream  tidyInput         = new PipedInputStream(tidyOutput);
+			PipedOutputStream preJTidyOutput    = new PipedOutputStream();
+			PipedInputStream  preJTidyInput     = new PipedInputStream(preJTidyOutput);
+			PipedOutputStream jTidyOutput       = new PipedOutputStream();
+			PipedInputStream  jTidyInput        = new PipedInputStream(jTidyOutput);
 			PipedOutputStream unclutteredOutput = new PipedOutputStream();
 			PipedInputStream  unclutteredInput  = new PipedInputStream(unclutteredOutput);
 
 			// Run threads, piping output of thread (n) into input of thread (n+1)
-			if (needsPreTidy) {
-				new Thread(new PreJTidyFilter(rawInput, preTidyOutput, origFile)).start();
-				new Thread(new JTidyFilter(preTidyInput, tidyOutput, origFile)).start();
+			if (needsPreJTidy) {
+				new Thread(new PreJTidyFilter(rawInput, preJTidyOutput, origFile)).start();
+				new Thread(new JTidyFilter(preJTidyInput, jTidyOutput, origFile)).start();
 			}
 			else {
-				new Thread(new JTidyFilter(rawInput, tidyOutput, origFile)).start();
+				new Thread(new JTidyFilter(rawInput, jTidyOutput, origFile)).start();
 			}
-			new Thread (new XOMUnclutterFilter(tidyInput, unclutteredOutput, origFile)).start();
+			new Thread (new XOMUnclutterFilter(jTidyInput, unclutteredOutput, origFile)).start();
 			new Thread (new JTidyFilter(unclutteredInput, finalOutput, origFile)).start();
 		}
 	}
