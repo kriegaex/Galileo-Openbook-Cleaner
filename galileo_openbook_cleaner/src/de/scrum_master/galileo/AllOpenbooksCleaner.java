@@ -2,6 +2,8 @@ package de.scrum_master.galileo;
 
 import java.util.Arrays;
 
+import de.scrum_master.util.SimpleLogger;
+
 public class AllOpenbooksCleaner
 {
 	private static final String basePath = "c:/Dokumente und Einstellungen/Robin/Eigene Dateien/Bücher/Galileo Computing/";

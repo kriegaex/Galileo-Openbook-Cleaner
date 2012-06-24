@@ -1,18 +1,20 @@
-package de.scrum_master.galileo;
+package de.scrum_master.galileo.filter;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public abstract class BasicConverter implements Runnable
+import de.scrum_master.util.SimpleLogger;
+
+public abstract class BasicFilter implements Runnable
 {
 	protected InputStream in;          // Where to read input from
 	protected OutputStream out;        // Where to write conversion result to
 	protected File origFile;           // Needed to determine special files like index.htm 
 	protected String debugLogMessage;  // Written to debug log upon conversion start
 
-	protected BasicConverter(InputStream in, OutputStream out, File origFile, String debugLogMessage)
+	protected BasicFilter(InputStream in, OutputStream out, File origFile, String debugLogMessage)
 	{
 		this.in  = in;
 		this.out = out;
@@ -24,7 +26,7 @@ public abstract class BasicConverter implements Runnable
 	{
 		SimpleLogger.debug("    " + debugLogMessage + "...");
 		try {
-			convert();
+			filter();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
@@ -45,5 +47,5 @@ public abstract class BasicConverter implements Runnable
 		}
 	}
 
-	protected abstract void convert() throws Exception;
+	protected abstract void filter() throws Exception;
 }

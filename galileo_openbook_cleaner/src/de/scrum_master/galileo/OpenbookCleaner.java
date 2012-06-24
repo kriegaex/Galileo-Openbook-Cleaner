@@ -16,6 +16,11 @@ import org.xml.sax.SAXException;
 
 import com.sun.org.apache.xalan.internal.xsltc.cmdline.getopt.GetOpt;
 
+import de.scrum_master.galileo.filter.JTidyFilter;
+import de.scrum_master.galileo.filter.PreJTidyFilter;
+import de.scrum_master.galileo.filter.XOMUnclutterFilter;
+import de.scrum_master.util.SimpleLogger;
+
 public class OpenbookCleaner
 {
 	private static File   baseDir;
@@ -147,14 +152,14 @@ public class OpenbookCleaner
 
 			// Run conversion steps, using output of step (n) as input of step (n+1)
 			if (needsPreTidy) {
-				new PreTidyHTMLFixer (rawInput, new FileOutputStream(preTidyFile), origFile).run();
-				new TidyXHTMLConverter(new FileInputStream(preTidyFile), new FileOutputStream(tidyFile), origFile).run();
+				new PreJTidyFilter(rawInput, new FileOutputStream(preTidyFile), origFile).run();
+				new JTidyFilter(new FileInputStream(preTidyFile), new FileOutputStream(tidyFile), origFile).run();
 			}
 			else {
-				new TidyXHTMLConverter(rawInput, new FileOutputStream(tidyFile), origFile).run();
+				new JTidyFilter(rawInput, new FileOutputStream(tidyFile), origFile).run();
 			}
-			new XOMClutterRemover (new FileInputStream(tidyFile), new FileOutputStream(xomFile), origFile).run();
-			new TidyXHTMLConverter (new FileInputStream(xomFile), finalOutput, origFile).run();
+			new XOMUnclutterFilter(new FileInputStream(tidyFile), new FileOutputStream(xomFile), origFile).run();
+			new JTidyFilter(new FileInputStream(xomFile), finalOutput, origFile).run();
 		}
 		else {
 			// Multi-threaded mode is faster, but not so good for diagnostic purposes:
@@ -171,14 +176,14 @@ public class OpenbookCleaner
 
 			// Run threads, piping output of thread (n) into input of thread (n+1)
 			if (needsPreTidy) {
-				new Thread(new PreTidyHTMLFixer (rawInput, preTidyOutput, origFile)).start();
-				new Thread(new TidyXHTMLConverter(preTidyInput, tidyOutput, origFile)).start();
+				new Thread(new PreJTidyFilter(rawInput, preTidyOutput, origFile)).start();
+				new Thread(new JTidyFilter(preTidyInput, tidyOutput, origFile)).start();
 			}
 			else {
-				new Thread(new TidyXHTMLConverter(rawInput, tidyOutput, origFile)).start();
+				new Thread(new JTidyFilter(rawInput, tidyOutput, origFile)).start();
 			}
-			new Thread (new XOMClutterRemover (tidyInput, unclutteredOutput, origFile)).start();
-			new Thread (new TidyXHTMLConverter(unclutteredInput, finalOutput, origFile)).start();
+			new Thread (new XOMUnclutterFilter(tidyInput, unclutteredOutput, origFile)).start();
+			new Thread (new JTidyFilter(unclutteredInput, finalOutput, origFile)).start();
 		}
 	}
 }

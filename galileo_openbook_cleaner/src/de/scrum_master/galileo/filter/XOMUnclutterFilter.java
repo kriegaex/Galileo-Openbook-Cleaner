@@ -1,4 +1,4 @@
-package de.scrum_master.galileo;
+package de.scrum_master.galileo.filter;
 
 import java.io.File;
 import java.io.InputStream;
@@ -20,7 +20,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-public class XOMClutterRemover extends BasicConverter
+import de.scrum_master.util.SimpleLogger;
+
+public class XOMUnclutterFilter extends BasicFilter
 {
 	private boolean   isTOCFile;                    // TOC = table of contents = index.htm*
 	private XMLReader tagsoup;                      // plug-in XML reader for XOM
@@ -116,7 +118,7 @@ public class XOMClutterRemover extends BasicConverter
 		}
 	}
 
-	public XOMClutterRemover(InputStream in, OutputStream out, File origFile)
+	public XOMUnclutterFilter(InputStream in, OutputStream out, File origFile)
 		throws SAXException
 	{
 		super(in, out, origFile, "Removing clutter (header, footer, navigation, ads) and fixing structure");
@@ -126,7 +128,7 @@ public class XOMClutterRemover extends BasicConverter
 	}
 
 	@Override
-	protected void convert() throws Exception
+	protected void filter() throws Exception
 	{
 		parseDocument();
 		removeClutter();

@@ -1,4 +1,4 @@
-package de.scrum_master.galileo;
+package de.scrum_master.galileo.filter;
 
 import java.io.File;
 import java.io.InputStream;
@@ -6,11 +6,12 @@ import java.io.OutputStream;
 
 import org.w3c.tidy.Tidy;
 
-public class TidyXHTMLConverter extends BasicConverter
+
+public class JTidyFilter extends BasicFilter
 {
 	private Tidy tidy;
 
-	public TidyXHTMLConverter(InputStream in, OutputStream out, File origFile)
+	public JTidyFilter(InputStream in, OutputStream out, File origFile)
 	{
 		super(in, out, origFile, "Converting to clean, pretty-printed XHTML");
 
@@ -32,7 +33,7 @@ public class TidyXHTMLConverter extends BasicConverter
 	}
 
 	@Override
-	protected void convert() throws Exception
+	protected void filter() throws Exception
 	{
 		tidy.parse(in, out);
 	}
