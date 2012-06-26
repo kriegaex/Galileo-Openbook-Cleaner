@@ -37,14 +37,14 @@ It also uses a few open source libraries:
 
 __To do:__
 * I want to add the missing download and unpack steps, so the tool can be used stand-alone and
-  fully replace the old shell script.
+  fully replace the old shell script. *[Done, available in master, not in download JAR yet.]*
 * I dislike the current code structure and want to do some refactoring. Because I have not programmed
   in a long time (I used to be a full-time developer in the 1990s and am a project management coach
   now), development is not my daily work anymore, so even though I already refactored a lot of things
   before the initial upload, there is still a lot to be done to satisfy my own demands from a design
   and [software craftsmanship](http://en.wikipedia.org/wiki/Software_craftsmanship) perspective. See
   also the book [Clean Code](http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882)
-  by Robert C. Martin.
+  by Robert C. Martin. *[Partly done, available in master, not in download JAR yet.]*
 * I am not sure about it, but I might start writing *unit tests* for the tool if I ever feel like it.
   Practicing a bit of TDD is something I have not done in a long time, except for recommending and
   introducing it to my clients as an agile coach. I would not consider myself a professional developer
@@ -54,6 +54,7 @@ Because of the missing features and open bugs as well as the *clean code* and *r
 mentioned above and because I want to learn about the *Git* integration in *Eclipse* (I currently only
 know a bit of *Git* command-line stuff), I guess it will be nice to do this step by step, documenting
 my progress in small, fine-granular *Git* changesets, so later on I can review my own progress.
+*[Partly done, available in master, not in download JAR yet.]*
 
 As you can see, I am mostly doing this little project for myself, but I like to share the results and
 receive some user feedback. I hope the openbook cleaner is useful to you. Enjoy! :-)
