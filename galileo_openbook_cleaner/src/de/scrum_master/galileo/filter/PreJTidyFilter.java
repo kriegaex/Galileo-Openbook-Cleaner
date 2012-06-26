@@ -9,8 +9,8 @@ import java.io.PrintStream;
 
 import de.scrum_master.util.SimpleLogger;
 
-/*
- * Currently this class only fixes one specific file: <i>ruby_on_rails/index.htm</i>.
+/**
+ * Currently this class only fixes one specific file: <i>ruby_on_rails_2/index.htm</i>.
  * If different types of pre-Tidy fixing should ever be needed, refactor this class into
  * a base class with specialised subclasses.
  */

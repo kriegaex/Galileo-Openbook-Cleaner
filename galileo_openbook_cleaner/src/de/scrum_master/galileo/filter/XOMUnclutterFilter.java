@@ -30,12 +30,12 @@ public class XOMUnclutterFilter extends BasicFilter
 	private Document  document;                     // XOM document (XML DOM structure)
 	private Element   headTag;                      // XOM element pointing to HTML <head> tag
 	private Element   bodyTag;                      // XOM element pointing to HTML <body> tag
-	private String    pageTitle;                    // Content of HTML <title> tag 
+	private String    pageTitle;                    // Content of HTML <title> tag
 	private boolean   hasStandardLayout = true;     // Known exception: "UNIX guru" book
 
 	private static final XPathContext context =     // XOM XPath context for HTML
 		new XPathContext("html", "http://www.w3.org/1999/xhtml");
-	
+
 	private static final String nonStandardCSS =    // CSS style overrides for "UNIX guru" book
 		"body { font-size: 13px; }" +
 		"h1 a, h2 a, h3 a, h4 a { font-size: 16px; }" +
@@ -66,7 +66,7 @@ public class XOMUnclutterFilter extends BasicFilter
 
 		LAST_HR_TAG                    ("//html:hr[position()=last()]"),
 		AFTER_LAST_HR_TAG              (LAST_HR_TAG.query + "/following-sibling::node()"),
-		FEEDBACK_FORM                  (LAST_HR_TAG.query + "|" + AFTER_LAST_HR_TAG.query), 
+		FEEDBACK_FORM                  (LAST_HR_TAG.query + "|" + AFTER_LAST_HR_TAG.query),
 		FEEDBACK_FORM_URL_FIELD        (AFTER_LAST_HR_TAG.query + "//html:input[@name='openbookurl']"),
 
 		IMAGE_SMALL                    ("//html:img[contains(@src,'klein/klein')]"),
@@ -223,7 +223,7 @@ public class XOMUnclutterFilter extends BasicFilter
 	/*
 	 * Individual fix for a buggy heading in "Unix Guru" book's node429.html
 	 * which would later make deletion of XPath.NON_STANDARD_TOP_NAVIGATION fail
-	 * in method removeClutterWithinMainContent(). 
+	 * in method removeClutterWithinMainContent().
 	 */
 	private void fixNode429()
 	{
@@ -256,7 +256,7 @@ public class XOMUnclutterFilter extends BasicFilter
 		deleteNodes(XPath.BODY_NODES.query);
 		moveNodesTo(mainContent, bodyTag);
 	}
-	
+
 	private void removeClutterWithinMainContent()
 	{
 		if (hasStandardLayout) {
@@ -322,7 +322,7 @@ public class XOMUnclutterFilter extends BasicFilter
 	/**
 	 * Many Galileo Openbooks' tables of contents (TOC, index.htm*) are missing
 	 * links to their respective indexes (stichwort.htm*).
-	 * 
+	 *
 	 * This is a problem because after clean-up there is no direct way to reach
 	 * the index other than from the TOC. This also results in missing pages within
 	 * EPUB books created by Calibre, for example. So we need to do something about it,
@@ -331,7 +331,7 @@ public class XOMUnclutterFilter extends BasicFilter
 	private void createIndexLink()
 	{
 		if (pageTitle.contains("Ruby on Rails")) {
-			SimpleLogger.verbose("      TOC file: not creating index link (no stichwort.htm*");
+			SimpleLogger.verbose("      TOC file: not creating index link (no stichwort.htm*)");
 			return;
 		}
 		SimpleLogger.verbose("      TOC file: creating index link...");
@@ -348,20 +348,20 @@ public class XOMUnclutterFilter extends BasicFilter
 	/**
 	 * There is a strange quirk in the table of contents (TOC, index.htm*) of
 	 * several (ca. 10) Galileo Openbooks:
-	 * 
+	 *
 	 * Some links for subchapters *.x point to the file for subchapter *.(x-1).
 	 * The problem there is that after we have removed the surrounding clutter,
 	 * there is no more redundant TOC column on the left, so there is no direct way
 	 * to reach the missing chapters which have no reference in the TOC. This also
 	 * results in missing pages within EPUB books created by Calibre, for example.
 	 * So we need to do something about it, i.e. detect and fix the faulty links.
-	 *  
+	 *
 	 * Faulty example (abbreviated) from "Ubuntu 11.04" book:
 	 * <pre>
 	 * &lt;a href="ubuntu_01_001.htm"&gt;1.2.* Blah&lt;/a&gt;
 	 * </pre>
 	 * For chapter x.2.* the href must be corrected to ubuntu_0x_002.htm.
-	 * 
+	 *
 	 * It further complicates the fixing task that there are some (ca. 2) books
 	 * which show a similar one-off behaviour for <i>all</i> subchapters by design,
 	 * because they have a different numbering scheme. Those books are OK, though,
