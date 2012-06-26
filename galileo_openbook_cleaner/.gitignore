@@ -1,2 +1,6 @@
 bin/
 lib/*.jar
+*.zip
+shell_prog/**
+photoshop_cs4/**
+*.xls
