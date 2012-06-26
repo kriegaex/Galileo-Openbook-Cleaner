@@ -54,14 +54,14 @@ public class OpenbookCleaner
 
 		processArgs(args);
 
-		SimpleLogger.echo("Downloading, verifying (MD5) and unpacking " + bookInfo + "...");
+		SimpleLogger.echo("Downloading, verifying (MD5) and unpacking " + bookInfo.unpackDirectory + "...");
 		new Downloader(downloadDir, bookInfo).download();
 
-		SimpleLogger.echo("Processing " + bookInfo + "...");
+		SimpleLogger.echo("Processing " + bookInfo.unpackDirectory + "...");
 		for (File htmlFile : new File(downloadDir, bookInfo.unpackDirectory).listFiles(HTML_FILES))
 			cleanHTMLFile(htmlFile);
 
-		SimpleLogger.time("Duration for " + bookInfo, System.currentTimeMillis() - startTime);
+		SimpleLogger.time("Duration for " + bookInfo.unpackDirectory, System.currentTimeMillis() - startTime);
 	}
 
 	private static void processArgs(String[] args)
