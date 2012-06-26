@@ -23,20 +23,28 @@ import de.scrum_master.util.SimpleLogger;
 
 public class OpenbookCleaner
 {
-	private static File   baseDir;
+	private static File downloadDir;
 	private static BookInfo bookInfo;
-	private static File[] htmlFiles;
+
 	private static boolean SINGLE_THREADED_WITH_INTERMEDIATE_FILES = false;
 
+	private final static FileFilter HTML_FILES = new FileFilter() {
+		public boolean accept(File file) {
+			String fileNameLC = file.getName().toLowerCase();
+			return fileNameLC.endsWith(".htm") || fileNameLC.endsWith(".html");
+		}
+	};
+
 	private final static String USAGE_TEXT =
-		"Usage: java " + OpenbookCleaner.class.getName() + " [-?] | [options] <book_path>\n\n" +
+		"Usage: java " + OpenbookCleaner.class.getName() + " [-?] | [options] <download_dir> <book_id>\n\n" +
 		"Options:\n"+
 		"  -?  show this help text\n" +
 		"  -v  verbose output\n" +
 		"  -d  debug output (implies -v)\n" +
 		"  -s  single-threaded mode with intermediate files (for diagnostics)\n\n" +
 		"Parameters:\n"+
-		"  book_path  base path containing the book to be cleaned";
+		"  download_dir  download directory for openbook archives (*.zip); must exist" +
+		"  book_id       book ID; book will be unpacked to subdirectory <download_dir>/<book_id>";
 
 	private static final String REGEX_TOC_RUBY = ".*ruby_on_rails.index.htm";
 
@@ -45,22 +53,26 @@ public class OpenbookCleaner
 		long startTime = System.currentTimeMillis();
 
 		processArgs(args);
-		SimpleLogger.echo("Processing " + baseDir.getName() + "...");
-		for (File htmlFile : htmlFiles)
+
+		SimpleLogger.echo("Downloading, verifying (MD5) and unpacking " + bookInfo + "...");
+		new Downloader(downloadDir, bookInfo).download();
+
+		SimpleLogger.echo("Processing " + bookInfo + "...");
+		for (File htmlFile : new File(downloadDir, bookInfo.unpackDirectory).listFiles(HTML_FILES))
 			cleanHTMLFile(htmlFile);
 
-		SimpleLogger.time("Duration for " + baseDir.getName(), System.currentTimeMillis() - startTime);
+		SimpleLogger.time("Duration for " + bookInfo, System.currentTimeMillis() - startTime);
 	}
 
 	private static void processArgs(String[] args)
 	{
-		if (args.length == 0)	
+		if (args.length < 2)
 			displayUsageAndExit(0);
 
 		// TODO: GetOpt is poorly documented, hard to use and buggy (getCmdArgs falsely returns options
 		// if no non-option command-line agrument is given). There are plenty of better free command line
 		// parsing tools. If it was not for indepencence of yet another external library, I would not use
-		// JRE's GetOpt. 
+		// JRE's GetOpt.
 		GetOpt options = new GetOpt(args, "?vds");
 		try {
 			int i = options.getNextOption();
@@ -81,37 +93,27 @@ public class OpenbookCleaner
 						SINGLE_THREADED_WITH_INTERMEDIATE_FILES = true;
 						break;
 				}
-				i = options.getNextOption(); 
+				i = options.getNextOption();
 			}
-			baseDir = new File(options.getCmdArgs()[0]);
-			SimpleLogger.debug("Option parser: book_path = " + baseDir);
 
-			// Check if given name corresponds to any predefined BookInfo 
+			if (options.getCmdArgs().length < 2)
+				displayUsageAndExit(0);
+
+			downloadDir = new File(options.getCmdArgs()[0]);
+			SimpleLogger.debug("Option parser: download_dir = " + downloadDir);
+			if (! downloadDir.isDirectory())
+				displayUsageAndExit(1, "download directory '" + downloadDir + "' not found\n");
+
 			try {
-				bookInfo = BookInfo.valueOf(baseDir.getName().toUpperCase());
+				bookInfo = BookInfo.valueOf(options.getCmdArgs()[1].toUpperCase());
 			}
 			catch (IllegalArgumentException e) {
-				displayUsageAndExit(1, "illegal book_path " + e.getMessage().replaceFirst(".*[.]", "").toLowerCase());
+				displayUsageAndExit(1, "illegal book_id " + e.getMessage().replaceFirst(".*[.]", "").toLowerCase());
 			}
-
-			if (! baseDir.isDirectory())
-				displayUsageAndExit(1, "book base directory '" + baseDir + "' not found\n");
 		}
 		catch (Exception e) {
 			displayUsageAndExit(1);
 		}
-
-		htmlFiles = baseDir.listFiles(
-			new FileFilter() {
-				public boolean accept(File file) {
-					String fileNameLC = file.getName().toLowerCase(); 
-					return fileNameLC.endsWith(".htm") || fileNameLC.endsWith(".html");
-					//return fileNameLC.endsWith("apps_06_005.html");
-					//return fileNameLC.endsWith("node429.html");
-					//return fileNameLC.endsWith("index.htm") || fileNameLC.endsWith("index.html");
-				}
-			}
-		);
 	}
 
 	private static void displayUsageAndExit(int exitCode)
@@ -124,7 +126,7 @@ public class OpenbookCleaner
 		PrintStream out = (exitCode == 0) ? System.out : System.err;
 		out.println(
 			USAGE_TEXT + "\n\n" +
-			"List of legal book_path values (case-insensitive):"
+			"List of legal book_id values (case-insensitive):"
 		);
 		for (BookInfo md : BookInfo.values())
 			out.println("  " + md.name().toLowerCase());
