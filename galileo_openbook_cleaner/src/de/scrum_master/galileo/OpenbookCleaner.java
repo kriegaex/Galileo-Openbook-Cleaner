@@ -46,7 +46,7 @@ public class OpenbookCleaner
 		"  download_dir  download directory for openbook archives (*.zip); must exist" +
 		"  book_id       book ID; book will be unpacked to subdirectory <download_dir>/<book_id>";
 
-	private static final String REGEX_TOC_RUBY = ".*ruby_on_rails.index.htm";
+	private static final String REGEX_TOC_RUBY = ".*ruby_on_rails_2.index.htm";
 
 	public static void main(String[] args) throws Exception
 	{
