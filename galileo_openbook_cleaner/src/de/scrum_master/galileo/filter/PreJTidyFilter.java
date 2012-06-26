@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.scrum_master.util.SimpleLogger;
 
@@ -16,7 +18,8 @@ import de.scrum_master.util.SimpleLogger;
  */
 public class PreJTidyFilter extends BasicFilter
 {
-	private static final String REGEX_MAIN_TABLE = "<table .*bgcolor=.#eeeeee.*";
+	private static final Pattern REGEX_TITLE      = Pattern.compile("(<title>.+Ruby on Rails 2 ). Das (Entwickler.+)");
+	private static final Pattern REGEX_MAIN_TABLE = Pattern.compile("<table .*bgcolor=.#eeeeee.*");
 
 	protected BufferedReader input;
 	protected PrintStream output;
@@ -32,9 +35,14 @@ public class PreJTidyFilter extends BasicFilter
 	@Override
 	protected void filter() throws Exception
 	{
+		Matcher matcher;
 		while ((line = input.readLine()) != null) {
-			if (line.matches(REGEX_MAIN_TABLE)) {
-				SimpleLogger.debug("    Found main content table, inserting missing </table> tag before it");
+			if ((matcher = REGEX_TITLE.matcher(line)).matches()) {
+				SimpleLogger.debug("      Found title tag, removing misleading substring \" – Das\"");
+				line = matcher.group(1) + matcher.group(2);
+			}
+			if (REGEX_MAIN_TABLE.matcher(line).matches()) {
+				SimpleLogger.debug("      Found main content table, inserting missing </table> tag before it");
 				output.println("</table>");
 			}
 			output.println(line);
