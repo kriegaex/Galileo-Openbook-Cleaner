@@ -91,7 +91,7 @@ public class OpenbookCleaner
 				bookInfo = BookInfo.valueOf(baseDir.getName().toUpperCase());
 			}
 			catch (IllegalArgumentException e) {
-				displayUsageAndExit(1, "book_path " + e.getMessage().replaceFirst(".*[.]", "") + " not found.");
+				displayUsageAndExit(1, "illegal book_path " + e.getMessage().replaceFirst(".*[.]", "").toLowerCase());
 			}
 
 			if (! baseDir.isDirectory())
