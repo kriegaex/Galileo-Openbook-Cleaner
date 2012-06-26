@@ -15,6 +15,7 @@ class Downloader
 {
 	private final BookInfo bookInfo;
 	private final File downloadDirectory;
+	private final File targetDirectory;
 
 	private static final FileFilter DIRECTORIES_ONLY = new FileFilter() {
 		public boolean accept(File pathname) {
@@ -23,10 +24,16 @@ class Downloader
 	};
 
 
-	Downloader(String downloadDirectory, BookInfo bookInfo)
+	Downloader(File downloadDirectory, BookInfo bookInfo)
 	{
 		this.bookInfo = bookInfo;
-		this.downloadDirectory = new File(downloadDirectory);
+		this.downloadDirectory = downloadDirectory;
+		this.targetDirectory = new File(downloadDirectory, bookInfo.unpackDirectory);
+	}
+	
+	Downloader(String downloadDirectory, BookInfo bookInfo)
+	{
+		this(new File(downloadDirectory), bookInfo);
 	}
 	
 	void download()
@@ -34,7 +41,7 @@ class Downloader
 	{
 		downloadBook();
 		unpackBook();
-		downloadCover();
+		downloadCoverImage();
 	}
 
 	private void downloadBook()
@@ -49,8 +56,6 @@ class Downloader
 	private void unpackBook()
 		throws IOException
 	{
-		File targetDirectory = new File(downloadDirectory, bookInfo.unpackDirectory);
-
 		// Create target directory if necessary
 		if (! targetDirectory.exists())
 			targetDirectory.mkdir();
@@ -88,6 +93,10 @@ class Downloader
 
 	private void moveDirectoryContents(File sourceDirectory, File targetDirectory)
 	{
+		// TODO: Do not work on file level, but on directory level:
+		//   - move sourceDirectory to ../../sourceDirectory.tmp
+		//   - delete targetDirectory
+		//   - rename sourceDirectory.tmp -> targetDirectory 
 		for (File file : sourceDirectory.listFiles()) {
 			File targetFile = new File(targetDirectory, file.getName());
 			if (! file.renameTo(targetFile))
@@ -95,11 +104,15 @@ class Downloader
 		}
 	}
 
-	private void downloadCover()
+	private void downloadCoverImage()
 		throws IOException, NoSuchAlgorithmException, MD5MismatchException
 	{
-		String imageName = bookInfo.coverImage.replaceFirst(".*/", "");
-		File file = new File(downloadDirectory, bookInfo.unpackDirectory + File.separator + imageName);
+		// Create target directory if necessary
+		if (! targetDirectory.exists())
+			targetDirectory.mkdir();
+
+		String imageName = bookInfo.unpackDirectory + File.separator + "cover.jpg";
+		File file = new File(downloadDirectory, imageName);
 		if (! file.exists())
 			new FileDownloader(new URL(bookInfo.coverImage), file, null).download();
 	}
@@ -107,22 +120,22 @@ class Downloader
 	public static void main(String[] args)
 		throws NoSuchAlgorithmException, IOException, MD5MismatchException
 	{
-		// Usage example
-		BookInfo bookInfo = BookInfo.SHELL_PROG;
-		System.out.println(
+		// Usage example #1: download & unpack one book
+		BookInfo myBook = BookInfo.SHELL_PROG;
+		SimpleLogger.echo(
 			"Downloading, MD5 checking, unpacking\n" +
-			"  " + bookInfo.downloadArchive + "\n" +
-			"  " + bookInfo.coverImage
+			"  " + myBook.downloadArchive + "\n" +
+			"  " + myBook.coverImage
 		);
-		new Downloader(".", bookInfo).download();
-		System.out.println("Done");
-//		bookInfo = BookInfo.PHOTOSHOP_CS4;
-//		System.out.println(
-//			"Downloading, MD5 checking, unpacking\n" +
-//			"  " + bookInfo.downloadArchive + "\n" +
-//			"  " + bookInfo.coverImage
-//		);
-//		new Downloader(".", bookInfo).download();
-//		System.out.println("Done");
+		new Downloader(".", myBook).download();
+		SimpleLogger.echo("Done\n");
+
+		// Usage example #2
+		SimpleLogger.echo("Downloading cover images for all books ...");
+		for (BookInfo book : BookInfo.values()) {
+			SimpleLogger.echo("  " + book);
+			new Downloader("c:\\Dokumente und Einstellungen\\Robin\\Eigene Dateien\\Bücher\\Galileo Computing", book).downloadCoverImage();
+		}
+		SimpleLogger.echo("Done");
 	}
 }
