@@ -9,6 +9,56 @@ is just a proof of concept for two books, this tool was made to convert *__all__
 __Current state of development:__ v0.9 is feature complete, i.e. it can download, MD5-verify, unpack
 and convert all 32 openbooks available at release time.
 
+__Usage:__
+``` bash
+$ java -jar galileo_openbook_cleaner-0.9.jar
+Usage: java de.scrum_master.galileo.OpenbookCleaner [-?] | [options] <download_dir> <book_id>
+
+Options:
+  -?  show this help text
+  -v  verbose output
+  -d  debug output (implies -v)
+  -s  single-threaded mode with intermediate files (for diagnostics)
+
+Parameters:
+  download_dir  download directory for openbook archives (*.zip); must exist
+  book_id       book ID; book will be unpacked to subdirectory <download_dir>/<book_id>
+
+List of legal book_id values (case-insensitive):
+  actionscript_1_und_2
+  actionscript_einstieg
+  apps_iphone
+  c_von_a_bis_z
+  dreamweaver_8
+  excel_2007
+  hdr_fotografie
+  it_handbuch
+  java_7
+  java_insel
+  javascript_ajax
+  joomla_1_5
+  linux
+  linux_unix_prog
+  microsoft_netzwerk
+  oop
+  photoshop_cs2
+  photoshop_cs4
+  php_pear
+  python
+  ruby_on_rails_2
+  shell_prog
+  ubuntu_10_04
+  ubuntu_11_04
+  unix_guru
+  vb_2008
+  vb_2008_einstieg
+  vb_2010_einstieg
+  vcsharp_2008
+  vcsharp_2010
+  vmware
+  windows_server_2008
+```
+
 __Dependencies:__ The tool was developed in Java 7 with compiler compliance level 1.5 (Java 5).
 It also uses a few open source libraries:
   * [JTidy r938](http://jtidy.sourceforge.net/) for converting the original Galileo files from
