@@ -7,10 +7,10 @@ before converting them to EPUB or PDF format. It is meant to be an improved reim
 script which is just meant to be a proof of concept for two books, this tool is meant to convert
 *__all__* books.
 
-__Current state of development:__ The tool in v.09 can download, verify (MD5), unpack and convert all 32 known
+__Current state of development:__ The tool in v0.9 can download, verify (MD5), unpack and convert all 32 known
 openbooks available for download as of 2012-06-25.
 
-__Dependencies:__ The tool was developed in Java 7, but might work in older JREs too (untested).
+__Dependencies:__ The tool was developed in Java 7 with compiler compliance level 1.5 (Java 5).
 It also uses a few open source libraries:
   * [JTidy r938](http://jtidy.sourceforge.net/) for converting the original Galileo files from
     unclean HTML into XHTML and also for pretty-printing the final result (XOM does not pretty-print).
@@ -43,12 +43,12 @@ __To do:__
 * For example I would like to have a more flexible CLI (command line interface). The way parameters are
   handled presently (with JRE on-board classes) is not very nice and flexible. I might switch to a CLI
   framework like JCommander, JOpt Simple, JewelCli or JSAP.
-* Another clean code issue are cross-cutting concerns like threading, logging, timing and profiling.
+* Another clean code issue are cross-cutting concerns like threading, logging and timing.
   I would like to get them out of the application logic via an
   [AOP](http://en.wikipedia.org/wiki/Aspect-oriented_programming) framework like
   [AspectJ](http://en.wikipedia.org/wiki/AspectJ). This would make building and packaging a little more
-  complex, but the code cleaner and more maintainable. Because I want to do more AOP anyway, this little
-  playground project might be a good place to do it. 
+  complex, but the code cleaner and more maintainable. Because I want to practice more AOP anyway, this little
+  project would be a nice playground. 
 * I am not sure about it, but I might start writing *unit tests* for the tool if I ever feel like it.
   Practicing a bit of TDD is something I have not done in a long time, except for recommending and
   introducing it to my clients as an agile coach. I would not consider myself a professional developer
