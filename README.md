@@ -10,7 +10,7 @@ __Current state of development:__ v0.9 is feature complete, i.e. it can download
 and convert all 32 openbooks available at release time.
 
 __Usage:__
-``` bash
+```
 $ java -jar galileo_openbook_cleaner-0.9.jar
 Usage: java de.scrum_master.galileo.OpenbookCleaner [-?] | [options] <download_dir> <book_id>
 
