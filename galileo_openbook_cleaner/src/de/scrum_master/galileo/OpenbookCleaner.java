@@ -43,7 +43,7 @@ public class OpenbookCleaner
 		"  -d  debug output (implies -v)\n" +
 		"  -s  single-threaded mode with intermediate files (for diagnostics)\n\n" +
 		"Parameters:\n"+
-		"  download_dir  download directory for openbook archives (*.zip); must exist" +
+		"  download_dir  download directory for openbook archives (*.zip); must exist\n" +
 		"  book_id       book ID; book will be unpacked to subdirectory <download_dir>/<book_id>";
 
 	private static final String REGEX_TOC_RUBY = ".*ruby_on_rails_2.index.htm";
