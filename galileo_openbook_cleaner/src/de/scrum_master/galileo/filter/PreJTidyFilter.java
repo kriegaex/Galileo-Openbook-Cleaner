@@ -18,7 +18,7 @@ import de.scrum_master.util.SimpleLogger;
  */
 public class PreJTidyFilter extends BasicFilter
 {
-	private static final Pattern REGEX_TITLE      = Pattern.compile("(<title>.+Ruby on Rails 2 ). Das (Entwickler.+)");
+	private static final Pattern REGEX_TITLE      = Pattern.compile("(<title>.+)(Ruby on Rails 2 .+Entwickler.+)");
 	private static final Pattern REGEX_MAIN_TABLE = Pattern.compile("<table .*bgcolor=.#eeeeee.*");
 
 	protected BufferedReader input;
@@ -38,8 +38,8 @@ public class PreJTidyFilter extends BasicFilter
 		Matcher matcher;
 		while ((line = input.readLine()) != null) {
 			if ((matcher = REGEX_TITLE.matcher(line)).matches()) {
-				SimpleLogger.debug("      Found title tag, removing misleading substring \" – Das\"");
-				line = matcher.group(1) + matcher.group(2);
+				SimpleLogger.debug("      Found title tag, adding dummy text as a workaround for later being cut off too much");
+				line = matcher.group(1) + "dummy - " + matcher.group(2);
 			}
 			if (REGEX_MAIN_TABLE.matcher(line).matches()) {
 				SimpleLogger.debug("      Found main content table, inserting missing </table> tag before it");
