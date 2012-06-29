@@ -69,7 +69,7 @@ public class OpenbookCleaner
 
 	private static void processArgs(String[] args)
 	{
-		if (args.length < 2)
+		if (args.length == 0)
 			displayUsageAndExit(0);
 
 		// TODO: GetOpt is poorly documented, hard to use and buggy (getCmdArgs falsely returns options
@@ -102,8 +102,8 @@ public class OpenbookCleaner
 				i = options.getNextOption();
 			}
 
-			if (options.getCmdArgs().length < 2)
-				displayUsageAndExit(0);
+			if (options.getCmdArgs().length < 2 && books == null)
+				displayUsageAndExit(1, "missing argument(s) - please specify download_dir and either book_id or -a");
 
 			downloadDir = new File(options.getCmdArgs()[0]);
 			SimpleLogger.debug("Option parser: download_dir = " + downloadDir);
