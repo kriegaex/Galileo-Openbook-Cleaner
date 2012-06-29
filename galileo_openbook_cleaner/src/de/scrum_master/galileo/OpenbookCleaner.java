@@ -77,29 +77,17 @@ public class OpenbookCleaner
 		// parsing tools. If it was not for indepencence of yet another external library, I would not use
 		// JRE's GetOpt.
 		GetOpt options = new GetOpt(args, "?avds");
+		char option;
 		try {
-			int i = options.getNextOption();
-			 while (i != -1) {
-				SimpleLogger.debug("Option parser: parameter = " + (char) i);
-				switch ((char) i) {
-					case '?' :
-						displayUsageAndExit(0);
-						break;
-					case 'a' :
-						books = BookInfo.values();
-						break;
-					case 'v' :
-						SimpleLogger.VERBOSE = true;
-						break;
-					case 'd' :
-						SimpleLogger.DEBUG = true;
-						SimpleLogger.VERBOSE = true;
-						break;
-					case 's' :
-						SINGLE_THREADED_WITH_INTERMEDIATE_FILES = true;
-						break;
+			while ((option = (char) options.getNextOption()) != '\uFFFF') {
+				SimpleLogger.debug("Option parser: parameter = " + option);
+				switch (option) {
+					case '?' : displayUsageAndExit(0); break;
+					case 'a' : books = BookInfo.values(); break;
+					case 'v' : SimpleLogger.VERBOSE = true; break;
+					case 'd' : SimpleLogger.DEBUG = true; SimpleLogger.VERBOSE = true; break;
+					case 's' : SINGLE_THREADED_WITH_INTERMEDIATE_FILES = true; break;
 				}
-				i = options.getNextOption();
 			}
 
 			if (options.getCmdArgs().length < 2 && books == null)
@@ -115,7 +103,7 @@ public class OpenbookCleaner
 			int bookCount = options.getCmdArgs().length - 1;
 			books = new BookInfo[bookCount];
 			try {
-				for (i = 0; i < bookCount; i++)
+				for (int i = 0; i < bookCount; i++)
 					books[i] = BookInfo.valueOf(options.getCmdArgs()[i + 1].toUpperCase());
 			}
 			catch (IllegalArgumentException e) {
