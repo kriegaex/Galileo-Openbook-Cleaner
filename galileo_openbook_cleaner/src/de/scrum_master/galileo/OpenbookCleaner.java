@@ -103,8 +103,10 @@ public class OpenbookCleaner
 			int bookCount = options.getCmdArgs().length - 1;
 			books = new BookInfo[bookCount];
 			try {
-				for (int i = 0; i < bookCount; i++)
+				for (int i = 0; i < bookCount; i++) {
+					SimpleLogger.debug("Option parser: book_id[" + (i+1) + "] = " + options.getCmdArgs()[i + 1]);
 					books[i] = BookInfo.valueOf(options.getCmdArgs()[i + 1].toUpperCase());
+				}
 			}
 			catch (IllegalArgumentException e) {
 				displayUsageAndExit(1, "illegal book_id " + e.getMessage().replaceFirst(".*[.]", "").toLowerCase());
