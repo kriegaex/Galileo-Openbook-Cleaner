@@ -24,7 +24,7 @@ import de.scrum_master.util.SimpleLogger;
 public class OpenbookCleaner
 {
 	private static File downloadDir;
-	private static BookInfo bookInfo;
+	private static BookInfo[] books;
 
 	private static boolean SINGLE_THREADED_WITH_INTERMEDIATE_FILES = false;
 
@@ -36,32 +36,35 @@ public class OpenbookCleaner
 	};
 
 	private final static String USAGE_TEXT =
-		"Usage: java " + OpenbookCleaner.class.getName() + " [-?] | [options] <download_dir> <book_id>\n\n" +
+		"Usage: java " + OpenbookCleaner.class.getName() + " [-?] | [options] <download_dir> [<book_id>]*\n\n" +
 		"Options:\n"+
 		"  -?  Show this help text\n" +
+		"  -a  Download & clean *all* books\n" +
 		"  -v  Verbose output\n" +
 		"  -d  Debug output (implies -v)\n" +
 		"  -s  Single-threaded mode with intermediate files (for diagnostics)\n\n" +
 		"Parameters:\n"+
 		"  download_dir  Download directory for openbook archives (*.zip); must exist\n" +
-		"  book_id       Book ID; book will be unpacked to subdirectory <download_dir>/<book_id>";
+		"  book_id       Book ID; book will be unpacked to subdirectory <download_dir>/<book_id>.\n" +
+		"                You can specify multiple book IDs separated by spaces.\n" +
+		"                If -a is specified, the book_id list will be ignored.";
 
 	private static final String REGEX_TOC_RUBY = ".*ruby_on_rails_2.index.htm";
 
 	public static void main(String[] args) throws Exception
 	{
-		long startTime = System.currentTimeMillis();
-
+		long startTimeTotal = System.currentTimeMillis();
 		processArgs(args);
-
-		SimpleLogger.echo("Downloading, verifying (MD5) and unpacking " + bookInfo.unpackDirectory + "...");
-		new Downloader(downloadDir, bookInfo).download();
-
-		SimpleLogger.echo("Processing " + bookInfo.unpackDirectory + "...");
-		for (File htmlFile : new File(downloadDir, bookInfo.unpackDirectory).listFiles(HTML_FILES))
-			cleanHTMLFile(htmlFile);
-
-		SimpleLogger.time("Duration for " + bookInfo.unpackDirectory, System.currentTimeMillis() - startTime);
+		for (BookInfo book : books) {
+			long startTime = System.currentTimeMillis();
+			SimpleLogger.echo("\nDownloading, verifying (MD5) and unpacking " + book.unpackDirectory + "...");
+			new Downloader(downloadDir, book).download();
+			SimpleLogger.echo("Processing " + book.unpackDirectory + "...");
+			for (File htmlFile : new File(downloadDir, book.unpackDirectory).listFiles(HTML_FILES))
+				cleanHTMLFile(htmlFile);
+			SimpleLogger.time("Duration for " + book.unpackDirectory, System.currentTimeMillis() - startTime);
+		}
+		SimpleLogger.time("\nTotal duration", System.currentTimeMillis() - startTimeTotal);
 	}
 
 	private static void processArgs(String[] args)
@@ -73,7 +76,7 @@ public class OpenbookCleaner
 		// if no non-option command-line agrument is given). There are plenty of better free command line
 		// parsing tools. If it was not for indepencence of yet another external library, I would not use
 		// JRE's GetOpt.
-		GetOpt options = new GetOpt(args, "?vds");
+		GetOpt options = new GetOpt(args, "?avds");
 		try {
 			int i = options.getNextOption();
 			 while (i != -1) {
@@ -81,6 +84,9 @@ public class OpenbookCleaner
 				switch ((char) i) {
 					case '?' :
 						displayUsageAndExit(0);
+						break;
+					case 'a' :
+						books = BookInfo.values();
 						break;
 					case 'v' :
 						SimpleLogger.VERBOSE = true;
@@ -104,8 +110,13 @@ public class OpenbookCleaner
 			if (! downloadDir.isDirectory())
 				displayUsageAndExit(1, "download directory '" + downloadDir + "' not found\n");
 
+			if (books != null)
+				return;
+			int bookCount = options.getCmdArgs().length - 1;
+			books = new BookInfo[bookCount];
 			try {
-				bookInfo = BookInfo.valueOf(options.getCmdArgs()[1].toUpperCase());
+				for (i = 0; i < bookCount; i++)
+					books[i] = BookInfo.valueOf(options.getCmdArgs()[i + 1].toUpperCase());
 			}
 			catch (IllegalArgumentException e) {
 				displayUsageAndExit(1, "illegal book_id " + e.getMessage().replaceFirst(".*[.]", "").toLowerCase());
