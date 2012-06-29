@@ -38,13 +38,13 @@ public class OpenbookCleaner
 	private final static String USAGE_TEXT =
 		"Usage: java " + OpenbookCleaner.class.getName() + " [-?] | [options] <download_dir> <book_id>\n\n" +
 		"Options:\n"+
-		"  -?  show this help text\n" +
-		"  -v  verbose output\n" +
-		"  -d  debug output (implies -v)\n" +
-		"  -s  single-threaded mode with intermediate files (for diagnostics)\n\n" +
+		"  -?  Show this help text\n" +
+		"  -v  Verbose output\n" +
+		"  -d  Debug output (implies -v)\n" +
+		"  -s  Single-threaded mode with intermediate files (for diagnostics)\n\n" +
 		"Parameters:\n"+
-		"  download_dir  download directory for openbook archives (*.zip); must exist\n" +
-		"  book_id       book ID; book will be unpacked to subdirectory <download_dir>/<book_id>";
+		"  download_dir  Download directory for openbook archives (*.zip); must exist\n" +
+		"  book_id       Book ID; book will be unpacked to subdirectory <download_dir>/<book_id>";
 
 	private static final String REGEX_TOC_RUBY = ".*ruby_on_rails_2.index.htm";
 
@@ -86,7 +86,7 @@ public class OpenbookCleaner
 						SimpleLogger.VERBOSE = true;
 						break;
 					case 'd' :
-						SimpleLogger.DEBUG= true;
+						SimpleLogger.DEBUG = true;
 						SimpleLogger.VERBOSE = true;
 						break;
 					case 's' :
