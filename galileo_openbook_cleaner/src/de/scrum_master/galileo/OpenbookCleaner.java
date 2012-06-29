@@ -142,7 +142,7 @@ public class OpenbookCleaner
 		SimpleLogger.verbose("  " + origFile.getName());
 		// Backups are useful if we want to re-run the application later
 		createBackupIfNotExists(origFile, backupFile);
-		doConversion(origFile, new FileInputStream(backupFile), new FileOutputStream(origFile));
+		convert(origFile, new FileInputStream(backupFile), new FileOutputStream(origFile));
 	}
 
 	private static void createBackupIfNotExists(File origFile, File backupFile)
@@ -152,7 +152,7 @@ public class OpenbookCleaner
 			origFile.renameTo(backupFile);
 	}
 
-	private static void doConversion(File origFile, InputStream rawInput, OutputStream finalOutput)
+	private static void convert(File origFile, InputStream rawInput, OutputStream finalOutput)
 		throws FileNotFoundException, SAXException, IOException
 	{
 		// Conversion steps for both modes (single-/multi-threaded):
@@ -161,52 +161,70 @@ public class OpenbookCleaner
 		//   3. Remove clutter (header, footer, navigation, ads) using XOM
 		//   4. Pretty-print XOM output again using JTidy (optional)
 
-		final boolean needsPreJTidy = origFile.getAbsolutePath().matches(REGEX_TOC_RUBY) ? true : false;
+		boolean needsPreJTidy = origFile.getAbsolutePath().matches(REGEX_TOC_RUBY) ? true : false;
 
-		if (SINGLE_THREADED_WITH_INTERMEDIATE_FILES) {
-			// Single-threaded mode is slower (~40%), but good for diagnostic purposes:
-			//   - It creates files for each intermediate processing step.
-			//   - Log output is in (chrono)logical order.
+		if (SINGLE_THREADED_WITH_INTERMEDIATE_FILES)
+			convertSingleThreaded(origFile, rawInput, finalOutput, needsPreJTidy);
+		else
+			convertMultiThreaded(origFile, rawInput, finalOutput, needsPreJTidy);
+	}
 
-			// Set up intermediate files
-			File preJTidyFile = new File(origFile + ".pretidy");
-			File jTidyFile    = new File(origFile + ".tidy");
-			File xomFile      = new File(origFile + ".xom");
+	private static void convertSingleThreaded(
+		File origFile,
+		InputStream rawInput,
+		OutputStream finalOutput,
+		boolean needsPreJTidy
+	) throws FileNotFoundException, SAXException
+	{
+		// Single-threaded mode is slower (~40%), but good for diagnostic purposes:
+		//   - It creates files for each intermediate processing step.
+		//   - Log output is in (chrono)logical order.
 
-			// Run conversion steps, using output of step (n) as input of step (n+1)
-			if (needsPreJTidy) {
-				new PreJTidyFilter(rawInput, new FileOutputStream(preJTidyFile), origFile).run();
-				new JTidyFilter(new FileInputStream(preJTidyFile), new FileOutputStream(jTidyFile), origFile).run();
-			}
-			else {
-				new JTidyFilter(rawInput, new FileOutputStream(jTidyFile), origFile).run();
-			}
-			new XOMUnclutterFilter(new FileInputStream(jTidyFile), new FileOutputStream(xomFile), origFile).run();
-			new JTidyFilter(new FileInputStream(xomFile), finalOutput, origFile).run();
+		// Set up intermediate files
+		File preJTidyFile = new File(origFile + ".pretidy");
+		File jTidyFile    = new File(origFile + ".tidy");
+		File xomFile      = new File(origFile + ".xom");
+
+		// Run conversion steps, using output of step (n) as input of step (n+1)
+		if (needsPreJTidy) {
+			new PreJTidyFilter(rawInput, new FileOutputStream(preJTidyFile), origFile).run();
+			new JTidyFilter(new FileInputStream(preJTidyFile), new FileOutputStream(jTidyFile), origFile).run();
 		}
 		else {
-			// Multi-threaded mode is faster, but not so good for diagnostic purposes:
-			//   - There are no files for intermediate processing steps.
-			//   - Log output is garbled because of multi-threading.
-
-			// Set up pipes
-			PipedOutputStream preJTidyOutput    = new PipedOutputStream();
-			PipedInputStream  preJTidyInput     = new PipedInputStream(preJTidyOutput);
-			PipedOutputStream jTidyOutput       = new PipedOutputStream();
-			PipedInputStream  jTidyInput        = new PipedInputStream(jTidyOutput);
-			PipedOutputStream unclutteredOutput = new PipedOutputStream();
-			PipedInputStream  unclutteredInput  = new PipedInputStream(unclutteredOutput);
-
-			// Run threads, piping output of thread (n) into input of thread (n+1)
-			if (needsPreJTidy) {
-				new Thread(new PreJTidyFilter(rawInput, preJTidyOutput, origFile)).start();
-				new Thread(new JTidyFilter(preJTidyInput, jTidyOutput, origFile)).start();
-			}
-			else {
-				new Thread(new JTidyFilter(rawInput, jTidyOutput, origFile)).start();
-			}
-			new Thread (new XOMUnclutterFilter(jTidyInput, unclutteredOutput, origFile)).start();
-			new Thread (new JTidyFilter(unclutteredInput, finalOutput, origFile)).start();
+			new JTidyFilter(rawInput, new FileOutputStream(jTidyFile), origFile).run();
 		}
+		new XOMUnclutterFilter(new FileInputStream(jTidyFile), new FileOutputStream(xomFile), origFile).run();
+		new JTidyFilter(new FileInputStream(xomFile), finalOutput, origFile).run();
+	}
+
+	private static void convertMultiThreaded(
+		File origFile,
+		InputStream rawInput,
+		OutputStream finalOutput,
+		boolean needsPreJTidy
+	) throws IOException, SAXException
+	{
+		// Multi-threaded mode is faster, but not so good for diagnostic purposes:
+		//   - There are no files for intermediate processing steps.
+		//   - Log output is garbled because of multi-threading.
+
+		// Set up pipes
+		PipedOutputStream preJTidyOutput    = new PipedOutputStream();
+		PipedInputStream  preJTidyInput     = new PipedInputStream(preJTidyOutput);
+		PipedOutputStream jTidyOutput       = new PipedOutputStream();
+		PipedInputStream  jTidyInput        = new PipedInputStream(jTidyOutput);
+		PipedOutputStream unclutteredOutput = new PipedOutputStream();
+		PipedInputStream  unclutteredInput  = new PipedInputStream(unclutteredOutput);
+
+		// Run threads, piping output of thread (n) into input of thread (n+1)
+		if (needsPreJTidy) {
+			new Thread(new PreJTidyFilter(rawInput, preJTidyOutput, origFile)).start();
+			new Thread(new JTidyFilter(preJTidyInput, jTidyOutput, origFile)).start();
+		}
+		else {
+			new Thread(new JTidyFilter(rawInput, jTidyOutput, origFile)).start();
+		}
+		new Thread (new XOMUnclutterFilter(jTidyInput, unclutteredOutput, origFile)).start();
+		new Thread (new JTidyFilter(unclutteredInput, finalOutput, origFile)).start();
 	}
 }
