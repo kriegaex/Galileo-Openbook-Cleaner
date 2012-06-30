@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -43,7 +44,10 @@ public class ZipFileExtractor
 		BufferedOutputStream outUnzipped   = null;
 
 		try {
-			zipStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(archiveFile), BUFFER_SIZE));
+			zipStream = new ZipInputStream(
+				new BufferedInputStream(new FileInputStream(archiveFile), BUFFER_SIZE),
+				Charset.forName("Cp437")
+			);
 			while ((zipEntry = zipStream.getNextEntry()) != null) {
 				SimpleLogger.debug("  Extracting " + zipEntry);
 				unzippedFile = new File(targetDirectory, zipEntry.getName());
