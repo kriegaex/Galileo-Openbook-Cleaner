@@ -27,16 +27,14 @@ public class PreJTidyFilter extends BasicFilter
 	private static final Pattern REGEX_TITLE      = Pattern.compile("(<title>.+)(Ruby on Rails 2 .+Entwickler.+)");
 	private static final Pattern REGEX_MAIN_TABLE = Pattern.compile("<table .*bgcolor=.#eeeeee.*");
 
-	public PreJTidyFilter(InputStream in, OutputStream out, File origFile)
-	{
+	public PreJTidyFilter(InputStream in, OutputStream out, File origFile) {
 		super(in, out, origFile);
 		input = new BufferedReader(new InputStreamReader(in));
 		output = new PrintStream(out);
 	}
 
 	@Override
-	protected void filter() throws Exception
-	{
+	protected void filter() throws Exception {
 		Matcher matcher;
 		while ((line = input.readLine()) != null) {
 			if ((matcher = REGEX_TITLE.matcher(line)).matches()) {
@@ -52,8 +50,7 @@ public class PreJTidyFilter extends BasicFilter
 	}
 
 	@Override
-	protected String getDebugLogMessage()
-	{
+	protected String getDebugLogMessage() {
 		return "Fixing HTML so as to enable JTidy to parse it";
 	}
 }

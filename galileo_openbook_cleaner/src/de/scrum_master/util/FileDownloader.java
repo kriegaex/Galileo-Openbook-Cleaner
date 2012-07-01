@@ -22,8 +22,7 @@ public class FileDownloader
 	private BigInteger md5;
 	private boolean    doChecksum;
 
-	public class MD5MismatchException extends Exception
-	{
+	public class MD5MismatchException extends Exception {
 		private File file;
 		private BigInteger md5Expected;
 		private BigInteger md5Actual;
@@ -42,8 +41,7 @@ public class FileDownloader
 		public BigInteger getMD5Actual() { return md5Actual; }
 	}
 
-	public FileDownloader(URL from, File to, BigInteger md5)
-	{
+	public FileDownloader(URL from, File to, BigInteger md5) {
 		if (from == null)
 			throw new IllegalArgumentException("Parameter 'from' must not be null");
 		if (to == null)
@@ -54,8 +52,7 @@ public class FileDownloader
 		this.doChecksum = md5 != null;
 	}
 
-	public FileDownloader(String fromURL, String toFile, String md5) throws MalformedURLException
-	{
+	public FileDownloader(String fromURL, String toFile, String md5) throws MalformedURLException {
 		this(
 			new URL(fromURL),
 			new File(toFile),
@@ -63,13 +60,11 @@ public class FileDownloader
 		);
 	}
 
-	public FileDownloader(URL from, File to)
-	{
+	public FileDownloader(URL from, File to) {
 		this(from, to, null);
 	}
 
-	public FileDownloader(String fromURL, String toFile) throws MalformedURLException
-	{
+	public FileDownloader(String fromURL, String toFile) throws MalformedURLException {
 		this(fromURL, toFile, null);
 	}
 
@@ -81,7 +76,7 @@ public class FileDownloader
 		ReadableByteChannel in         = null;
 		WritableByteChannel out        = null;
 		ByteBuffer          buffer;
-		BigInteger          md5Actual; 
+		BigInteger          md5Actual;
 		try {
 			outStream = new FileOutputStream(to);
 			if (doChecksum) {
@@ -91,7 +86,7 @@ public class FileDownloader
 			in = Channels.newChannel(from.openStream());
 			out = Channels.newChannel(outStream);
 			buffer = ByteBuffer.allocate(1 << 20);  // 1 MB
-		
+
 			// Download file, optionally calculate MD5 while writing output
 			while (in.read(buffer) != -1) {
 				buffer.flip();
@@ -100,7 +95,7 @@ public class FileDownloader
 			}
 
 			if (doChecksum) {
-				md5Actual = new BigInteger(1, md5Digest.digest()); 
+				md5Actual = new BigInteger(1, md5Digest.digest());
 				if (! md5Actual.equals(md5))
 					throw new MD5MismatchException(to, md5, md5Actual);
 			}
@@ -110,5 +105,4 @@ public class FileDownloader
 			try { out.close(); } catch (IOException e) { }
 		}
 	}
-
 }

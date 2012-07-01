@@ -13,15 +13,13 @@ public abstract class BasicFilter implements Runnable
 	protected OutputStream out;        // Where to write conversion result to
 	protected File origFile;           // Needed to determine special files like index.htm
 
-	protected BasicFilter(InputStream in, OutputStream out, File origFile)
-	{
+	protected BasicFilter(InputStream in, OutputStream out, File origFile) {
 		this.in  = in;
 		this.out = out;
 		this.origFile = origFile;
 	}
 
-	public void run()
-	{
+	public void run() {
 		SimpleLogger.debug("    " + getDebugLogMessage() + "...");
 		try { filter(); }
 		catch (Exception e) { throw new RuntimeException(e); }
@@ -45,5 +43,4 @@ public abstract class BasicFilter implements Runnable
 	 * about to do, e.g. "Converting HTML into valid XHTML" or "Removing navigation elements".
 	 */
 	protected abstract String getDebugLogMessage();
-
 }

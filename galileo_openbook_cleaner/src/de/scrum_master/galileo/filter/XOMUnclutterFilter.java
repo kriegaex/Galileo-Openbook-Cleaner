@@ -133,31 +133,27 @@ public class XOMUnclutterFilter extends BasicFilter
 	}
 
 	@Override
-	protected void filter() throws Exception
-	{
+	protected void filter() throws Exception {
 		parseDocument();
 		removeClutter();
 		fixStructure();
 		writeDocument();
 	}
 
-	private void parseDocument() throws Exception
-	{
+	private void parseDocument() throws Exception {
 		document = builder.build(in);
 		headTag = (Element) xPathQuery(XPath.HEAD.query).get(0);
 		bodyTag = (Element) xPathQuery(XPath.BODY.query).get(0);
 		initialiseTitle(true);
 	}
 
-	private void removeClutter()
-	{
+	private void removeClutter() {
 		fixNode429();
 		removeClutterAroundMainContent();
 		removeClutterWithinMainContent();
 	}
 
-	private void initialiseTitle(boolean removeBookTitle)
-	{
+	private void initialiseTitle(boolean removeBookTitle) {
 		SimpleLogger.debug("      Initialising page title...");
 		Element titleTag = (Element) xPathQuery(XPath.TITLE.query).get(0);
 		pageTitle = titleTag.getValue();
@@ -201,8 +197,7 @@ public class XOMUnclutterFilter extends BasicFilter
 		titleTag.appendChild(pageTitle);
 	}
 
-	private void fixStructure()
-	{
+	private void fixStructure() {
 		if (!hasStandardLayout) {
 			fixFontSizesForNonStandardLayout();
 			return;
@@ -220,8 +215,7 @@ public class XOMUnclutterFilter extends BasicFilter
 		}
 	}
 
-	private void writeDocument() throws Exception
-	{
+	private void writeDocument() throws Exception {
 		new Serializer(out, "ISO-8859-1").write(document);
 	}
 
@@ -230,8 +224,7 @@ public class XOMUnclutterFilter extends BasicFilter
 	 * which would later make deletion of XPath.NON_STANDARD_TOP_NAVIGATION fail
 	 * in method removeClutterWithinMainContent().
 	 */
-	private void fixNode429()
-	{
+	private void fixNode429() {
 		if (! (origFile.getName().equals("node429.html") && pageTitle.contains("UNIX-Guru")))
 			return;
 		SimpleLogger.verbose("      Fixing buggy heading...");
@@ -245,8 +238,7 @@ public class XOMUnclutterFilter extends BasicFilter
 		replaceNodeBy(buggyParagraph, heading);
 	}
 
-	private void removeClutterAroundMainContent()
-	{
+	private void removeClutterAroundMainContent() {
 		// Keep JavaScript for source code colouring ('prettyPrint' function) in some books
 		// deleteNodes(XPath.SCRIPTS.query);
 
@@ -262,8 +254,7 @@ public class XOMUnclutterFilter extends BasicFilter
 		moveNodesTo(mainContent, bodyTag);
 	}
 
-	private void removeClutterWithinMainContent()
-	{
+	private void removeClutterWithinMainContent() {
 		if (hasStandardLayout) {
 			deleteNodes(XPath.JUMP_TO_TOP_LINK.query);
 			deleteNodes(XPath.GRAPHICAL_PARAGRAPH_SEPARATOR.query);
@@ -276,13 +267,11 @@ public class XOMUnclutterFilter extends BasicFilter
 		}
 	}
 
-	private void overrideBackgroundImage()
-	{
+	private void overrideBackgroundImage() {
 		bodyTag.addAttribute(new Attribute("style", "background: none"));
 	}
 
-	private void fixImages()
-	{
+	private void fixImages() {
 		replaceByBigImages(xPathQuery(XPath.IMAGE_SMALL.query));
 		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_1.query), xPathQuery(XPath.IMAGE_1.query));
 		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_2.query), xPathQuery(XPath.IMAGE_2.query));
@@ -299,8 +288,7 @@ public class XOMUnclutterFilter extends BasicFilter
 	 * removeClutterAroundMainContent() there still is a leftover grey table which needs
 	 * to be removed. This is done here.
 	 */
-	private void removeRedundantGreyTable()
-	{
+	private void removeRedundantGreyTable() {
 		deleteNodes(XPath.GREY_TABLE.query);
 	}
 
@@ -308,8 +296,7 @@ public class XOMUnclutterFilter extends BasicFilter
 	 * Font sizes for non-standard layout book "UNIX guru" are too small in general and
 	 * for page heading in particular. Fix it by adding a custom CSS style tag to each page.
 	 */
-	private void fixFontSizesForNonStandardLayout()
-	{
+	private void fixFontSizesForNonStandardLayout() {
 		Element styleTag = new Element("style");
 		styleTag.addAttribute(new Attribute("type", "text/css"));
 		styleTag.appendChild(nonStandardCSS);
@@ -319,8 +306,7 @@ public class XOMUnclutterFilter extends BasicFilter
 	/*
 	 * Find out if this page contains a link to the index (stichwort.htm*).
 	 */
-	private boolean hasIndexLink()
-	{
+	private boolean hasIndexLink() {
 		return xPathQuery(XPath.INDEX_LINK.query).size() > 0;
 	}
 
@@ -333,8 +319,7 @@ public class XOMUnclutterFilter extends BasicFilter
 	 * EPUB books created by Calibre, for example. So we need to do something about it,
 	 * i.e. insert missing links at the end of the respective TOC.
 	 */
-	private void createIndexLink()
-	{
+	private void createIndexLink() {
 		if (pageTitle.contains("Ruby on Rails")) {
 			SimpleLogger.verbose("      TOC file: not creating index link (no stichwort.htm*)");
 			return;
@@ -347,7 +332,6 @@ public class XOMUnclutterFilter extends BasicFilter
 		((Element) indexLink.getChild(0)).getAttribute("href").setValue("stichwort" + fileExtension);
 		((Text) indexLink.getChild(0).getChild(0)).setValue("Index");
 		bodyTag.appendChild(indexLink);
-
 	}
 
 	/**
@@ -372,10 +356,8 @@ public class XOMUnclutterFilter extends BasicFilter
 	 * because they have a different numbering scheme. Those books are OK, though,
 	 * thus we need to explicitly exclude them from "fixing". <tt>:-(</tt>
 	 */
-	private void fixFaultyLinkTargets()
-	{
+	private void fixFaultyLinkTargets() {
 		SimpleLogger.verbose("    Checking for faulty TOC link targets...");
-
 		SimpleLogger.verbose("      Page title = " + pageTitle);
 
 		// Exclude the 3 know exceptions and immediately return if one is found
@@ -414,21 +396,18 @@ public class XOMUnclutterFilter extends BasicFilter
 	 * erroneous trailing text after the last TOC entry (the index link pointing to
 	 * stichwort.htm*). Because it looks ugly, we remove everything after the index link.
 	 */
-	private void removeContentAfterIndexLink()
-	{
+	private void removeContentAfterIndexLink() {
 		deleteNodes(XPath.AFTER_INDEX_LINK.query);
 	}
 
-	private static void replaceByBigImages(Nodes smallImages)
-	{
+	private static void replaceByBigImages(Nodes smallImages) {
 		for (int i = 0; i < smallImages.size(); i++) {
 			Attribute imageSrc = ((Element) smallImages.get(i)).getAttribute("src");
 			imageSrc.setValue(imageSrc.getValue().replaceFirst("klein/klein", "/"));
 		}
 	}
 
-	private static void replaceBoxesByImages(Nodes smallImageBoxes, Nodes smallImages)
-	{
+	private static void replaceBoxesByImages(Nodes smallImageBoxes, Nodes smallImages) {
 		for (int i = 0; i < smallImageBoxes.size(); i++)
 			replaceNodeBy(smallImageBoxes.get(i), smallImages.get(i));
 	}
@@ -439,32 +418,27 @@ public class XOMUnclutterFilter extends BasicFilter
 	 * ============================================================================================
 	 */
 
-	private Nodes xPathQuery(String query)
-	{
+	private Nodes xPathQuery(String query) {
 		return document.query(query, context);
 	}
 
-	private static void deleteNodes(Nodes nodes)
-	{
+	private static void deleteNodes(Nodes nodes) {
 		for (int i = 0; i < nodes.size(); i++)
 			nodes.get(i).detach();
 	}
 
-	private void deleteNodes(String xPathQuery)
-	{
+	private void deleteNodes(String xPathQuery) {
 		deleteNodes(xPathQuery(xPathQuery));
 	}
 
-	private static void moveNodesTo(Nodes sourceNodes, Element targetElement)
-	{
+	private static void moveNodesTo(Nodes sourceNodes, Element targetElement) {
 		for (int i = 0; i < sourceNodes.size(); i++) {
 			sourceNodes.get(i).detach();
 			targetElement.appendChild(sourceNodes.get(i));
 		}
 	}
 
-	private static void replaceNodeBy(Node original, Node replacement)
-	{
+	private static void replaceNodeBy(Node original, Node replacement) {
 		replacement.detach();
 		original.getParent().replaceChild(original, replacement);
 	}

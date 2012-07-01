@@ -48,8 +48,7 @@ public class OpenbookCleaner
 
 	private static final String REGEX_TOC_RUBY = ".*ruby_on_rails_2.index.htm";
 
-	public static void main(String[] args) throws Exception
-	{
+	public static void main(String[] args) throws Exception {
 		long startTimeTotal = System.currentTimeMillis();
 		processArgs(args);
 		for (Book book : books) {
@@ -64,8 +63,7 @@ public class OpenbookCleaner
 		SimpleLogger.time("\nTotal duration", System.currentTimeMillis() - startTimeTotal);
 	}
 
-	private static void processArgs(String[] args)
-	{
+	private static void processArgs(String[] args) {
 		if (args.length == 0)
 			displayUsageAndExit(0);
 
@@ -115,13 +113,11 @@ public class OpenbookCleaner
 		}
 	}
 
-	private static void displayUsageAndExit(int exitCode)
-	{
+	private static void displayUsageAndExit(int exitCode) {
 		displayUsageAndExit(exitCode, null);
 	}
 
-	private static void displayUsageAndExit(int exitCode, String errorMessage)
-	{
+	private static void displayUsageAndExit(int exitCode, String errorMessage) {
 		PrintStream out = (exitCode == 0) ? System.out : System.err;
 		out.println(
 			USAGE_TEXT + "\n\n" +
@@ -134,8 +130,7 @@ public class OpenbookCleaner
 		System.exit(exitCode);
 	}
 
-	private static void cleanHTMLFile(File origFile) throws Exception
-	{
+	private static void cleanHTMLFile(File origFile) throws Exception {
 		File backupFile = new File(origFile + ".bak");
 		SimpleLogger.verbose("  " + origFile.getName());
 		// Backups are useful if we want to re-run the application later
@@ -170,7 +165,7 @@ public class OpenbookCleaner
 			filters.add(JTidyFilter.class);
 
 		// Run conversion
-
+		//
 		// TODO: Decide if each filter chain should also run in its own thread if (MULTI_THREADED),
 		// but probably not because it does not seem to speed up conversion.
 		new FilterChain(origFile, source, target, MULTI_THREADED, filters).run();

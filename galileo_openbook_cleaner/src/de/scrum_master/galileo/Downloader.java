@@ -24,18 +24,16 @@ class Downloader
 	};
 
 
-	Downloader(File downloadDirectory, Book book)
-	{
+	Downloader(File downloadDirectory, Book book) {
 		this.book = book;
 		this.downloadDirectory = downloadDirectory;
 		this.targetDirectory = new File(downloadDirectory, book.unpackDirectory);
 	}
-	
-	Downloader(String downloadDirectory, Book book)
-	{
+
+	Downloader(String downloadDirectory, Book book) {
 		this(new File(downloadDirectory), book);
 	}
-	
+
 	void download()
 		throws IOException, NoSuchAlgorithmException, MD5MismatchException
 	{
@@ -53,9 +51,7 @@ class Downloader
 			new FileDownloader(new URL(book.downloadArchive), file, book.archiveMD5).download();
 	}
 
-	private void unpackBook()
-		throws IOException
-	{
+	private void unpackBook() throws IOException {
 		// Create target directory if necessary
 		if (! targetDirectory.exists())
 			targetDirectory.mkdir();
@@ -64,7 +60,7 @@ class Downloader
 		if (hasIndexHtml(targetDirectory))
 			return;
 
-		// Unzip openbook archive 
+		// Unzip openbook archive
 		new ZipFileExtractor(
 			new File(downloadDirectory, book.downloadArchive.replaceFirst(".*/", "")),
 			targetDirectory
@@ -86,17 +82,15 @@ class Downloader
 		subDirectory.delete();
 	}
 
-	private boolean hasIndexHtml(File directory)
-	{
+	private boolean hasIndexHtml(File directory) {
 		return new File(directory, "index.htm").exists() || new File(directory, "index.html").exists();
 	}
 
-	private void moveDirectoryContents(File sourceDirectory, File targetDirectory)
-	{
+	private void moveDirectoryContents(File sourceDirectory, File targetDirectory) {
 		// TODO: Do not work on file level, but on directory level:
 		//   - move sourceDirectory to ../../sourceDirectory.tmp
 		//   - delete targetDirectory
-		//   - rename sourceDirectory.tmp -> targetDirectory 
+		//   - rename sourceDirectory.tmp -> targetDirectory
 		for (File file : sourceDirectory.listFiles()) {
 			File targetFile = new File(targetDirectory, file.getName());
 			if (! file.renameTo(targetFile))

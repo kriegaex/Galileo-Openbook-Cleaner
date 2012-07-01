@@ -17,8 +17,7 @@ public class ZipFileExtractor
 
 	private static final int BUFFER_SIZE = 128 * 1024;
 
-	public ZipFileExtractor(File archiveFile, File targetDirectory)
-	{
+	public ZipFileExtractor(File archiveFile, File targetDirectory) {
 		if (archiveFile == null)
 			throw new IllegalArgumentException("Parameter 'archiveFile' must not be null");
 		if (targetDirectory == null)
@@ -27,13 +26,11 @@ public class ZipFileExtractor
 		this.targetDirectory = targetDirectory;
 	}
 
-	public ZipFileExtractor(String archiveFile, String targetDirectory)
-	{
+	public ZipFileExtractor(String archiveFile, String targetDirectory) {
 		this(new File(archiveFile), new File(targetDirectory));
 	}
 
-	public void unzip() throws IOException
-	{
+	public void unzip() throws IOException {
 		SimpleLogger.debug("Unzipping archive " + archiveFile + " ...");
 
 		ZipInputStream       zipStream     = null;

@@ -13,8 +13,7 @@ public class JTidyFilter extends BasicFilter
 
 	protected static final String FILE_EXTENSION = ".tidy";
 
-	public JTidyFilter(InputStream in, OutputStream out, File origFile)
-	{
+	public JTidyFilter(InputStream in, OutputStream out, File origFile) {
 		super(in, out, origFile);
 
 		tidy.setXHTML(true);
