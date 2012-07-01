@@ -25,27 +25,20 @@ public abstract class BasicFilter implements Runnable
 	public void run()
 	{
 		SimpleLogger.debug("    " + debugLogMessage + "...");
-		try {
-			filter();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		try { filter(); }
+		catch (Exception e) { throw new RuntimeException(e); }
 		finally {
-			try {
-				in.close();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				out.close();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
+			try { in.close(); }
+			catch (IOException e) { e.printStackTrace(); }
+			try { out.close(); }
+			catch (IOException e) { e.printStackTrace(); }
 		}
 	}
 
+	/**
+	 * Encapsulates the filter action and should not be called by any method other than {@link #run}
+	 *
+	 * @throws Exception
+	 */
 	protected abstract void filter() throws Exception;
 }

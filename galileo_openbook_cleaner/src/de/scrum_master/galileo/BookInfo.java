@@ -43,9 +43,9 @@ enum BookInfo
 	final BigInteger archiveMD5;
 	final String coverImage;
 
-	private final static String BOOK_URL       = "http://download2.galileo-press.de/openbook/"; 
+	private final static String BOOK_URL       = "http://download2.galileo-press.de/openbook/";
 	private final static String COVER_URL      = "http://cover.galileo-press.de/";
-	private final static String ARCHIVE_PREFIX = "galileo"; 
+	private final static String ARCHIVE_PREFIX = "galileo";
 
 	private BookInfo(String downloadArchive, String archiveMD5, String coverImage)
 	{
@@ -70,16 +70,12 @@ enum BookInfo
 		// Convert string into enum identifier
 		System.out.println(BookInfo.valueOf("LINUX"));
 
-		// Handle illegal identifier + get its name from exception message 
+		// Handle illegal identifier + get its name from exception message
 		try {
 			System.out.println(BookInfo.valueOf("FOOBAR_BOOK"));
 		}
 		catch (IllegalArgumentException e) {
-			System.err.println(
-				"Error: book info element " + 
-				e.getMessage().replaceFirst(".*[.]", "") +
-				" not found"
-			);
+			System.err.println("Error: book info element " + e.getMessage().replaceFirst(".*[.]", "") + " not found");
 		}
 	}
 }

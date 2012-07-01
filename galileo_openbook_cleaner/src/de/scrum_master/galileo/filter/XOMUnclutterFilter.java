@@ -88,8 +88,7 @@ public class XOMUnclutterFilter extends BasicFilter
 
 		private final String query;
 
-		private XPath(String query)
-		{
+		private XPath(String query) {
 			this.query = query;
 		}
 	}
@@ -112,8 +111,7 @@ public class XOMUnclutterFilter extends BasicFilter
 
 		private final Pattern pattern;
 
-		private Regex(String regex)
-		{
+		private Regex(String regex) {
 			pattern = Pattern.compile(regex);
 		}
 	}
@@ -182,7 +180,7 @@ public class XOMUnclutterFilter extends BasicFilter
 			}
 			SimpleLogger.debug("          Step 3 DashedBook: " + pageTitle);
 
-			// Remove book title, only chapter number + name remain 
+			// Remove book title, only chapter number + name remain
 			matcher = Regex.TITLE_CHAPTER.pattern.matcher(pageTitle);
 			if (matcher.matches())
 				pageTitle = matcher.group(1);

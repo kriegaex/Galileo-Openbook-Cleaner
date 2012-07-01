@@ -18,12 +18,12 @@ import de.scrum_master.util.SimpleLogger;
  */
 public class PreJTidyFilter extends BasicFilter
 {
-	private static final Pattern REGEX_TITLE      = Pattern.compile("(<title>.+)(Ruby on Rails 2 .+Entwickler.+)");
-	private static final Pattern REGEX_MAIN_TABLE = Pattern.compile("<table .*bgcolor=.#eeeeee.*");
-
 	protected BufferedReader input;
 	protected PrintStream output;
 	protected String line;
+
+	private static final Pattern REGEX_TITLE      = Pattern.compile("(<title>.+)(Ruby on Rails 2 .+Entwickler.+)");
+	private static final Pattern REGEX_MAIN_TABLE = Pattern.compile("<table .*bgcolor=.#eeeeee.*");
 
 	public PreJTidyFilter(InputStream in, OutputStream out, File origFile)
 	{
