@@ -6,23 +6,27 @@ before converting them to EPUB or PDF format. It is meant to be an improved reim
 [bash shell script using xml2](https://github.com/kriegaex/html_book_cleaner). While the old script
 is just a proof of concept for two books, this tool was made to convert *__all__* books.
 
-__Current state of development:__ v0.9 is feature complete, i.e. it can download, MD5-verify, unpack
+__Current state of development:__ v0.9.1 is feature complete, i.e. it can download, MD5-verify, unpack
 and convert all 32 openbooks available at release time.
 
 __Usage:__
 
-    $ java -jar galileo_openbook_cleaner-0.9.jar
-    Usage: java de.scrum_master.galileo.OpenbookCleaner [-?] | [options] <download_dir> <book_id>
+    $ java -jar galileo_openbook_cleaner-0.9.1.jar
+    Usage: java de.scrum_master.galileo.OpenbookCleaner [-?] | [options] <download_dir> [<book_id>]*
     
     Options:
-      -?  show this help text
-      -v  verbose output
-      -d  debug output (implies -v)
-      -s  single-threaded mode with intermediate files (for diagnostics)
+      -?  Show this help text
+      -n  No pretty-printing after structural clean-up (saves ~15% processing time)
+      -a  Download & clean *all* books
+      -v  Verbose output
+      -d  Debug output (implies -v)
+      -s  Single-threaded mode with intermediate files (for diagnostics)
     
     Parameters:
-      download_dir  download directory for openbook archives (*.zip); must exist
-      book_id       book ID; book will be unpacked to subdirectory <download_dir>/<book_id>
+      download_dir  Download directory for openbook archives (*.zip); must exist
+      book_id       Book ID; book will be unpacked to subdirectory <download_dir>/<book_id>.
+                    You can specify multiple book IDs separated by spaces.
+                    If -a is specified, the book_id list will be ignored.
     
     List of legal book_id values (case-insensitive):
       actionscript_1_und_2
@@ -84,7 +88,7 @@ It also uses a few open source libraries:
     Direct JAR download: [tagsoup-1.2.1.jar](http://ccil.org/~cowan/XML/tagsoup/tagsoup-1.2.1.jar)
 
 __To do:__
-* I have refactored the code structure from v0.8 to v0.9, but still there are several things I dislike
+* I have refactored the code structure from v0.8 to v0.9.1, but still there are several things I dislike
   from a design and [software craftsmanship](http://en.wikipedia.org/wiki/Software_craftsmanship) perspective.
   See also the book [Clean Code](http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882)
   by Robert C. Martin.
@@ -95,7 +99,8 @@ __To do:__
   them out of the application logic via an [AOP](http://en.wikipedia.org/wiki/Aspect-oriented_programming)
   framework like [AspectJ](http://en.wikipedia.org/wiki/AspectJ). This would make building and packaging a
   little more complex, but the code cleaner and more maintainable. Because I want to practice more AOP
-  anyway, this little project would be a nice playground. 
+  anyway, this little project would be a nice playground. *[Update on threading: In 0.9.1 threading was
+  encapsulated in class FilterChain, which is better than before.]*
 * I am not sure about it, but I might start writing *unit tests* for the tool if I ever feel like it.
   Practicing a bit of TDD is something I have not done in a long time, except for recommending and
   introducing it to my clients as an agile coach. I would not consider myself a professional developer
