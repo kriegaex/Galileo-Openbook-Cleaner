@@ -26,7 +26,7 @@ public class OpenbookCleaner
 	private static File downloadDir;
 	private static BookInfo[] books;
 
-	private static boolean SINGLE_THREADED_WITH_INTERMEDIATE_FILES = false;
+	private static boolean MULTI_THREADED = true;
 
 	private final static FileFilter HTML_FILES = new FileFilter() {
 		public boolean accept(File file) {
@@ -86,7 +86,7 @@ public class OpenbookCleaner
 					case 'a' : books = BookInfo.values(); break;
 					case 'v' : SimpleLogger.VERBOSE = true; break;
 					case 'd' : SimpleLogger.DEBUG = true; SimpleLogger.VERBOSE = true; break;
-					case 's' : SINGLE_THREADED_WITH_INTERMEDIATE_FILES = true; break;
+					case 's' : MULTI_THREADED = false; break;
 				}
 			}
 
@@ -163,10 +163,10 @@ public class OpenbookCleaner
 
 		boolean needsPreJTidy = origFile.getAbsolutePath().matches(REGEX_TOC_RUBY) ? true : false;
 
-		if (SINGLE_THREADED_WITH_INTERMEDIATE_FILES)
-			convertSingleThreaded(origFile, rawInput, finalOutput, needsPreJTidy);
-		else
+		if (MULTI_THREADED)
 			convertMultiThreaded(origFile, rawInput, finalOutput, needsPreJTidy);
+		else
+			convertSingleThreaded(origFile, rawInput, finalOutput, needsPreJTidy);
 	}
 
 	private static void convertSingleThreaded(
