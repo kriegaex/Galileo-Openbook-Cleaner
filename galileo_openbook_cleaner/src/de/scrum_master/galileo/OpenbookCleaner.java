@@ -22,6 +22,7 @@ public class OpenbookCleaner
 	private static BookInfo[] books;
 
 	private static boolean MULTI_THREADED = true;
+	private static boolean PRETTY_PRINT = true;
 
 	private final static FileFilter HTML_FILES = new FileFilter() {
 		public boolean accept(File file) {
@@ -34,6 +35,7 @@ public class OpenbookCleaner
 		"Usage: java " + OpenbookCleaner.class.getName() + " [-?] | [options] <download_dir> [<book_id>]*\n\n" +
 		"Options:\n"+
 		"  -?  Show this help text\n" +
+		"  -n  No pretty-printing after structural clean-up (saves ~15% processing time)\n" +
 		"  -a  Download & clean *all* books\n" +
 		"  -v  Verbose output\n" +
 		"  -d  Debug output (implies -v)\n" +
@@ -71,13 +73,14 @@ public class OpenbookCleaner
 		// if no non-option command-line agrument is given). There are plenty of better free command line
 		// parsing tools. If it was not for indepencence of yet another external library, I would not use
 		// JRE's GetOpt.
-		GetOpt options = new GetOpt(args, "?avds");
+		GetOpt options = new GetOpt(args, "?navds");
 		char option;
 		try {
 			while ((option = (char) options.getNextOption()) != '\uFFFF') {
 				SimpleLogger.debug("Option parser: parameter = " + option);
 				switch (option) {
 					case '?' : displayUsageAndExit(0); break;
+					case 'n' : PRETTY_PRINT = false; break;
 					case 'a' : books = BookInfo.values(); break;
 					case 'v' : SimpleLogger.VERBOSE = true; break;
 					case 'd' : SimpleLogger.DEBUG = true; SimpleLogger.VERBOSE = true; break;
@@ -163,8 +166,8 @@ public class OpenbookCleaner
 		// 3. Remove clutter (header, footer, navigation, ads) using XOM
 		filters.add(XOMUnclutterFilter.class);
 		// 4. Pretty-print XOM output again using JTidy (optional)
-		// TODO: really make this step optional via CLI option
-		filters.add(JTidyFilter.class);
+		if (PRETTY_PRINT)
+			filters.add(JTidyFilter.class);
 
 		// Run conversion
 
