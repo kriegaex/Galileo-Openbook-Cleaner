@@ -33,6 +33,8 @@ public class XOMUnclutterFilter extends BasicFilter
 	private String    pageTitle;                    // Content of HTML <title> tag
 	private boolean   hasStandardLayout = true;     // Known exception: "UNIX guru" book
 
+	protected static final String FILE_EXTENSION = ".xom";
+
 	private static final XPathContext context =     // XOM XPath context for HTML
 		new XPathContext("html", "http://www.w3.org/1999/xhtml");
 

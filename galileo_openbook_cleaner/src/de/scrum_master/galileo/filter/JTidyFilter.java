@@ -11,6 +11,8 @@ public class JTidyFilter extends BasicFilter
 {
 	private Tidy tidy = new Tidy();
 
+	protected static final String FILE_EXTENSION = ".tidy";
+
 	public JTidyFilter(InputStream in, OutputStream out, File origFile)
 	{
 		super(in, out, origFile);

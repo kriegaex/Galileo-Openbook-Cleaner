@@ -22,6 +22,8 @@ public class PreJTidyFilter extends BasicFilter
 	protected PrintStream output;
 	protected String line;
 
+	protected static final String FILE_EXTENSION = ".pretidy";
+
 	private static final Pattern REGEX_TITLE      = Pattern.compile("(<title>.+)(Ruby on Rails 2 .+Entwickler.+)");
 	private static final Pattern REGEX_MAIN_TABLE = Pattern.compile("<table .*bgcolor=.#eeeeee.*");
 
