@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class FilterChain implements Runnable {
@@ -55,6 +57,7 @@ public class FilterChain implements Runnable {
 	 * BTW: What we would really need here are abstract static methods, but they do not exist in Java.
 	 */
 	public void run() {
+		List<BasicFilter> filterInstances = new LinkedList<BasicFilter>();
 		Class<? extends BasicFilter> filterClass;
 		InputStream in;
 		OutputStream out = null;
@@ -91,12 +94,19 @@ public class FilterChain implements Runnable {
 					out = new FileOutputStream(outFile);
 				}
 
-				// Instantiate filter
+				// Instantiate filter and add it to list for running it later
 				BasicFilter filter = filterClass
 					.getConstructor(InputStream.class, OutputStream.class, File.class)
 					.newInstance(in, out, origFile);
-
-				// Run filter, either in-thread or as a separate thread
+				filterInstances.add(filter);
+			}
+			for (BasicFilter filter : filterInstances) {
+				// Run filter, either in-thread or as a separate thread.
+				//
+				// NOTE: It is essential to run filters *after* they have been set up completely because
+				// otherwise there might be pipe buffer overflows if filter (n) is already writing into its pipe
+				// before filter (n+1) has connected its reading end.
+				// to it.
 				if (runMultiThreaded)
 					new Thread(filter).start();
 				else
