@@ -2,7 +2,7 @@ package de.scrum_master.galileo;
 
 import java.math.BigInteger;
 
-enum BookInfo
+enum Book
 {
 	ACTIONSCRIPT_1_UND_2  ("design_actionscript",                            "f0fce9b57be89d1263ab5aad218f08d9", "9783898422215"),
 	ACTIONSCRIPT_EINSTIEG ("design_actionscript_einstieg",                   "d873a2bea68a0184137f8e95370d2dac", "9783898427746"),
@@ -47,7 +47,7 @@ enum BookInfo
 	private final static String COVER_URL      = "http://cover.galileo-press.de/";
 	private final static String ARCHIVE_PREFIX = "galileo";
 
-	private BookInfo(String downloadArchive, String archiveMD5, String coverImage)
+	private Book(String downloadArchive, String archiveMD5, String coverImage)
 	{
 		this.unpackDirectory = name().toLowerCase();
 		this.downloadArchive = BOOK_URL + ARCHIVE_PREFIX + downloadArchive + ".zip";
@@ -58,21 +58,21 @@ enum BookInfo
 	public static void main(String[] args)
 	{
 		// Iterate over enum and access members
-		for (BookInfo bookInfo : BookInfo.values()) {
-			System.out.println(bookInfo.name());  // or just 'bookInfo'
-			System.out.println("  unpackDirectory = " + bookInfo.unpackDirectory);
-			System.out.println("  downloadArchive = " + bookInfo.downloadArchive);
-			System.out.println("  archiveMD5      = " + bookInfo.archiveMD5.toString(16));
-			System.out.println("  coverImage      = " + bookInfo.coverImage);
+		for (Book book : Book.values()) {
+			System.out.println(book.name());  // or just 'bookInfo'
+			System.out.println("  unpackDirectory = " + book.unpackDirectory);
+			System.out.println("  downloadArchive = " + book.downloadArchive);
+			System.out.println("  archiveMD5      = " + book.archiveMD5.toString(16));
+			System.out.println("  coverImage      = " + book.coverImage);
 		}
 		System.out.println();
 
 		// Convert string into enum identifier
-		System.out.println(BookInfo.valueOf("LINUX"));
+		System.out.println(Book.valueOf("LINUX"));
 
 		// Handle illegal identifier + get its name from exception message
 		try {
-			System.out.println(BookInfo.valueOf("FOOBAR_BOOK"));
+			System.out.println(Book.valueOf("FOOBAR_BOOK"));
 		}
 		catch (IllegalArgumentException e) {
 			System.err.println("Error: book info element " + e.getMessage().replaceFirst(".*[.]", "") + " not found");

@@ -13,7 +13,7 @@ import de.scrum_master.util.ZipFileExtractor;
 
 class Downloader
 {
-	private final BookInfo bookInfo;
+	private final Book book;
 	private final File downloadDirectory;
 	private final File targetDirectory;
 
@@ -24,16 +24,16 @@ class Downloader
 	};
 
 
-	Downloader(File downloadDirectory, BookInfo bookInfo)
+	Downloader(File downloadDirectory, Book book)
 	{
-		this.bookInfo = bookInfo;
+		this.book = book;
 		this.downloadDirectory = downloadDirectory;
-		this.targetDirectory = new File(downloadDirectory, bookInfo.unpackDirectory);
+		this.targetDirectory = new File(downloadDirectory, book.unpackDirectory);
 	}
 	
-	Downloader(String downloadDirectory, BookInfo bookInfo)
+	Downloader(String downloadDirectory, Book book)
 	{
-		this(new File(downloadDirectory), bookInfo);
+		this(new File(downloadDirectory), book);
 	}
 	
 	void download()
@@ -47,10 +47,10 @@ class Downloader
 	private void downloadBook()
 		throws IOException, NoSuchAlgorithmException, MD5MismatchException
 	{
-		String archiveName = bookInfo.downloadArchive.replaceFirst(".*/", "");
+		String archiveName = book.downloadArchive.replaceFirst(".*/", "");
 		File file = new File(downloadDirectory, archiveName);
 		if (! file.exists())
-			new FileDownloader(new URL(bookInfo.downloadArchive), file, bookInfo.archiveMD5).download();
+			new FileDownloader(new URL(book.downloadArchive), file, book.archiveMD5).download();
 	}
 
 	private void unpackBook()
@@ -66,7 +66,7 @@ class Downloader
 
 		// Unzip openbook archive 
 		new ZipFileExtractor(
-			new File(downloadDirectory, bookInfo.downloadArchive.replaceFirst(".*/", "")),
+			new File(downloadDirectory, book.downloadArchive.replaceFirst(".*/", "")),
 			targetDirectory
 		).unzip();
 
@@ -111,17 +111,17 @@ class Downloader
 		if (! targetDirectory.exists())
 			targetDirectory.mkdir();
 
-		String imageName = bookInfo.unpackDirectory + File.separator + "cover.jpg";
+		String imageName = book.unpackDirectory + File.separator + "cover.jpg";
 		File file = new File(downloadDirectory, imageName);
 		if (! file.exists())
-			new FileDownloader(new URL(bookInfo.coverImage), file, null).download();
+			new FileDownloader(new URL(book.coverImage), file, null).download();
 	}
 
 	public static void main(String[] args)
 		throws NoSuchAlgorithmException, IOException, MD5MismatchException
 	{
 		// Usage example #1: download & unpack one book
-		BookInfo myBook = BookInfo.SHELL_PROG;
+		Book myBook = Book.SHELL_PROG;
 		SimpleLogger.echo(
 			"Downloading, MD5 checking, unpacking\n" +
 			"  " + myBook.downloadArchive + "\n" +
@@ -132,7 +132,7 @@ class Downloader
 
 		// Usage example #2
 		SimpleLogger.echo("Downloading cover images for all books ...");
-		for (BookInfo book : BookInfo.values()) {
+		for (Book book : Book.values()) {
 			SimpleLogger.echo("  " + book);
 			new Downloader("c:\\Dokumente und Einstellungen\\Robin\\Eigene Dateien\\Bücher\\Galileo Computing", book).downloadCoverImage();
 		}

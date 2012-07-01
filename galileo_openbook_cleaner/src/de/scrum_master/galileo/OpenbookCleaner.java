@@ -19,7 +19,7 @@ import de.scrum_master.util.SimpleLogger;
 public class OpenbookCleaner
 {
 	private static File downloadDir;
-	private static BookInfo[] books;
+	private static Book[] books;
 
 	private static boolean MULTI_THREADED = true;
 	private static boolean PRETTY_PRINT = true;
@@ -52,7 +52,7 @@ public class OpenbookCleaner
 	{
 		long startTimeTotal = System.currentTimeMillis();
 		processArgs(args);
-		for (BookInfo book : books) {
+		for (Book book : books) {
 			long startTime = System.currentTimeMillis();
 			SimpleLogger.echo("\nDownloading, verifying (MD5) and unpacking " + book.unpackDirectory + "...");
 			new Downloader(downloadDir, book).download();
@@ -81,7 +81,7 @@ public class OpenbookCleaner
 				switch (option) {
 					case '?' : displayUsageAndExit(0); break;
 					case 'n' : PRETTY_PRINT = false; break;
-					case 'a' : books = BookInfo.values(); break;
+					case 'a' : books = Book.values(); break;
 					case 'v' : SimpleLogger.VERBOSE = true; break;
 					case 'd' : SimpleLogger.DEBUG = true; SimpleLogger.VERBOSE = true; break;
 					case 's' : MULTI_THREADED = false; break;
@@ -99,11 +99,11 @@ public class OpenbookCleaner
 			if (books != null)
 				return;
 			int bookCount = options.getCmdArgs().length - 1;
-			books = new BookInfo[bookCount];
+			books = new Book[bookCount];
 			try {
 				for (int i = 0; i < bookCount; i++) {
 					SimpleLogger.debug("Option parser: book_id[" + (i+1) + "] = " + options.getCmdArgs()[i + 1]);
-					books[i] = BookInfo.valueOf(options.getCmdArgs()[i + 1].toUpperCase());
+					books[i] = Book.valueOf(options.getCmdArgs()[i + 1].toUpperCase());
 				}
 			}
 			catch (IllegalArgumentException e) {
@@ -127,8 +127,8 @@ public class OpenbookCleaner
 			USAGE_TEXT + "\n\n" +
 			"List of legal book_id values (case-insensitive):"
 		);
-		for (BookInfo md : BookInfo.values())
-			out.println("  " + md.name().toLowerCase());
+		for (Book book : Book.values())
+			out.println("  " + book.name().toLowerCase());
 		if (exitCode != 0 && errorMessage != null)
 			out.println("\nError: " + errorMessage);
 		System.exit(exitCode);
