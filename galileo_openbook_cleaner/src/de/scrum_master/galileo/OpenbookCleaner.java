@@ -2,20 +2,15 @@ package de.scrum_master.galileo;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.io.PrintStream;
-
-import org.xml.sax.SAXException;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import com.sun.org.apache.xalan.internal.xsltc.cmdline.getopt.GetOpt;
 
+import de.scrum_master.galileo.filter.BasicFilter;
+import de.scrum_master.galileo.filter.FilterChain;
 import de.scrum_master.galileo.filter.JTidyFilter;
 import de.scrum_master.galileo.filter.PreJTidyFilter;
 import de.scrum_master.galileo.filter.XOMUnclutterFilter;
@@ -142,7 +137,7 @@ public class OpenbookCleaner
 		SimpleLogger.verbose("  " + origFile.getName());
 		// Backups are useful if we want to re-run the application later
 		createBackupIfNotExists(origFile, backupFile);
-		convert(origFile, new FileInputStream(backupFile), new FileOutputStream(origFile));
+		convert(origFile, backupFile, origFile);
 	}
 
 	private static void createBackupIfNotExists(File origFile, File backupFile)
@@ -152,79 +147,29 @@ public class OpenbookCleaner
 			origFile.renameTo(backupFile);
 	}
 
-	private static void convert(File origFile, InputStream rawInput, OutputStream finalOutput)
-		throws FileNotFoundException, SAXException, IOException
+	private static void convert(File origFile, File source, File target)
+		throws Exception
 	{
-		// Conversion steps for both modes (single-/multi-threaded):
-		//   1. Clean up raw HTML where necessary to make it parseable by JTidy
-		//   2. Convert raw HTML into valid XHTML using JTidy
-		//   3. Remove clutter (header, footer, navigation, ads) using XOM
-		//   4. Pretty-print XOM output again using JTidy (optional)
+		Queue<Class<? extends BasicFilter>> filters = new LinkedList<Class<? extends BasicFilter>>();
 
+		// Define conversion steps:
+
+		// 1. Clean up raw HTML where necessary to make it parseable by JTidy
 		boolean needsPreJTidy = origFile.getAbsolutePath().matches(REGEX_TOC_RUBY) ? true : false;
+		if (needsPreJTidy)
+			filters.add(PreJTidyFilter.class);
+		// 2. Convert raw HTML into valid XHTML using JTidy
+		filters.add(JTidyFilter.class);
+		// 3. Remove clutter (header, footer, navigation, ads) using XOM
+		filters.add(XOMUnclutterFilter.class);
+		// 4. Pretty-print XOM output again using JTidy (optional)
+		// TODO: really make this step optional via CLI option
+		filters.add(JTidyFilter.class);
 
-		if (MULTI_THREADED)
-			convertMultiThreaded(origFile, rawInput, finalOutput, needsPreJTidy);
-		else
-			convertSingleThreaded(origFile, rawInput, finalOutput, needsPreJTidy);
-	}
+		// Run conversion
 
-	private static void convertSingleThreaded(
-		File origFile,
-		InputStream rawInput,
-		OutputStream finalOutput,
-		boolean needsPreJTidy
-	) throws FileNotFoundException, SAXException
-	{
-		// Single-threaded mode is slower (~40%), but good for diagnostic purposes:
-		//   - It creates files for each intermediate processing step.
-		//   - Log output is in (chrono)logical order.
-
-		// Set up intermediate files
-		File preJTidyFile = new File(origFile + ".pretidy");
-		File jTidyFile    = new File(origFile + ".tidy");
-		File xomFile      = new File(origFile + ".xom");
-
-		// Run conversion steps, using output of step (n) as input of step (n+1)
-		if (needsPreJTidy) {
-			new PreJTidyFilter(rawInput, new FileOutputStream(preJTidyFile), origFile).run();
-			new JTidyFilter(new FileInputStream(preJTidyFile), new FileOutputStream(jTidyFile), origFile).run();
-		}
-		else {
-			new JTidyFilter(rawInput, new FileOutputStream(jTidyFile), origFile).run();
-		}
-		new XOMUnclutterFilter(new FileInputStream(jTidyFile), new FileOutputStream(xomFile), origFile).run();
-		new JTidyFilter(new FileInputStream(xomFile), finalOutput, origFile).run();
-	}
-
-	private static void convertMultiThreaded(
-		File origFile,
-		InputStream rawInput,
-		OutputStream finalOutput,
-		boolean needsPreJTidy
-	) throws IOException, SAXException
-	{
-		// Multi-threaded mode is faster, but not so good for diagnostic purposes:
-		//   - There are no files for intermediate processing steps.
-		//   - Log output is garbled because of multi-threading.
-
-		// Set up pipes
-		PipedOutputStream preJTidyOutput    = new PipedOutputStream();
-		PipedInputStream  preJTidyInput     = new PipedInputStream(preJTidyOutput);
-		PipedOutputStream jTidyOutput       = new PipedOutputStream();
-		PipedInputStream  jTidyInput        = new PipedInputStream(jTidyOutput);
-		PipedOutputStream unclutteredOutput = new PipedOutputStream();
-		PipedInputStream  unclutteredInput  = new PipedInputStream(unclutteredOutput);
-
-		// Run threads, piping output of thread (n) into input of thread (n+1)
-		if (needsPreJTidy) {
-			new Thread(new PreJTidyFilter(rawInput, preJTidyOutput, origFile)).start();
-			new Thread(new JTidyFilter(preJTidyInput, jTidyOutput, origFile)).start();
-		}
-		else {
-			new Thread(new JTidyFilter(rawInput, jTidyOutput, origFile)).start();
-		}
-		new Thread (new XOMUnclutterFilter(jTidyInput, unclutteredOutput, origFile)).start();
-		new Thread (new JTidyFilter(unclutteredInput, finalOutput, origFile)).start();
+		// TODO: Decide if each filter chain should also run in its own thread if (MULTI_THREADED),
+		// but probably not because it does not seem to speed up conversion.
+		new FilterChain(origFile, source, target, MULTI_THREADED, filters).run();
 	}
 }
