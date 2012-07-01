@@ -105,8 +105,7 @@ public class FilterChain implements Runnable {
 				//
 				// NOTE: It is essential to run filters *after* they have been set up completely because
 				// otherwise there might be pipe buffer overflows if filter (n) is already writing into its pipe
-				// before filter (n+1) has connected its reading end.
-				// to it.
+				// before filter (n+1) has connected its reading end to it.
 				if (runMultiThreaded)
 					new Thread(filter).start();
 				else
