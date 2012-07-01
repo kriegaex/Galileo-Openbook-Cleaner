@@ -119,10 +119,15 @@ public class XOMUnclutterFilter extends BasicFilter
 	public XOMUnclutterFilter(InputStream in, OutputStream out, File origFile)
 		throws SAXException
 	{
-		super(in, out, origFile, "Removing clutter (header, footer, navigation, ads) and fixing structure");
+		super(in, out, origFile);
 		isTOCFile = origFile.getName().startsWith("index.htm");
 		tagsoup = XMLReaderFactory.createXMLReader("org.ccil.cowan.tagsoup.Parser");
 		builder = new Builder(tagsoup);
+	}
+
+	@Override
+	protected String getDebugLogMessage() {
+		return "Removing clutter (header, footer, navigation, ads) and fixing structure";
 	}
 
 	@Override

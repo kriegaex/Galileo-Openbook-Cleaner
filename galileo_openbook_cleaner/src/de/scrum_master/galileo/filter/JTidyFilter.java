@@ -13,7 +13,7 @@ public class JTidyFilter extends BasicFilter
 
 	public JTidyFilter(InputStream in, OutputStream out, File origFile)
 	{
-		super(in, out, origFile, "Converting to clean, pretty-printed XHTML");
+		super(in, out, origFile);
 
 		tidy.setXHTML(true);
 		tidy.setQuiet(true);
@@ -30,5 +30,10 @@ public class JTidyFilter extends BasicFilter
 	@Override
 	protected void filter() throws Exception {
 		tidy.parse(in, out);
+	}
+
+	@Override
+	protected String getDebugLogMessage() {
+		return "Converting to clean, pretty-printed XHTML";
 	}
 }

@@ -11,20 +11,18 @@ public abstract class BasicFilter implements Runnable
 {
 	protected InputStream in;          // Where to read input from
 	protected OutputStream out;        // Where to write conversion result to
-	protected File origFile;           // Needed to determine special files like index.htm 
-	protected String debugLogMessage;  // Written to debug log upon conversion start
+	protected File origFile;           // Needed to determine special files like index.htm
 
-	protected BasicFilter(InputStream in, OutputStream out, File origFile, String debugLogMessage)
+	protected BasicFilter(InputStream in, OutputStream out, File origFile)
 	{
 		this.in  = in;
 		this.out = out;
 		this.origFile = origFile;
-		this.debugLogMessage = debugLogMessage;
 	}
 
 	public void run()
 	{
-		SimpleLogger.debug("    " + debugLogMessage + "...");
+		SimpleLogger.debug("    " + getDebugLogMessage() + "...");
 		try { filter(); }
 		catch (Exception e) { throw new RuntimeException(e); }
 		finally {
@@ -41,4 +39,11 @@ public abstract class BasicFilter implements Runnable
 	 * @throws Exception
 	 */
 	protected abstract void filter() throws Exception;
+
+	/**
+	 * @return a one-line text string to be printed in debug output, describing what the filter is
+	 * about to do, e.g. "Converting HTML into valid XHTML" or "Removing navigation elements".
+	 */
+	protected abstract String getDebugLogMessage();
+
 }

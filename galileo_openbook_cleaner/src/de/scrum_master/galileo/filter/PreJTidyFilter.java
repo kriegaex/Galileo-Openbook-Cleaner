@@ -27,7 +27,7 @@ public class PreJTidyFilter extends BasicFilter
 
 	public PreJTidyFilter(InputStream in, OutputStream out, File origFile)
 	{
-		super(in, out, origFile, "Fixing HTML so as to enable JTidy to parse it");
+		super(in, out, origFile);
 		input = new BufferedReader(new InputStreamReader(in));
 		output = new PrintStream(out);
 	}
@@ -47,5 +47,11 @@ public class PreJTidyFilter extends BasicFilter
 			}
 			output.println(line);
 		}
+	}
+
+	@Override
+	protected String getDebugLogMessage()
+	{
+		return "Fixing HTML so as to enable JTidy to parse it";
 	}
 }
