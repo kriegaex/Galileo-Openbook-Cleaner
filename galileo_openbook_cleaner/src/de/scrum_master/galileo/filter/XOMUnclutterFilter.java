@@ -219,7 +219,7 @@ public class XOMUnclutterFilter extends BasicFilter
 		new Serializer(out, "ISO-8859-1").write(document);
 	}
 
-	/*
+	/**
 	 * Individual fix for a buggy heading in "Unix Guru" book's node429.html
 	 * which would later make deletion of XPath.NON_STANDARD_TOP_NAVIGATION fail
 	 * in method removeClutterWithinMainContent().
@@ -230,7 +230,6 @@ public class XOMUnclutterFilter extends BasicFilter
 		SimpleLogger.verbose("      Fixing buggy heading...");
 		Element buggyParagraph = (Element) xPathQuery("//html:p[contains(text(),'gpGlossar18133')]").get(0);
 		Element heading = new Element("h1");
-		//heading.appendChild("unix");
 		bodyTag.appendChild(heading);
 		Element link = new Element("a");
 		link.appendChild("unix");
