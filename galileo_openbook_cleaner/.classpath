@@ -17,6 +17,10 @@
 			<attribute name="javadoc_location" value="http://www.xom.nu/apidocs"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/jcommander-1.26.jar" sourcepath="/JCommander-1.26/git_src"/>
+	<classpathentry kind="lib" path="lib/jcommander-1.26.jar" sourcepath="C:/Programme/Java/jcommander-1.26/src/main/java">
+		<attributes>
+			<attribute name="javadoc_location" value="http://jcommander.org/apidocs/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
