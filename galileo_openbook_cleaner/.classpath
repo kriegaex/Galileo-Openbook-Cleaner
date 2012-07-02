@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/jtidy-r938.jar" sourcepath="C:/Programme/Java/jtidy-r938/jtidy-r938-sources/src/main/java">
+	<classpathentry kind="lib" path="lib/jtidy-r938.jar" sourcepath="c:/Programme/Java/jcommander-1.26/src/main/java/">
 		<attributes>
 			<attribute name="javadoc_location" value="http://jtidy.sourceforge.net/apidocs"/>
 		</attributes>
@@ -17,5 +17,6 @@
 			<attribute name="javadoc_location" value="http://www.xom.nu/apidocs"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/jcommander-1.26.jar" sourcepath="/JCommander-1.26/git_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
