@@ -31,7 +31,6 @@ public class OpenbookCleaner
 		long startTimeTotal = System.currentTimeMillis();
 		processArgs(args);
 		for (Book book : Options.VALUES.books) {
-			System.out.println(book);
 			long startTimeBook = System.currentTimeMillis();
 			new Downloader(Options.VALUES.downloadDir, book).download();
 			cleanBook(book);
