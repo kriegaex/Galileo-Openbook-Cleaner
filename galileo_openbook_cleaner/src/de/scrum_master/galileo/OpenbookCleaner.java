@@ -2,12 +2,14 @@ package de.scrum_master.galileo;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.sun.org.apache.xalan.internal.xsltc.cmdline.getopt.GetOpt;
+import com.beust.jcommander.ParameterException;
 
 import de.scrum_master.galileo.filter.BasicFilter;
 import de.scrum_master.galileo.filter.FilterChain;
@@ -18,155 +20,109 @@ import de.scrum_master.util.SimpleLogger;
 
 public class OpenbookCleaner
 {
-	private static File downloadDir;
-	private static Book[] books;
-
-	private static boolean MULTI_THREADED = true;
-	private static boolean PRETTY_PRINT = true;
-
-	private final static FileFilter HTML_FILES = new FileFilter() {
+	private static final FileFilter HTML_FILES = new FileFilter() {
 		public boolean accept(File file) {
 			String fileNameLC = file.getName().toLowerCase();
 			return fileNameLC.endsWith(".htm") || fileNameLC.endsWith(".html");
 		}
 	};
 
-	private final static String USAGE_TEXT =
-		"Usage: java " + OpenbookCleaner.class.getName() + " [-?] | [options] <download_dir> [<book_id>]*\n\n" +
-		"Options:\n"+
-		"  -?  Show this help text\n" +
-		"  -n  No pretty-printing after structural clean-up (saves ~15% processing time)\n" +
-		"  -a  Download & clean *all* books\n" +
-		"  -v  Verbose output\n" +
-		"  -d  Debug output (implies -v)\n" +
-		"  -s  Single-threaded mode with intermediate files (for diagnostics)\n\n" +
-		"Parameters:\n"+
-		"  download_dir  Download directory for openbook archives (*.zip); must exist\n" +
-		"  book_id       Book ID; book will be unpacked to subdirectory <download_dir>/<book_id>.\n" +
-		"                You can specify multiple book IDs separated by spaces.\n" +
-		"                If -a is specified, the book_id list will be ignored.";
-
-	private static final String REGEX_TOC_RUBY = ".*ruby_on_rails_2.index.htm";
-
 	public static void main(String[] args) throws Exception {
 		long startTimeTotal = System.currentTimeMillis();
 		processArgs(args);
-		for (Book book : books) {
-			long startTime = System.currentTimeMillis();
-			new Downloader(downloadDir, book).download();
-			SimpleLogger.echo("Processing " + book.unpackDirectory + "...");
-			for (File htmlFile : new File(downloadDir, book.unpackDirectory).listFiles(HTML_FILES))
-				cleanHTMLFile(htmlFile);
-			SimpleLogger.time("Duration for " + book.unpackDirectory, System.currentTimeMillis() - startTime);
+		for (Book book : Options.VALUES.books) {
+			System.out.println(book);
+			long startTimeBook = System.currentTimeMillis();
+			new Downloader(Options.VALUES.downloadDir, book).download();
+			cleanBook(book);
+			SimpleLogger.time("Duration for " + book.unpackDirectory, System.currentTimeMillis() - startTimeBook);
 		}
 		SimpleLogger.time("\nTotal duration", System.currentTimeMillis() - startTimeTotal);
 	}
 
 	private static void processArgs(String[] args) {
-		if (args.length == 0)
-			displayUsageAndExit(0);
-
-		// TODO: GetOpt is poorly documented, hard to use and buggy (getCmdArgs falsely returns options
-		// if no non-option command-line agrument is given). There are plenty of better free command line
-		// parsing tools. If it was not for indepencence of yet another external library, I would not use
-		// JRE's GetOpt.
-		GetOpt options = new GetOpt(args, "?navds");
-		char option;
 		try {
-			while ((option = (char) options.getNextOption()) != '\uFFFF') {
-				SimpleLogger.debug("Option parser: parameter = " + option);
-				switch (option) {
-					case '?' : displayUsageAndExit(0); break;
-					case 'n' : PRETTY_PRINT = false; break;
-					case 'a' : books = Book.values(); break;
-					case 'v' : SimpleLogger.VERBOSE = true; break;
-					case 'd' : SimpleLogger.DEBUG = true; SimpleLogger.VERBOSE = true; break;
-					case 's' : MULTI_THREADED = false; break;
-				}
-			}
-
-			if (options.getCmdArgs().length < 2 && books == null)
-				displayUsageAndExit(1, "missing argument(s) - please specify download_dir and either book_id or -a");
-
-			downloadDir = new File(options.getCmdArgs()[0]);
-			SimpleLogger.debug("Option parser: download_dir = " + downloadDir);
-			if (! downloadDir.isDirectory())
-				displayUsageAndExit(1, "download directory '" + downloadDir + "' not found\n");
-
-			if (books != null)
-				return;
-			int bookCount = options.getCmdArgs().length - 1;
-			books = new Book[bookCount];
-			try {
-				for (int i = 0; i < bookCount; i++) {
-					SimpleLogger.debug("Option parser: book_id[" + (i+1) + "] = " + options.getCmdArgs()[i + 1]);
-					books[i] = Book.valueOf(options.getCmdArgs()[i + 1].toUpperCase());
-				}
-			}
-			catch (IllegalArgumentException e) {
-				displayUsageAndExit(1, "illegal book_id " + e.getMessage().replaceFirst(".*[.]", "").toLowerCase());
-			}
+			Options.PARSER.parse(args);
 		}
-		catch (Exception e) {
-			displayUsageAndExit(1);
+		catch (ParameterException e) {
+			// Parsing error
+			// TODO: get rid of this if-else as soon as JCommander knows a special help mode, not throwing
+			// exceptions anymore for required parameters which are irrelevant when help is required
+			if (Options.VALUES.showHelp)
+				// Case 1: "--help" was part of command line -> ignore error, display help, exit cleanly
+				displayUsageAndExit(0, null);
+			else
+				// Case 2: other parsing error -> display help + error message, exit with error code
+				displayUsageAndExit(1, e.getMessage());
 		}
-	}
 
-	private static void displayUsageAndExit(int exitCode) {
-		displayUsageAndExit(exitCode, null);
+		// User wants help -> ignore other parameters, display help, exit cleanly
+		if (Options.VALUES.showHelp)
+			displayUsageAndExit(0, null);
+
+		SimpleLogger.VERBOSE = Options.VALUES.logLevel > 0;
+		SimpleLogger.DEBUG = Options.VALUES.logLevel > 1;
+
+		if (Options.VALUES.books.contains(null))
+			// null is a magic value for "all books", {@
+			Options.VALUES.books = Arrays.asList(Book.values());
 	}
 
 	private static void displayUsageAndExit(int exitCode, String errorMessage) {
 		PrintStream out = (exitCode == 0) ? System.out : System.err;
-		out.println(
-			USAGE_TEXT + "\n\n" +
-			"List of legal book_id values (case-insensitive):"
-		);
+		StringBuilder usageText = new StringBuilder();
+		Options.PARSER.usage(usageText);
+		out.println(usageText);
+		out.println("  Legal book IDs:");
+		out.println("    all (magic value to process all books)");
+		out.println("    ----------");
 		for (Book book : Book.values())
-			out.println("  " + book.name().toLowerCase());
-		if (exitCode != 0 && errorMessage != null)
+			out.println("    " + book.name().toLowerCase());
+		if (exitCode != 0 && errorMessage != null && !errorMessage.trim().equals(""))
 			out.println("\nError: " + errorMessage);
 		System.exit(exitCode);
 	}
 
-	private static void cleanHTMLFile(File origFile) throws Exception {
+	private static void cleanBook(Book book) throws Exception {
+		SimpleLogger.echo("Filtering " + book.unpackDirectory + "...");
+		for (File htmlFile : new File(Options.VALUES.downloadDir, book.unpackDirectory).listFiles(HTML_FILES))
+			cleanChapter(book, htmlFile);
+	}
+
+	private static void cleanChapter(Book book, File origFile) throws Exception {
 		File backupFile = new File(origFile + ".bak");
 		SimpleLogger.verbose("  " + origFile.getName());
 		// Backups are useful if we want to re-run the application later
 		createBackupIfNotExists(origFile, backupFile);
-		convert(origFile, backupFile, origFile);
+		getFilterChain(book, origFile, backupFile, origFile).run();
 	}
 
-	private static void createBackupIfNotExists(File origFile, File backupFile)
-		throws IOException
-	{
+	private static void createBackupIfNotExists(File origFile, File backupFile) throws IOException {
 		if (!backupFile.exists())
 			origFile.renameTo(backupFile);
 	}
 
-	private static void convert(File origFile, File source, File target)
-		throws Exception
+	private static FilterChain getFilterChain(Book book, File origFile, File source, File target)
+		throws FileNotFoundException
 	{
-		Queue<Class<? extends BasicFilter>> filters = new LinkedList<Class<? extends BasicFilter>>();
+		Queue<Class<? extends BasicFilter>> filters =
+			new LinkedList<Class<? extends BasicFilter>>();
 
-		// Define conversion steps:
-
-		// 1. Clean up raw HTML where necessary to make it parseable by JTidy
-		boolean needsPreJTidy = origFile.getAbsolutePath().matches(REGEX_TOC_RUBY) ? true : false;
-		if (needsPreJTidy)
+		// Step 1: clean up raw HTML where necessary to make it parseable by JTidy
+		if (book.equals(Book.RUBY_ON_RAILS_2))
 			filters.add(PreJTidyFilter.class);
-		// 2. Convert raw HTML into valid XHTML using JTidy
+		// Step 2: convert raw HTML into valid XHTML using JTidy
 		filters.add(JTidyFilter.class);
-		// 3. Remove clutter (header, footer, navigation, ads) using XOM
+		// Step 3: remove clutter (header, footer, navigation, ads) using XOM
 		filters.add(XOMUnclutterFilter.class);
-		// 4. Pretty-print XOM output again using JTidy (optional)
-		if (PRETTY_PRINT)
+		// Step 4: pretty-print XOM output again using JTidy (optional)
+		if (!Options.VALUES.noPrettyPrint)
 			filters.add(JTidyFilter.class);
 
-		// Run conversion
-		//
-		// TODO: Decide if each filter chain should also run in its own thread if (MULTI_THREADED),
-		// but probably not because it does not seem to speed up conversion.
-		new FilterChain(origFile, source, target, MULTI_THREADED, filters).run();
+		return new FilterChain(
+			origFile, source, target,
+			!Options.VALUES.singleThread,
+			filters
+		);
 	}
 }
