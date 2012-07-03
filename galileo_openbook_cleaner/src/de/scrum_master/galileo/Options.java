@@ -103,7 +103,7 @@ class Options
 	}
 
 	public static void main(String[] args) {
-		String[] argv = { "-d", "/ProgrammeX", "--log-level", "2", "--help", "-n", "-s", "all", "oop"};
+		String[] argv = { "-d", "/Programme", "--log-level", "2", "--help", "-n", "-s", "all", "oop"};
 		JCommander cliOptions = new JCommander(new Options(), argv);
 		cliOptions.setProgramName(OpenbookCleaner.class.getSimpleName());
 		//System.out.println(cliOptions.getColumnSize());
