@@ -23,47 +23,36 @@ class Options
 		PARSER.setColumnSize(99);
 	}
 
-	private Options() {
-		// This is a singleton!
-	}
+	private Options() { /* This is a singleton! */ }
 
 	@Parameter(
 		names = {"-?", "--help"},
-		description = "Display this help text"
-	)
+		description = "Display this help text")
 	boolean showHelp = false;
 
 	@Parameter(
-		names = {"-d", "--download-dir"},
-		converter = DownloadDirConverter.class,
-		description = "Download directory for openbook archives (*.zip); must exist"
-	)
+		names = {"-d", "--download-dir"}, converter = DownloadDirConverter.class,
+		description = "Download directory for openbook archives (*.zip); must exist")
 	File downloadDir = new File(".");
 
 	@Parameter(
 		names = {"-n", "--no-pretty-print"},
-		description = "No pretty-printing after clean-up (saves ~15% processing time)"
-	)
+		description = "No pretty-printing after clean-up (saves ~15% processing time)")
 	boolean noPrettyPrint = false;
 
 	@Parameter(
-		names = {"-l", "--log-level"},
-		validateWith = LogLevelValidator.class,
-		description = "Log level (0=normal, 1=verbose, 2=debug)"
-	)
+		names = {"-l", "--log-level"}, validateWith = LogLevelValidator.class,
+		description = "Log level (0=normal, 1=verbose, 2=debug)")
 	int logLevel =0;
 
 	@Parameter(
 		names = {"-s", "--single-thread"},
-		description = "Single-threaded mode with intermediate files (for diagnostics)"
-	)
+		description = "Single-threaded mode with intermediate files (for diagnostics)")
 	boolean singleThread;
 
 	@Parameter(
-		required = true,
-		converter = BookConverter.class,
-		description = "[list of book IDs | 'all']"
-	)
+		required = true, converter = BookConverter.class,
+		description = "[list of book IDs | 'all']")
 	List<Book> books = new ArrayList<Book>();
 
 	public static class DownloadDirConverter implements IStringConverter<File> {
@@ -94,7 +83,7 @@ class Options
 	public static class BookConverter implements IStringConverter<Book> {
 		public Book convert(String value) {
 			if ("all".equals(value)) {
-				// null is a magic value for "all books"
+				// magic value for "all books"
 				return null;
 			}
 			try {
