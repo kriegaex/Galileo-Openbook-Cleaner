@@ -53,7 +53,6 @@ public class OpenbookCleaner
 		processArgs(args);
 		for (Book book : books) {
 			long startTime = System.currentTimeMillis();
-			SimpleLogger.echo("\nDownloading, verifying (MD5) and unpacking " + book.unpackDirectory + "...");
 			new Downloader(downloadDir, book).download();
 			SimpleLogger.echo("Processing " + book.unpackDirectory + "...");
 			for (File htmlFile : new File(downloadDir, book.unpackDirectory).listFiles(HTML_FILES))
