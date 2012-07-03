@@ -37,6 +37,7 @@ class Downloader
 	void download()
 		throws IOException, NoSuchAlgorithmException, MD5MismatchException
 	{
+		SimpleLogger.echo("\nDownloading, verifying (MD5) and unpacking " + book.unpackDirectory + "...");
 		downloadBook();
 		unpackBook();
 		downloadCoverImage();
