@@ -59,9 +59,6 @@ public class OpenbookCleaner
 		if (Options.VALUES.showHelp)
 			displayUsageAndExit(0, null);
 
-		SimpleLogger.VERBOSE = Options.VALUES.logLevel > 0;
-		SimpleLogger.DEBUG = Options.VALUES.logLevel > 1;
-
 		if (Options.VALUES.books.contains(null))
 			// null is a magic value for "all books", {@
 			Options.VALUES.books = Arrays.asList(Book.values());

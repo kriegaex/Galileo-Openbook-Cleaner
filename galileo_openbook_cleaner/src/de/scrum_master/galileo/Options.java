@@ -11,6 +11,8 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 
+import de.scrum_master.util.SimpleLogger;
+
 @Parameters(separators=" =")
 class Options
 {
@@ -84,6 +86,8 @@ class Options
 			}
 			if (logLevel < 0 || logLevel > 2)
 				throw new ParameterException("invalid log level " + value + ", must be in [0..2]");
+			SimpleLogger.VERBOSE = logLevel > 0;
+			SimpleLogger.DEBUG = logLevel > 1;
 		}
 	}
 
