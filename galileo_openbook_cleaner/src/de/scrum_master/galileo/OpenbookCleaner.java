@@ -59,8 +59,8 @@ public class OpenbookCleaner
 		if (Options.VALUES.showHelp)
 			displayUsageAndExit(0, null);
 
+		// null is a magic value for "all books"
 		if (Options.VALUES.books.contains(null))
-			// null is a magic value for "all books", {@
 			Options.VALUES.books = Arrays.asList(Book.values());
 	}
 
@@ -73,8 +73,8 @@ public class OpenbookCleaner
 		out.println("    all (magic value to process all books)");
 		out.println("    ----------");
 		for (Book book : Book.values())
-			out.println("    " + book.name().toLowerCase());
-		if (exitCode != 0 && errorMessage != null && !errorMessage.trim().equals(""))
+			out.println("    " + book.unpackDirectory);
+		if (exitCode != 0)
 			out.println("\nError: " + errorMessage);
 		System.exit(exitCode);
 	}
