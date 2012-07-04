@@ -31,12 +31,16 @@ public class OpenbookCleaner
 		long startTimeTotal = System.currentTimeMillis();
 		processArgs(args);
 		for (Book book : Options.VALUES.books) {
+			SimpleLogger.echo("Book: " + book.unpackDirectory);
+			SimpleLogger.indent();
 			long startTimeBook = System.currentTimeMillis();
 			new Downloader(Options.VALUES.downloadDir, book).download();
 			cleanBook(book);
 			SimpleLogger.time("Duration for " + book.unpackDirectory, System.currentTimeMillis() - startTimeBook);
+			SimpleLogger.dedent();
 		}
-		SimpleLogger.time("\nTotal duration", System.currentTimeMillis() - startTimeTotal);
+		SimpleLogger.echo("");
+		SimpleLogger.time("Total duration", System.currentTimeMillis() - startTimeTotal);
 	}
 
 	private static void processArgs(String[] args) {
@@ -80,17 +84,24 @@ public class OpenbookCleaner
 	}
 
 	private static void cleanBook(Book book) throws Exception {
-		SimpleLogger.echo("Filtering " + book.unpackDirectory + "...");
+		SimpleLogger.verbose("Filtering ...");
+		SimpleLogger.indent();
 		for (File htmlFile : new File(Options.VALUES.downloadDir, book.unpackDirectory).listFiles(HTML_FILES))
 			cleanChapter(book, htmlFile);
+		SimpleLogger.dedent();
+		SimpleLogger.verbose("Filtering done");
 	}
 
 	private static void cleanChapter(Book book, File origFile) throws Exception {
+		SimpleLogger.verbose("Chapter: " + origFile.getName());
+		SimpleLogger.indent();
 		File backupFile = new File(origFile + ".bak");
-		SimpleLogger.verbose("  " + origFile.getName());
 		// Backups are useful if we want to re-run the application later
 		createBackupIfNotExists(origFile, backupFile);
 		getFilterChain(book, origFile, backupFile, origFile).run();
+		SimpleLogger.dedent();
+		SimpleLogger.verbose("Chapter done");
+
 	}
 
 	private static void createBackupIfNotExists(File origFile, File backupFile) throws IOException {

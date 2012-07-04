@@ -154,10 +154,12 @@ public class XOMUnclutterFilter extends BasicFilter
 	}
 
 	private void initialiseTitle(boolean removeBookTitle) {
-		SimpleLogger.debug("      Initialising page title...");
+		SimpleLogger.indent();
+		SimpleLogger.debug("Initialising page title...");
 		Element titleTag = (Element) xPathQuery(XPath.TITLE.query).get(0);
 		pageTitle = titleTag.getValue();
-		SimpleLogger.debug("        Original page title: " + pageTitle);
+		SimpleLogger.indent();
+		SimpleLogger.debug("Original page title: " + pageTitle);
 
 		Matcher matcher;
 
@@ -165,13 +167,14 @@ public class XOMUnclutterFilter extends BasicFilter
 		matcher = Regex.TITLE_INFIX.pattern.matcher(pageTitle);
 		if (matcher.matches())
 			pageTitle = matcher.group(1) + matcher.group(2);
-		SimpleLogger.debug("          Step 1 In:         " + pageTitle);
+		SimpleLogger.indent();
+		SimpleLogger.debug("Step 1 In:         " + pageTitle);
 
 		// Remove "Galileo Computing/Design" prefix and " openbook/index" postfix
 		matcher = Regex.TITLE_PREFIX_POSTFIX.pattern.matcher(pageTitle);
 		if (matcher.matches())
 			pageTitle = matcher.group(1);
-		SimpleLogger.debug("          Step 2 PrePost:    " + pageTitle);
+		SimpleLogger.debug("Step 2 PrePost:    " + pageTitle);
 
 		if (removeBookTitle) {
 			// Get text before dash for some books with " - " or " &ndash; " within the book title
@@ -181,7 +184,7 @@ public class XOMUnclutterFilter extends BasicFilter
 				titlePrefix = matcher.group(1);
 				pageTitle = matcher.group(2);
 			}
-			SimpleLogger.debug("          Step 3 DashedBook: " + pageTitle);
+			SimpleLogger.debug("Step 3 DashedBook: " + pageTitle);
 
 			// Remove book title, only chapter number + name remain
 			matcher = Regex.TITLE_CHAPTER.pattern.matcher(pageTitle);
@@ -189,12 +192,15 @@ public class XOMUnclutterFilter extends BasicFilter
 				pageTitle = matcher.group(1);
 			else
 				pageTitle = titlePrefix + pageTitle;
-			SimpleLogger.debug("          Step 4 Chapter:    " + pageTitle);
+			SimpleLogger.debug("Step 4 Chapter:    " + pageTitle);
+			SimpleLogger.dedent();
 		}
-		SimpleLogger.debug("        Clean page title:    " + pageTitle);
+		SimpleLogger.debug("Clean page title:    " + pageTitle);
+		SimpleLogger.dedent();
 
 		titleTag.removeChildren();
 		titleTag.appendChild(pageTitle);
+		SimpleLogger.dedent();
 	}
 
 	private void fixStructure() {
@@ -225,9 +231,12 @@ public class XOMUnclutterFilter extends BasicFilter
 	 * in method removeClutterWithinMainContent().
 	 */
 	private void fixNode429() {
-		if (! (origFile.getName().equals("node429.html") && pageTitle.contains("UNIX-Guru")))
+		SimpleLogger.indent();
+		if (! (origFile.getName().equals("node429.html") && pageTitle.contains("UNIX-Guru"))) {
+			SimpleLogger.dedent();
 			return;
-		SimpleLogger.verbose("      Fixing buggy heading...");
+		}
+		SimpleLogger.verbose("Fixing buggy heading...");
 		Element buggyParagraph = (Element) xPathQuery("//html:p[contains(text(),'gpGlossar18133')]").get(0);
 		Element heading = new Element("h1");
 		bodyTag.appendChild(heading);
@@ -235,6 +244,7 @@ public class XOMUnclutterFilter extends BasicFilter
 		link.appendChild("unix");
 		heading.appendChild(link);
 		replaceNodeBy(buggyParagraph, heading);
+		SimpleLogger.dedent();
 	}
 
 	private void removeClutterAroundMainContent() {
@@ -319,11 +329,13 @@ public class XOMUnclutterFilter extends BasicFilter
 	 * i.e. insert missing links at the end of the respective TOC.
 	 */
 	private void createIndexLink() {
+		SimpleLogger.indent();
 		if (pageTitle.contains("Ruby on Rails")) {
-			SimpleLogger.verbose("      TOC file: not creating index link (no stichwort.htm*)");
+			SimpleLogger.verbose("TOC file: not creating index link (no stichwort.htm*)");
+			SimpleLogger.dedent();
 			return;
 		}
-		SimpleLogger.verbose("      TOC file: creating index link...");
+		SimpleLogger.verbose("TOC file: creating index link...");
 		Element indexLink = (Element) xPathQuery(XPath.TOC_HEADING_2.query).get(0).copy();
 		String fileExtension = ".htm";
 		if (((Element) indexLink.getChild(0)).getAttribute("href").getValue().contains(".html"))
@@ -331,6 +343,7 @@ public class XOMUnclutterFilter extends BasicFilter
 		((Element) indexLink.getChild(0)).getAttribute("href").setValue("stichwort" + fileExtension);
 		((Text) indexLink.getChild(0).getChild(0)).setValue("Index");
 		bodyTag.appendChild(indexLink);
+		SimpleLogger.dedent();
 	}
 
 	/**
@@ -356,12 +369,16 @@ public class XOMUnclutterFilter extends BasicFilter
 	 * thus we need to explicitly exclude them from "fixing". <tt>:-(</tt>
 	 */
 	private void fixFaultyLinkTargets() {
-		SimpleLogger.verbose("    Checking for faulty TOC link targets...");
-		SimpleLogger.verbose("      Page title = " + pageTitle);
+		SimpleLogger.indent();
+		SimpleLogger.verbose("Checking for faulty TOC link targets...");
+		SimpleLogger.indent();
+		SimpleLogger.verbose("Page title = " + pageTitle);
 
 		// Exclude the 3 know exceptions and immediately return if one is found
 		if (pageTitle.matches(".*(ActionScript 1 und 2|Microsoft-Netzwerk|Shell-Programmierung).*")) {
-			SimpleLogger.verbose("      Book title is an exception - no link fixing done");
+			SimpleLogger.verbose("Book title is an exception - no link fixing done");
+			SimpleLogger.dedent();
+			SimpleLogger.dedent();
 			return;
 		}
 
@@ -377,17 +394,21 @@ public class XOMUnclutterFilter extends BasicFilter
 				int hrefNumber = Integer.parseInt(hrefMatcher.group(2));
 				int textNumber = Integer.parseInt(textMatcher.group(2));
 				if (hrefNumber != textNumber) {
-					SimpleLogger.debug("        Chapter " + text);
-					SimpleLogger.debug("          Faulty: " + href);
+					SimpleLogger.indent();
+					SimpleLogger.debug("Chapter " + text);
+					SimpleLogger.debug("  Faulty: " + href);
 					String numberFormat = "%0" + hrefMatcher.group(2).length() + "d";
 					href=hrefMatcher.group(1) + String.format(numberFormat, textNumber) + hrefMatcher.group(3);
-					SimpleLogger.debug("          Fixed:  " + href);
+					SimpleLogger.debug("  Fixed:  " + href);
 					link.getAttribute("href").setValue(href);
 					fixedLinksCount++;
+					SimpleLogger.dedent();
 				}
 			}
 		}
-		SimpleLogger.verbose("    Number of fixed links = " + fixedLinksCount);
+		SimpleLogger.dedent();
+		SimpleLogger.verbose("Number of fixed links = " + fixedLinksCount);
+		SimpleLogger.dedent();
 	}
 
 	/*

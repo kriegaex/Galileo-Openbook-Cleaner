@@ -37,10 +37,13 @@ class Downloader
 	void download()
 		throws IOException, NoSuchAlgorithmException, MD5MismatchException
 	{
-		SimpleLogger.echo("\nDownloading, verifying (MD5) and unpacking " + book.unpackDirectory + "...");
+		SimpleLogger.verbose("Downloading, verifying (MD5) and unpacking ...");
+		SimpleLogger.indent();
 		downloadBook();
 		unpackBook();
 		downloadCoverImage();
+		SimpleLogger.dedent();
+		SimpleLogger.verbose("Downloading, verifying (MD5) and unpacking done");
 	}
 
 	private void downloadBook()
@@ -95,7 +98,7 @@ class Downloader
 		for (File file : sourceDirectory.listFiles()) {
 			File targetFile = new File(targetDirectory, file.getName());
 			if (! file.renameTo(targetFile))
-				SimpleLogger.error("Not moved: " + file + " -> " + targetFile);
+				SimpleLogger.error("  Not moved: " + file + " -> " + targetFile);
 		}
 	}
 
@@ -117,11 +120,9 @@ class Downloader
 	{
 		// Usage example #1: download & unpack one book
 		Book myBook = Book.SHELL_PROG;
-		SimpleLogger.echo(
-			"Downloading, MD5 checking, unpacking\n" +
-			"  " + myBook.downloadArchive + "\n" +
-			"  " + myBook.coverImage
-		);
+		SimpleLogger.echo("Downloading, MD5 checking, unpacking");
+		SimpleLogger.echo("  " + myBook.downloadArchive);
+		SimpleLogger.echo("  " + myBook.coverImage);
 		new Downloader(".", myBook).download();
 		SimpleLogger.echo("Done\n");
 

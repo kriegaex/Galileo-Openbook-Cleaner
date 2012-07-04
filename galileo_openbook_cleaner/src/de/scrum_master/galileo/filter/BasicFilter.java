@@ -20,7 +20,8 @@ public abstract class BasicFilter implements Runnable
 	}
 
 	public void run() {
-		SimpleLogger.debug("    " + getDebugLogMessage() + "...");
+		SimpleLogger.indent();
+		SimpleLogger.debug(getDebugLogMessage() + "...");
 		try { filter(); }
 		catch (Exception e) { throw new RuntimeException(e); }
 		finally {
@@ -29,6 +30,7 @@ public abstract class BasicFilter implements Runnable
 			try { out.close(); }
 			catch (IOException e) { e.printStackTrace(); }
 		}
+		SimpleLogger.dedent();
 	}
 
 	/**

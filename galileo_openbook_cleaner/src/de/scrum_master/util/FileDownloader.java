@@ -78,6 +78,7 @@ public class FileDownloader
 		ByteBuffer          buffer;
 		BigInteger          md5Actual;
 		try {
+			SimpleLogger.debug("Downloading " + from + " ...");
 			outStream = new FileOutputStream(to);
 			if (doChecksum) {
 				md5Digest = MessageDigest.getInstance("MD5");
@@ -98,7 +99,9 @@ public class FileDownloader
 				md5Actual = new BigInteger(1, md5Digest.digest());
 				if (! md5Actual.equals(md5))
 					throw new MD5MismatchException(to, md5, md5Actual);
+				SimpleLogger.debug("  MD5 checksum OK");
 			}
+			SimpleLogger.debug("Download done");
 		}
 		finally {
 			try { in.close(); }  catch (IOException e) { }

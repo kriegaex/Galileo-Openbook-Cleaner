@@ -35,18 +35,20 @@ public class PreJTidyFilter extends BasicFilter
 
 	@Override
 	protected void filter() throws Exception {
+		SimpleLogger.indent();
 		Matcher matcher;
 		while ((line = input.readLine()) != null) {
 			if ((matcher = REGEX_TITLE.matcher(line)).matches()) {
-				SimpleLogger.debug("      Found title tag, adding dummy text as a workaround for later being cut off too much");
+				SimpleLogger.debug("Found title tag, adding dummy text as a workaround for later being cut off too much");
 				line = matcher.group(1) + "dummy - " + matcher.group(2);
 			}
 			if (REGEX_MAIN_TABLE.matcher(line).matches()) {
-				SimpleLogger.debug("      Found main content table, inserting missing </table> tag before it");
+				SimpleLogger.debug("Found main content table, inserting missing </table> tag before it");
 				output.println("</table>");
 			}
 			output.println(line);
 		}
+		SimpleLogger.dedent();
 	}
 
 	@Override
