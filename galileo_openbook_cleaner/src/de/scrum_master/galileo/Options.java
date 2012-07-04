@@ -11,8 +11,6 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 
-import de.scrum_master.util.SimpleLogger;
-
 @Parameters(separators=" =")
 class Options
 {
@@ -20,7 +18,7 @@ class Options
 	static final JCommander PARSER = new JCommander(VALUES);
 	static {
 		PARSER.setProgramName(OpenbookCleaner.class.getSimpleName());
-		PARSER.setColumnSize(99);
+		//PARSER.setColumnSize(99);
 	}
 
 	private Options() { /* This is a singleton! */ }
@@ -36,9 +34,9 @@ class Options
 	File downloadDir = new File(".");
 
 	@Parameter(
-		names = {"-n", "--no-pretty-print"},
-		description = "No pretty-printing after clean-up (saves ~15% processing time)")
-	boolean noPrettyPrint = false;
+		names = {"-p", "--pretty-print"}, validateWith = PrettyPrintModeValidator.class,
+		description = "Pretty-print after clean-up (0=no, 1=yes); no saves ~15% processing time")
+	int prettyPrint = 1;
 
 	@Parameter(
 		names = {"-l", "--log-level"}, validateWith = LogLevelValidator.class,
@@ -46,9 +44,9 @@ class Options
 	int logLevel =0;
 
 	@Parameter(
-		names = {"-s", "--single-thread"},
-		description = "Single-threaded mode with intermediate files (for diagnostics)")
-	boolean singleThread;
+		names = {"-t", "--threading"}, validateWith = ThreadingModeValidator.class,
+		description = "Threading mode (0=single, 1=multi); single is slower, but better for diagnostics)")
+	int threadingMode = 1;
 
 	@Parameter(
 		required = true, converter = BookConverter.class,
@@ -64,25 +62,39 @@ class Options
 		}
 	}
 
+	public static class PrettyPrintModeValidator implements IParameterValidator {
+		public void validate(String name, String value) throws ParameterException {
+			int prettyPrintMode = -1;
+			try { prettyPrintMode = Integer.parseInt(value); }
+			catch (NumberFormatException e) {}
+			if (prettyPrintMode < 0 || prettyPrintMode > 1)
+				throw new ParameterException("invalid pretty-print mode " + value + ", must be 0 or 1");
+		}
+	}
+
 	public static class LogLevelValidator implements IParameterValidator {
 		public void validate(String name, String value) throws ParameterException {
-			int logLevel;
-			try {
-				logLevel = Integer.parseInt(value);
-			}
-			catch (NumberFormatException e) {
-				throw new ParameterException("invalid log level '" + value + "', must be an integer in [0..2]");
-			}
+			int logLevel = -1;
+			try { logLevel = Integer.parseInt(value); }
+			catch (NumberFormatException e) {}
 			if (logLevel < 0 || logLevel > 2)
 				throw new ParameterException("invalid log level " + value + ", must be in [0..2]");
-			SimpleLogger.VERBOSE = logLevel > 0;
-			SimpleLogger.DEBUG = logLevel > 1;
+		}
+	}
+
+	public static class ThreadingModeValidator implements IParameterValidator {
+		public void validate(String name, String value) throws ParameterException {
+			int threadingMode = -1;
+			try { threadingMode = Integer.parseInt(value); }
+			catch (NumberFormatException e) {}
+			if (threadingMode < 0 || threadingMode > 1)
+				throw new ParameterException("invalid threading mode " + value + ", must be 0 or 1");
 		}
 	}
 
 	public static class BookConverter implements IStringConverter<Book> {
 		public Book convert(String value) {
-			if ("all".equals(value)) {
+			if ("all".equalsIgnoreCase(value)) {
 				// magic value for "all books"
 				return null;
 			}
@@ -90,7 +102,7 @@ class Options
 				return Book.valueOf(value.toUpperCase());
 			}
 			catch (IllegalArgumentException e) {
-				throw new ParameterException("illegal book ID '" + value + "'");
+				throw new ParameterException("invalid book ID '" + value + "'");
 			}
 		}
 	}

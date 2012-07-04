@@ -66,6 +66,12 @@ public class OpenbookCleaner
 		// null is a magic value for "all books"
 		if (Options.VALUES.books.contains(null))
 			Options.VALUES.books = Arrays.asList(Book.values());
+
+		// Configure logging
+		SimpleLogger.VERBOSE = Options.VALUES.logLevel > 0;
+		SimpleLogger.DEBUG = Options.VALUES.logLevel > 1;
+		SimpleLogger.LOG_THREAD_ID = Options.VALUES.threadingMode == 1;
+
 	}
 
 	private static void displayUsageAndExit(int exitCode, String errorMessage) {
@@ -123,12 +129,12 @@ public class OpenbookCleaner
 		// Step 3: remove clutter (header, footer, navigation, ads) using XOM
 		filters.add(XOMUnclutterFilter.class);
 		// Step 4: pretty-print XOM output again using JTidy (optional)
-		if (!Options.VALUES.noPrettyPrint)
+		if (Options.VALUES.prettyPrint != 0)
 			filters.add(JTidyFilter.class);
 
 		return new FilterChain(
 			origFile, source, target,
-			!Options.VALUES.singleThread,
+			Options.VALUES.threadingMode == 1,
 			filters
 		);
 	}
