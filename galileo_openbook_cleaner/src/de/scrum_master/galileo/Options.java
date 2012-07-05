@@ -24,7 +24,7 @@ class Options
 	private Options() { /* This is a singleton! */ }
 
 	@Parameter(
-		names = {"-?", "--help"},
+		names = {"-?", "--help"}, help = true,
 		description = "Display this help text")
 	boolean showHelp = false;
 

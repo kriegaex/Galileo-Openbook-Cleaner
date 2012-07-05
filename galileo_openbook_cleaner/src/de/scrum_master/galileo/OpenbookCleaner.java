@@ -39,7 +39,6 @@ public class OpenbookCleaner
 			SimpleLogger.time("Duration for " + book.unpackDirectory, System.currentTimeMillis() - startTimeBook);
 			SimpleLogger.dedent();
 		}
-		SimpleLogger.echo("");
 		SimpleLogger.time("Total duration", System.currentTimeMillis() - startTimeTotal);
 	}
 
@@ -48,15 +47,7 @@ public class OpenbookCleaner
 			Options.PARSER.parse(args);
 		}
 		catch (ParameterException e) {
-			// Parsing error
-			// TODO: get rid of this if-else as soon as JCommander knows a special help mode, not throwing
-			// exceptions anymore for required parameters which are irrelevant when help is required
-			if (Options.VALUES.showHelp)
-				// Case 1: "--help" was part of command line -> ignore error, display help, exit cleanly
-				displayUsageAndExit(0, null);
-			else
-				// Case 2: other parsing error -> display help + error message, exit with error code
-				displayUsageAndExit(1, e.getMessage());
+			displayUsageAndExit(1, e.getMessage());
 		}
 
 		// User wants help -> ignore other parameters, display help, exit cleanly
@@ -71,7 +62,6 @@ public class OpenbookCleaner
 		SimpleLogger.VERBOSE = Options.VALUES.logLevel > 0;
 		SimpleLogger.DEBUG = Options.VALUES.logLevel > 1;
 		SimpleLogger.LOG_THREAD_ID = Options.VALUES.threadingMode == 1;
-
 	}
 
 	private static void displayUsageAndExit(int exitCode, String errorMessage) {
