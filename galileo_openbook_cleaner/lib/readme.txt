@@ -7,3 +7,6 @@ You need to add the following JAR files here in order to make the Eclipse build 
     http://ccil.org/~cowan/XML/tagsoup/tagsoup-1.2.1.jar
   JCommander 1.26
     http://repo1.maven.org/maven2/com/beust/jcommander/1.26/jcommander-1.26.jar
+  Apache Commons Compress 1.4.1
+    http://mirror3.layerjet.com/apache//commons/compress/binaries/commons-compress-1.4.1-bin.zip
+    Unpack and use commons-compress-1.4.1.jar

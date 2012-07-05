@@ -22,5 +22,10 @@
 			<attribute name="javadoc_location" value="http://jcommander.org/apidocs/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/commons-compress-1.4.1.jar" sourcepath="C:/Programme/Java/commons-compress-1.4.1/commons-compress-1.4.1-test-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/Programme/Java/commons-compress-1.4.1/apidocs/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

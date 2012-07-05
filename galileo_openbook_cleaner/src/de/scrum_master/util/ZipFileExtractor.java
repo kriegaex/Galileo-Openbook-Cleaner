@@ -6,9 +6,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 
 public class ZipFileExtractor
 {
@@ -33,19 +33,19 @@ public class ZipFileExtractor
 	public void unzip() throws IOException {
 		SimpleLogger.debug("Unzipping archive " + archiveFile + " ...");
 
-		ZipInputStream       zipStream     = null;
-		ZipEntry             zipEntry;
-		byte[]               buffer        = new byte[BUFFER_SIZE];
-		int                  byteCount;
-		File                 unzippedFile;
-		BufferedOutputStream outUnzipped   = null;
+		ZipArchiveInputStream zipStream     = null;
+		ZipEntry              zipEntry;
+		byte[]                buffer        = new byte[BUFFER_SIZE];
+		int                   byteCount;
+		File                  unzippedFile;
+		BufferedOutputStream  outUnzipped   = null;
 
 		try {
-			zipStream = new ZipInputStream(
+			zipStream = new ZipArchiveInputStream(
 				new BufferedInputStream(new FileInputStream(archiveFile), BUFFER_SIZE),
-				Charset.forName("Cp437")
+				"Cp437", false
 			);
-			while ((zipEntry = zipStream.getNextEntry()) != null) {
+			while ((zipEntry = zipStream.getNextZipEntry()) != null) {
 				SimpleLogger.debug("  Extracting " + zipEntry);
 				unzippedFile = new File(targetDirectory, zipEntry.getName());
 				if (zipEntry.isDirectory()) {
