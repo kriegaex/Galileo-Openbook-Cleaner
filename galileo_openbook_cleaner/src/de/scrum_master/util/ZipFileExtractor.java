@@ -37,11 +37,11 @@ public class ZipFileExtractor
 		SimpleLogger.debug("Unzipping archive " + archiveFile + " ...");
 
 		ZipArchiveInputStream zipStream     = null;
-		ZipEntry             zipEntry;
-		byte[]               buffer        = new byte[BUFFER_SIZE];
-		int                  byteCount;
-		File                 unzippedFile;
-		BufferedOutputStream outUnzipped   = null;
+		ZipEntry              zipEntry;
+		byte[]                buffer        = new byte[BUFFER_SIZE];
+		int                   byteCount;
+		File                  unzippedFile;
+		BufferedOutputStream  outUnzipped   = null;
 
 		try {
 			zipStream = new ZipArchiveInputStream(
