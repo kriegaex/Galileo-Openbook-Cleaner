@@ -67,7 +67,7 @@ public class SimpleLogger
 			/* Tab-separated format can be imported into Excel easily via copy & paste.
 			 * Add a header row, convert into table layout and there you go: filtering, sorting etc.
 			 * are at your command, making it easy to see what happens in multi-threaded mode mode.
-			 * TODO: time stamps might be useful - or overkill. No need for then just now.
+			 * TODO: time stamps might be useful - or overkill. No need for them just now.
 			 */
 			channel.printf("%5d\t%s\n", Thread.currentThread().getId(), indentText.get() + message);
 		}
