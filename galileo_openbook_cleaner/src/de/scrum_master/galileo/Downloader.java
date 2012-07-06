@@ -23,7 +23,6 @@ class Downloader
 		}
 	};
 
-
 	Downloader(File downloadDirectory, Book book) {
 		this.book = book;
 		this.downloadDirectory = downloadDirectory;
@@ -37,13 +36,9 @@ class Downloader
 	void download()
 		throws IOException, NoSuchAlgorithmException, MD5MismatchException
 	{
-		SimpleLogger.verbose("Downloading, verifying (MD5) and unpacking ...");
-		SimpleLogger.indent();
 		downloadBook();
 		unpackBook();
 		downloadCoverImage();
-		SimpleLogger.dedent();
-		SimpleLogger.verbose("Downloading, verifying (MD5) and unpacking done");
 	}
 
 	private void downloadBook()

@@ -27,5 +27,6 @@
 			<attribute name="javadoc_location" value="file:/C:/Programme/Java/jcommander-1.27/doc/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
