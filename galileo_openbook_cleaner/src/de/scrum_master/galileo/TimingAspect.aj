@@ -2,7 +2,7 @@ package de.scrum_master.galileo;
 
 import de.scrum_master.util.SimpleLogger;
 
-public privileged aspect TimingAspect
+aspect TimingAspect
 {
 	// Timing should wrap around logging
 	declare precedence: TimingAspect, LoggingAspect;

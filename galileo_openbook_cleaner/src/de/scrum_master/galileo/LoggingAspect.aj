@@ -5,7 +5,7 @@ import java.io.File;
 import de.scrum_master.util.SimpleLogger;
 import de.scrum_master.util.SimpleLogger.IndentMode;
 
-public privileged aspect LoggingAspect
+aspect LoggingAspect
 {
 	pointcut processBook()  : execution(* OpenbookCleaner.downloadAndCleanBook(Book));
 	pointcut download()     : execution(* Downloader.download());
