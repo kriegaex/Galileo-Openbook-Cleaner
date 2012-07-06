@@ -27,15 +27,15 @@ public class SimpleLogger
 			@Override protected String initialValue() { return ""; }
 		};
 
-		public static void echo   (String message) { echo   (message, IndentMode.UNCHANGED); }
-		public static void verbose(String message) { verbose(message, IndentMode.UNCHANGED); }
-		public static void debug  (String message) { debug  (message, IndentMode.UNCHANGED); }
-		public static void error  (String message) { error  (message, IndentMode.UNCHANGED); }
+	public static void echo   (String message) { echo   (message, IndentMode.UNCHANGED); }
+	public static void verbose(String message) { verbose(message, IndentMode.UNCHANGED); }
+	public static void debug  (String message) { debug  (message, IndentMode.UNCHANGED); }
+	public static void error  (String message) { error  (message, IndentMode.UNCHANGED); }
 
-		public static void echo   (String message, IndentMode indentMode) { log(System.out, ECHO,    message, indentMode); }
-		public static void verbose(String message, IndentMode indentMode) { log(System.out, VERBOSE, message, indentMode); }
-		public static void debug  (String message, IndentMode indentMode) { log(System.out, DEBUG,   message, indentMode); }
-		public static void error  (String message, IndentMode indentMode) { log(System.err, ERROR,   message, indentMode); }
+	public static void echo   (String message, IndentMode indentMode) { log(System.out, ECHO,    message, indentMode); }
+	public static void verbose(String message, IndentMode indentMode) { log(System.out, VERBOSE, message, indentMode); }
+	public static void debug  (String message, IndentMode indentMode) { log(System.out, DEBUG,   message, indentMode); }
+	public static void error  (String message, IndentMode indentMode) { log(System.err, ERROR,   message, indentMode); }
 
 	public static void time(String header, long milliSeconds) {
 		log(System.out, TIME, header + ": " + milliSeconds / 1000.0 + " s");
