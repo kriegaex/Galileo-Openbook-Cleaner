@@ -11,11 +11,7 @@ import java.util.Queue;
 
 import com.beust.jcommander.ParameterException;
 
-import de.scrum_master.galileo.filter.BasicFilter;
-import de.scrum_master.galileo.filter.FilterChain;
-import de.scrum_master.galileo.filter.JTidyFilter;
-import de.scrum_master.galileo.filter.PreJTidyFilter;
-import de.scrum_master.galileo.filter.XOMUnclutterFilter;
+import de.scrum_master.galileo.filter.*;
 import de.scrum_master.util.SimpleLogger;
 
 public class OpenbookCleaner
@@ -95,8 +91,7 @@ public class OpenbookCleaner
 	private static FilterChain getFilterChain(Book book, File origFile, File source, File target)
 		throws FileNotFoundException
 	{
-		Queue<Class<? extends BasicFilter>> filters =
-			new LinkedList<Class<? extends BasicFilter>>();
+		Queue<Class<? extends BasicFilter>> filters = new LinkedList<Class<? extends BasicFilter>>();
 
 		// Step 1: clean up raw HTML where necessary to make it parseable by JTidy
 		if (book.equals(Book.RUBY_ON_RAILS_2))
@@ -109,10 +104,6 @@ public class OpenbookCleaner
 		if (Options.VALUES.prettyPrint != 0)
 			filters.add(JTidyFilter.class);
 
-		return new FilterChain(
-			origFile, source, target,
-			Options.VALUES.threadingMode == 1,
-			filters
-		);
+		return new FilterChain(origFile, source, target, Options.VALUES.threadingMode == 1, filters);
 	}
 }

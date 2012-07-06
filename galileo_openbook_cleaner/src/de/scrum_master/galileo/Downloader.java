@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 
-import de.scrum_master.util.FileDownloader;
-import de.scrum_master.util.FileDownloader.MD5MismatchException;
-import de.scrum_master.util.SimpleLogger;
-import de.scrum_master.util.ZipFileExtractor;
+import de.scrum_master.util.*;
+import de.scrum_master.util.FileDownloader.*;
 
 class Downloader
 {

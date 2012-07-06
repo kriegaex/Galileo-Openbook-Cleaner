@@ -4,12 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.beust.jcommander.IParameterValidator;
-import com.beust.jcommander.IStringConverter;
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.ParameterException;
-import com.beust.jcommander.Parameters;
+import com.beust.jcommander.*;
 
 @Parameters(separators=" =")
 class Options
