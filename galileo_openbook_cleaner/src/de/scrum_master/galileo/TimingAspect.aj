@@ -1,7 +1,5 @@
 package de.scrum_master.galileo;
 
-import java.io.File;
-
 import de.scrum_master.util.SimpleLogger;
 
 public privileged aspect TimingAspect
