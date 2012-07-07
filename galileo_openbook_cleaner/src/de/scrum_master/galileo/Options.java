@@ -1,104 +1,92 @@
 package de.scrum_master.galileo;
 
+import static java.util.Arrays.asList;
+
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.beust.jcommander.*;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 
-@Parameters(separators=" =")
-class Options
-{
-	static final Options VALUES = new Options();
-	static final JCommander PARSER = new JCommander(VALUES);
-	static {
-		PARSER.setProgramName(OpenbookCleaner.class.getSimpleName());
-		//PARSER.setColumnSize(99);
-	}
-
-	private Options() { /* This is a singleton! */ }
-
-	@Parameter(
-		names = {"-?", "--help"}, help = true,
-		description = "Display this help text")
-	boolean showHelp = false;
-
-	@Parameter(
-		names = {"-d", "--download-dir"}, converter = DownloadDirConverter.class,
-		description = "Download directory for openbook archives (*.zip); must exist")
-	File downloadDir = new File(".");
-
-	@Parameter(
-		names = {"-p", "--pretty-print"}, validateWith = PrettyPrintModeValidator.class,
-		description = "Pretty-print after clean-up (0=no, 1=yes); no saves ~15% processing time")
-	int prettyPrint = 1;
-
-	@Parameter(
-		names = {"-l", "--log-level"}, validateWith = LogLevelValidator.class,
-		description = "Log level (0=normal, 1=verbose, 2=debug)")
-	int logLevel =0;
-
-	@Parameter(
-		names = {"-t", "--threading"}, validateWith = ThreadingModeValidator.class,
-		description = "Threading mode (0=single, 1=multi); single is slower, but better for diagnostics)")
-	int threadingMode = 1;
-
-	@Parameter(
-		required = true, converter = BookConverter.class,
-		description = "[list of book IDs | 'all']")
+class Options extends OptionParser {
+	boolean showHelp;
+	File downloadDir;
+	int logLevel, prettyPrint, threading;
 	List<Book> books = new ArrayList<Book>();
 
-	public static class DownloadDirConverter implements IStringConverter<File> {
-		public File convert(String value) {
-			File downloadDir = new File(value);
-			if (! downloadDir.isDirectory())
-				throw new ParameterException("download directory '" + value + "' does not exist");
-			return downloadDir;
-		}
-	}
+	Options() { super(); }
 
-	public static class PrettyPrintModeValidator implements IParameterValidator {
-		public void validate(String name, String value) throws ParameterException {
-			int prettyPrintMode = -1;
-			try { prettyPrintMode = Integer.parseInt(value); }
-			catch (NumberFormatException e) {}
-			if (prettyPrintMode < 0 || prettyPrintMode > 1)
-				throw new ParameterException("invalid pretty-print mode " + value + ", must be 0 or 1");
-		}
-	}
+	@Override
+	public OptionSet parse(String... arguments)
+	{
+		// Set up parsing rules
+		OptionSpec<Void> sp_showHelp =
+			acceptsAll(asList("?", "help"),         "Display this help text");
+		OptionSpec<File> sp_downloadDir =
+			acceptsAll(asList("d", "download-dir"), "Download directory for openbooks; must exist")
+				.withRequiredArg().ofType(File.class).defaultsTo(new File("."));
+		OptionSpec<Integer> sp_logLevel =
+			acceptsAll(asList("l", "log-level"),    "Log level (0=normal, 1=verbose, 2=debug)")
+				.withRequiredArg().ofType(Integer.class).defaultsTo(0);
+		OptionSpec<Integer> sp_prettyPrint =
+			acceptsAll(asList("p", "pretty-print"), "Pretty-print after clean-up (0=no, 1=yes); no saves ~15% processing time")
+				.withRequiredArg().ofType(Integer.class).defaultsTo(1);
+		OptionSpec<Integer> sp_threading =
+			acceptsAll(asList("t", "threading"),    "Threading mode (0=single, 1=multi); single is slower, but better for diagnostics)")
+				.withRequiredArg().ofType(Integer.class).defaultsTo(1);
 
-	public static class LogLevelValidator implements IParameterValidator {
-		public void validate(String name, String value) throws ParameterException {
-			int logLevel = -1;
-			try { logLevel = Integer.parseInt(value); }
-			catch (NumberFormatException e) {}
-			if (logLevel < 0 || logLevel > 2)
-				throw new ParameterException("invalid log level " + value + ", must be in [0..2]");
-		}
-	}
+		// Parse options
+		OptionSet optionSet = super.parse(arguments);
 
-	public static class ThreadingModeValidator implements IParameterValidator {
-		public void validate(String name, String value) throws ParameterException {
-			int threadingMode = -1;
-			try { threadingMode = Integer.parseInt(value); }
-			catch (NumberFormatException e) {}
-			if (threadingMode < 0 || threadingMode > 1)
-				throw new ParameterException("invalid threading mode " + value + ", must be 0 or 1");
-		}
-	}
-
-	public static class BookConverter implements IStringConverter<Book> {
-		public Book convert(String value) {
-			if ("all".equalsIgnoreCase(value)) {
-				// magic value for "all books"
-				return null;
+		// Assign parsed values to members for later application access
+		showHelp = optionSet.has(sp_showHelp);
+		downloadDir = sp_downloadDir.value(optionSet);
+		logLevel = sp_logLevel.value(optionSet);
+		prettyPrint = sp_prettyPrint.value(optionSet);
+		threading = sp_threading.value(optionSet);
+		for (String book_id : optionSet.nonOptionArguments()) {
+			if ("all".equalsIgnoreCase(book_id)) {
+				books = asList(Book.values());
+				break;
 			}
 			try {
-				return Book.valueOf(value.toUpperCase());
-			}
+				books.add(Book.valueOf(book_id.toUpperCase())); }
 			catch (IllegalArgumentException e) {
-				throw new ParameterException("invalid book ID '" + value + "'");
+				throw new IllegalArgumentException("invalid book ID '" + book_id + "'", e); }
+		}
+
+		// Validate values
+		if (! downloadDir.isDirectory())
+			throw new IllegalArgumentException("invalid download directory '" + downloadDir + "', does not exist");
+		if (prettyPrint < 0 || prettyPrint > 1)
+			throw new IllegalArgumentException("invalid pretty-print mode " + prettyPrint + ", must be 0 or 1");
+		if (logLevel < 0 || logLevel > 2)
+			throw new IllegalArgumentException("invalid log level " + logLevel + ", must be in [0..2]");
+		if (threading < 0 || threading > 1)
+			throw new IllegalArgumentException("invalid threading mode " + threading + ", must be 0 or 1");
+
+		return optionSet;
+	}
+
+	public void printHelpOn(PrintStream sink, String errorMessage) throws IOException {
+		printHelpOn(sink);
+		sink.println("book_id1 book_id2 ...                   Books to be downloaded & converted");
+		sink.println("\nLegal book IDs:");
+		String line = "  all (magic value: all books)";
+		for (Book book : Book.values()) {
+			if (line.length() + book.unpackDirectory.length() < 79)
+				line += ", " + book.unpackDirectory;
+			else {
+				sink.println(line + ",");
+				line = "  " + book.unpackDirectory;
 			}
 		}
+		sink.println(line);
+		if (errorMessage != null)
+			sink.println("\nError: " + errorMessage);
 	}
 }

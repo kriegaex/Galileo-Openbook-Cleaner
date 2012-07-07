@@ -9,8 +9,8 @@ You need to add the following JAR files here in order to make the Eclipse build 
   TagSoup 1.2.1
     http://ccil.org/~cowan/XML/tagsoup/tagsoup-1.2.1.jar
 
-  JCommander 1.27
-    http://repo1.maven.org/maven2/com/beust/jcommander/1.27/jcommander-1.27.jar
+  JOpt Simple 4.3
+    http://central.maven.org/maven2/net/sf/jopt-simple/jopt-simple/4.3/jopt-simple-4.3.jar
 
   Apache Commons Compress 1.4.1
     http://mirror3.layerjet.com/apache//commons/compress/binaries/commons-compress-1.4.1-bin.zip

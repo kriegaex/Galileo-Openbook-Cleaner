@@ -22,9 +22,9 @@
 			<attribute name="javadoc_location" value="file:/C:/Programme/Java/commons-compress-1.4.1/apidocs/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/jcommander-1.27.jar" sourcepath="C:/Programme/Java/jcommander-1.27/src">
+	<classpathentry kind="lib" path="lib/jopt-simple-4.3.jar" sourcepath="C:/Programme/Java/jopt-simple-4.3/src">
 		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/Programme/Java/jcommander-1.27/doc/"/>
+			<attribute name="javadoc_location" value="file:/C:/Programme/Java/jopt-simple-4.3/doc/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>

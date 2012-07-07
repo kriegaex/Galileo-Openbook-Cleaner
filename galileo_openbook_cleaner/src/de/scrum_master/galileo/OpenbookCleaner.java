@@ -5,17 +5,16 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
-
-import com.beust.jcommander.ParameterException;
 
 import de.scrum_master.galileo.filter.*;
 import de.scrum_master.util.SimpleLogger;
 
 public class OpenbookCleaner
 {
+	static Options options = new Options();
+
 	private static final FileFilter HTML_FILES = new FileFilter() {
 		public boolean accept(File file) {
 			String fileNameLC = file.getName().toLowerCase();
@@ -25,54 +24,35 @@ public class OpenbookCleaner
 
 	public static void main(String[] args) throws Exception {
 		processArgs(args);
-		for (Book book : Options.VALUES.books)
+		for (Book book : options.books)
 			downloadAndCleanBook(book);
 	}
 
-	private static void processArgs(String[] args) {
+	private static void processArgs(String[] args) throws IOException {
 		try {
-			Options.PARSER.parse(args);
-		}
-		catch (ParameterException e) {
-			displayUsageAndExit(1, e.getMessage());
-		}
-
-		// User wants help -> ignore other parameters, display help, exit cleanly
-		if (Options.VALUES.showHelp)
+			options.parse(args); }
+		catch (RuntimeException e) {
+			displayUsageAndExit(1, e.getMessage()); }
+		if (options.showHelp)
 			displayUsageAndExit(0, null);
-
-		// null is a magic value for "all books"
-		if (Options.VALUES.books.contains(null))
-			Options.VALUES.books = Arrays.asList(Book.values());
-
-		// Configure logging
-		SimpleLogger.VERBOSE = Options.VALUES.logLevel > 0;
-		SimpleLogger.DEBUG = Options.VALUES.logLevel > 1;
-		SimpleLogger.LOG_THREAD_ID = Options.VALUES.threadingMode == 1;
+		SimpleLogger.VERBOSE = options.logLevel > 0;
+		SimpleLogger.DEBUG = options.logLevel > 1;
+		SimpleLogger.LOG_THREAD_ID = options.threading > 0;
 	}
 
-	private static void displayUsageAndExit(int exitCode, String errorMessage) {
+	private static void displayUsageAndExit(int exitCode, String errorMessage) throws IOException {
 		PrintStream out = (exitCode == 0) ? System.out : System.err;
-		StringBuilder usageText = new StringBuilder();
-		Options.PARSER.usage(usageText);
-		out.println(usageText);
-		out.println("  Legal book IDs:");
-		out.println("    all (magic value to process all books)");
-		out.println("    ----------");
-		for (Book book : Book.values())
-			out.println("    " + book.unpackDirectory);
-		if (exitCode != 0)
-			out.println("\nError: " + errorMessage);
+		options.printHelpOn(out, errorMessage);
 		System.exit(exitCode);
 	}
 
 	private static void downloadAndCleanBook(Book book) throws Exception {
-		new Downloader(Options.VALUES.downloadDir, book).download();
+		new Downloader(options.downloadDir, book).download();
 		cleanBook(book);
 	}
 
 	private static void cleanBook(Book book) throws Exception {
-		for (File htmlFile : new File(Options.VALUES.downloadDir, book.unpackDirectory).listFiles(HTML_FILES))
+		for (File htmlFile : new File(options.downloadDir, book.unpackDirectory).listFiles(HTML_FILES))
 			cleanChapter(book, htmlFile);
 	}
 
@@ -101,9 +81,9 @@ public class OpenbookCleaner
 		// Step 3: remove clutter (header, footer, navigation, ads) using XOM
 		filters.add(XOMUnclutterFilter.class);
 		// Step 4: pretty-print XOM output again using JTidy (optional)
-		if (Options.VALUES.prettyPrint != 0)
+		if (options.prettyPrint != 0)
 			filters.add(JTidyFilter.class);
 
-		return new FilterChain(origFile, source, target, Options.VALUES.threadingMode == 1, filters);
+		return new FilterChain(origFile, source, target, options.threading == 1, filters);
 	}
 }
