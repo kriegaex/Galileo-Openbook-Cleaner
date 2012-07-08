@@ -1,0 +1,83 @@
+Version 0.9.1.1
+  Changed features
+    - Openbook Cleaner now runs under Java 6, Java 7 is no longer required
+  Internal changes
+    - Switch zip file handling to Apache Commons Compress 1.4.1. Thanks to user
+      Christian Feneberg for pointing out that Java 7 on MacOS ist still in preview
+      stage and thus not preinstalled on most Macs.
+
+Version 0.9.1
+  New features
+    - CLI (command line interface)
+        * Accept multiple book IDs or '-a' (all books) on command line. This makes
+          convenience class AllOpenbooksCleaner with its own main method obsolete.
+        * New option '-n' skips final pretty-printing after clean up. This optionally saves
+          around 15% processing time, but the final result will not be pretty-printed by
+          JTidy, it remains as written by XOM (which produces correct, but not nicely
+          formatted XHTML).
+  Changed features
+    - Java 7 is now required because of the vcsharp_2008 unpacking bugfix (see below)
+  Bugfixes
+    - Book vcsharp_2008 could not be unpacked because it contains two files with special
+      characters (German umlauts). This was due to a character encoding of "Cp437" while
+      Java always expects UTF-8. Thanks to user Dirk Höpfner for notifying me about the bug.
+  Internal changes
+    - Option parsing: simplify loop and make it more readable
+    - Option parsing: add log output for book_id arguments
+    - Create separate methods for single- and multi-threaded conversion
+    - ZipInputStream now explicitly uses "Cp437" encoding, a new feature available only
+      in Java 7 after years of waiting.
+    - BasicFilter: turn member debugLogMessage into method getDebugLogMessage. This
+      removes the constructor parameter debugLogMessage from BasicFilter, making the
+      constructor signature consistent with that of its subclasses. Also update all
+      concrete subclasses so as to implement the abstract method and to use the changed
+      constructor.
+    - File extensions moved from application class OpenbookCleaner to static member
+      FILE_EXTENSION in all concrete BasicFilter subclasses.
+    - Rename SINGLE_THREADED_WITH_INTERMEDIATE_FILES to MULTI_THREADED. This also means
+      that the logic is reversed now, but still multi-threaded mode is the default, so
+      there is no change in behaviour.
+    - Encapsulate filtering & threading in new class FilterChain. The new class iterates
+      over a Queue of class objects (not instances!) and dynamically sets up the
+      conversion/filtering chain, instantiating concrete BasicFilter subclass objects via
+      reflection. This works in single- as well as multi-threaded mode, as usual using
+      intermediate files for the former and piped streams for the latter. This makes class
+      OpenbookCleaner cleaner, not violating the single purpose principle anymore. Only a
+      nicely readable version of method 'convert' remains, methods 'convertSingleThreaded'
+      and 'convertMultiThreaded' are gone. Furthermore, 'convert' now takes File arguments
+      and no longer File*Stream ones, because FilterChain creates its own streams.
+
+Version 0.9
+  New features
+    - Download, MD5-check and unpack books automatically before filtering
+    - Download hi-res book cover image for each book (can be used as covers for e-books)
+    - Page titles are filtered so as to remove book names and get clean chapter numbers and names.
+      E.g. something like "Galileo Computing :: Book title - 1.2.3 Chapter title" becomes
+      "1.2.3 Chapter title". Special fixes are applied to TOC (index.htm*) pages.
+    - AllOpenbooksCleaner knows new books visualbasic_2008, einstieg_vb_2010
+    - CLI (command line interface)
+        * Former book path (subdirectory) is now a book ID
+        * New mandatory parameter download directory (also base directory for book subdirectories)
+          is needed because of the new download feature and must be inserted as the first
+          non-option parameter before the book ID. 
+  Changed features
+    - Books are now unpacked into subdirectories with predefined names which might be different
+      from the download archive names. E.g. archive galileocomputing_shell_programmierung.zip
+      will be unpacked to folder shell_prog.
+  Internal changes
+    - Refactor pre-JTidy HTML fixing into its own BasicConverter subclass PreJTidyFilter
+      and move some code there. Currently this filter class only fixes the "Ruby on Rails 2"
+      book because other books doe not need to be pre-filtered just to readable by JTidy.
+    - Reorganise package structure and rename some filter (converter) classes & methods
+    - New class (enum) BookInfo to be used by the download/unpack features
+    - New utility classes FileDownloader (incl. MD5 check), ZipFileExtractor
+    - New class Downloader can download & unpack openbooks
+
+Version 0.8
+  - Initial release
+  - Can convert 30 known openbooks, but has not download/unpack functionality yet
+  - Developed in Java7
+  - Needs libraries
+      * JTidy r938
+      * XOM 1.2.8
+      * TagSoup 1.2.1
