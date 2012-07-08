@@ -154,12 +154,12 @@ public class XOMUnclutterFilter extends BasicFilter
 	}
 
 	private void initialiseTitle(boolean removeBookTitle) {
-		SimpleLogger.indent();
 		SimpleLogger.debug("Initialising page title...");
+		SimpleLogger.indent();
 		Element titleTag = (Element) xPathQuery(XPath.TITLE.query).get(0);
 		pageTitle = titleTag.getValue();
-		SimpleLogger.indent();
 		SimpleLogger.debug("Original page title: " + pageTitle);
+		SimpleLogger.indent();
 
 		Matcher matcher;
 
@@ -167,7 +167,6 @@ public class XOMUnclutterFilter extends BasicFilter
 		matcher = Regex.TITLE_INFIX.pattern.matcher(pageTitle);
 		if (matcher.matches())
 			pageTitle = matcher.group(1) + matcher.group(2);
-		SimpleLogger.indent();
 		SimpleLogger.debug("Step 1 In:         " + pageTitle);
 
 		// Remove "Galileo Computing/Design" prefix and " openbook/index" postfix
@@ -200,7 +199,6 @@ public class XOMUnclutterFilter extends BasicFilter
 
 		titleTag.removeChildren();
 		titleTag.appendChild(pageTitle);
-		SimpleLogger.dedent();
 	}
 
 	private void fixStructure() {

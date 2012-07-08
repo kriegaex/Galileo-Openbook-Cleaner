@@ -20,8 +20,8 @@ public abstract class BasicFilter implements Runnable
 	}
 
 	public void run() {
-		SimpleLogger.indent();
 		SimpleLogger.debug(getDebugLogMessage() + "...");
+		SimpleLogger.indent();
 		try { filter(); }
 		catch (Exception e) { throw new RuntimeException(e); }
 		finally {
