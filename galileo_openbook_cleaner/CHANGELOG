@@ -1,3 +1,65 @@
+Version [###]
+  New features
+    - The souce code is now explicitly licenced under GPLv3 (see file COPYING)
+    - Not a new feature, but a new requirement for developer wishing to edit the code or build
+      the program from source: The Eclipse project is no longer a plain Java project, but an
+      AspectJ project because I now use AOP (aspect-oriented programming) techniques for
+      cross-cutting concerns like timing and logging to keep the main application code cleaner
+      and more readable, no longer cluttering it with calls to functionality outside the main
+      scope of cleaning openbooks. 
+  Changed features
+    - CLI (command line interface)
+        * Option '-a' replaced by magic book ID 'all' which can be used instead
+        * Options '-d'/'-v' replaced by '-l|--log-level=(0|1|2)' with a default of
+          0 (normal). 1 is verbose, 2 is debug.
+        * download_dir is no longer a positional parameter, but a named option
+         '-d|--download-dir' with default '.' (current directory)
+        * Option '-s' replaced by '-t|--threading=(0|1)' with a default of 1 (multi)
+        * Option '-n' replaced by '-p|--pretty-print=(0|1)' with a default of 1 (pretty).
+          This avoids the negative flag "no pretty-print".
+        * Option '-?' can also be written as '--help' now
+  Bugfixes
+  Internal changes
+    - Rename BookInfo to just Book
+    - Temporarily add JCommander 1.26 as CLI parsing tool. Later upgraded to 1.27 and then removed
+      again because of the switch to JOpt Simple. JCommander ist still available in branch
+      cli_jcommander at the time of writing this (commit 0050d681).
+    - Add JOpt Simple 4.3 as CLI parsing tool in class Options. This makes class OpenbookCleaner
+      smaller and cleaner, moving constant USAGE_TEXT and most content of methods processArgs and
+      displayUsageAndExit to Options. Static config variables are also in Options now. So CLI and
+      option handling is nicely encapsulated now.
+    - SimpleLogger: add thread-safe in-/dedent functionality. Thread-safe means: variables
+      indentLevel and indentText are InheritableThreadLocal, not static.
+    - SimpleLogger: optionally log thread ID (static flag LOG_THREAD_ID).  If the flag is true, the
+      log is written in tab-separated format (two columns: thread ID and indentation + log message)
+      which can be imported into Excel easily via copy & paste. Then just add a header row, convert
+      into table layout and there you go: filtering, sorting etc. are at your command, making it
+      easy to see what happens in multi-threaded mode.
+    - Start using AspectJ for logging and timing
+        * Converted Eclipse project from Java to AspectJ
+        * New TimingAspect is the stopwatch for the main loop and per book
+        * New LoggingAspect takes care of indented echo/verbose output in
+          classes OpenbookCleaner and Downloader.
+        * Other classes like the filters still do their logging within the
+          application code because they rather use intrinsic, fine-granular
+          logging (several outputs per method) than wrapping comments
+          ("entering", "exiting") which can easily be outsourced to AOP around()
+          advice.
+        * New enum SimpleLogger.IndentMode makes it possible to print and
+          in-/dedent before/after printing in one method call. This helps to
+          keep AOP around() advice code a bit shorter.
+        * Corrected some minor indenting issues in filter classes
+    - Downloader: rename & refactor moveDirectoryContents, closing a TODO: Now for books which are
+      unzipped one directory level too deep it is no longer necessary to rename all files one by
+      one, but the whole subdirectory is moved in three steps:
+        1) move download_dir/book_id/subdir -> download_dir/book_id.tmp
+        2) delete empty download_dir/book_id
+        3) move download_dir/book_id.tmp -> download_dir/book_id
+    - Eclipse: For being able to browse javadocs for external libs offline, I changed all javadoc
+      links to point to folders on my personal hard drive. This is not as interoperable as having
+      them point to online URLs, but it works offline for me.
+
+
 Version 0.9.1.1
   Changed features
     - Openbook Cleaner now runs under Java 6, Java 7 is no longer required
