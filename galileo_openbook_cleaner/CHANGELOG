@@ -6,6 +6,7 @@ Version 0.9.1.1
       Christian Feneberg for pointing out that Java 7 on MacOS ist still in preview
       stage and thus not preinstalled on most Macs.
 
+
 Version 0.9.1
   New features
     - CLI (command line interface)
@@ -47,6 +48,7 @@ Version 0.9.1
       and 'convertMultiThreaded' are gone. Furthermore, 'convert' now takes File arguments
       and no longer File*Stream ones, because FilterChain creates its own streams.
 
+
 Version 0.9
   New features
     - Download, MD5-check and unpack books automatically before filtering
@@ -72,6 +74,7 @@ Version 0.9
     - New class (enum) BookInfo to be used by the download/unpack features
     - New utility classes FileDownloader (incl. MD5 check), ZipFileExtractor
     - New class Downloader can download & unpack openbooks
+
 
 Version 0.8
   - Initial release
