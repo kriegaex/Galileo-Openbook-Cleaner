@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import de.scrum_master.util.SimpleLogger;
+import de.scrum_master.util.SimpleLogger.IndentMode;
 
 public abstract class BasicFilter implements Runnable
 {
@@ -20,8 +21,7 @@ public abstract class BasicFilter implements Runnable
 	}
 
 	public void run() {
-		SimpleLogger.debug(getDebugLogMessage() + "...");
-		SimpleLogger.indent();
+		SimpleLogger.verbose(getDebugLogMessage(), IndentMode.INDENT_AFTER);
 		try { filter(); }
 		catch (Exception e) { throw new RuntimeException(e); }
 		finally {
@@ -29,8 +29,8 @@ public abstract class BasicFilter implements Runnable
 			catch (IOException e) { e.printStackTrace(); }
 			try { out.close(); }
 			catch (IOException e) { e.printStackTrace(); }
+			SimpleLogger.dedent();
 		}
-		SimpleLogger.dedent();
 	}
 
 	/**
