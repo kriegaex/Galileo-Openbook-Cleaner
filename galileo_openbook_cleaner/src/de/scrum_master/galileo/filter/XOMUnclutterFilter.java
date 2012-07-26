@@ -230,7 +230,7 @@ public class XOMUnclutterFilter extends BasicFilter
 	 */
 	private void fixNode429() {
 		SimpleLogger.indent();
-		if (! (origFile.getName().equals("node429.html") && pageTitle.contains("UNIX-Guru"))) {
+		if (! (origFile.getName().equals("node429.html") && pageTitle.contains("unix"))) {
 			SimpleLogger.dedent();
 			return;
 		}
