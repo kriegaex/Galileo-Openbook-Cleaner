@@ -8,10 +8,10 @@ import de.scrum_master.galileo.filter.*;
 
 aspect LoggingAspect
 {
-	pointcut processBook()  : execution(* OpenbookCleaner.downloadAndCleanBook(Book));
-	pointcut download()     : execution(* Downloader.download());
-	pointcut cleanBook()    : execution(* OpenbookCleaner.cleanBook(Book));
-	pointcut cleanChapter() : execution(* OpenbookCleaner.cleanChapter(Book, File));
+	pointcut processBook()            : execution(* OpenbookCleaner.downloadAndCleanBook(Book));
+	pointcut download()               : execution(* Downloader.download());
+	pointcut cleanBook()              : execution(* OpenbookCleaner.cleanBook(Book));
+	pointcut cleanChapter()           : execution(* OpenbookCleaner.cleanChapter(Book, File));
 	pointcut runFilter(
 		BasicFilter filter)           : execution(* BasicFilter.run()) && this(filter);
 
