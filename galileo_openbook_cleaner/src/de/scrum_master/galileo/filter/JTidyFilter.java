@@ -33,6 +33,7 @@ public class JTidyFilter extends BasicFilter
 		tidy.parse(in, out);
 	}
 
+	@Override
 	protected String getLogMessage() {
 		return "Converting to clean, pretty-printed XHTML";
 	}

@@ -128,6 +128,7 @@ public class XOMUnclutterFilter extends BasicFilter
 		builder = new Builder(tagsoup);
 	}
 
+	@Override
 	protected String getLogMessage() {
 		return "Removing clutter (header, footer, navigation, ads) and fixing structure";
 	}
