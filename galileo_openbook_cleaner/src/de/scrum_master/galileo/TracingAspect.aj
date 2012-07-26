@@ -14,6 +14,9 @@ import java.io.PrintStream;
  */
 public aspect TracingAspect extends BasicTracingAspect
 {
+	// Tracing should wrap around timing, timing around logging
+	declare precedence: TracingAspect, TimingAspect, LoggingAspect;
+
 	protected static boolean isActive() {
 		return OpenbookCleaner.options == null
 			? false
