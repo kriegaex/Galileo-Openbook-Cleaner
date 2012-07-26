@@ -1,7 +1,7 @@
 Version [###]
   New features
     - The souce code is now explicitly licenced under GPLv3 (see file COPYING)
-    - Not a new feature, but a new requirement for developer wishing to edit the code or build
+    - Not a new feature, but a new requirement for developers wishing to edit the code or build
       the program from source: The Eclipse project is no longer a plain Java project, but an
       AspectJ project because I now use AOP (aspect-oriented programming) techniques for
       cross-cutting concerns like timing and logging to keep the main application code cleaner
@@ -14,8 +14,8 @@ Version [###]
           0 (normal). 1 is verbose, 2 is debug.
         * New log level 3 (trace) activates a call trace output on System.err (lower log levels
           still go to System.out). This is implemented via AspectJ and prints constructor and method
-          signatures. This is very technical and a nice toy if you want to avoid debugging the
-          source code in an IDE, but still see what is going on internally. 
+          signatures. So the trace output is very technical, but a nice toy if you want to avoid
+          debugging the source code in an IDE, but still be able to see what is going on internally. 
         * download_dir is no longer a positional parameter, but a named option
          '-d|--download-dir' with default '.' (current directory)
         * Option '-s' replaced by '-t|--threading=(0|1)' with a default of 1 (multi)
