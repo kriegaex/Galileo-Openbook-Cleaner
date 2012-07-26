@@ -1,6 +1,7 @@
 package de.scrum_master.galileo;
 
 import de.scrum_master.util.BasicTracingAspect;
+import de.scrum_master.util.SimpleLogger;
 
 import java.io.BufferedOutputStream;
 import java.io.FileFilter;
@@ -21,7 +22,7 @@ public aspect TracingAspect extends BasicTracingAspect
 
 	protected pointcut myClass():
 		if(isActive()) && within(de.scrum_master..*) &&
-			!within(*Aspect) && !within(Options) && !within(FileFilter+) && !within(Book);
+			!within(*Aspect) && !within(Options) && !within(FileFilter+) && !within(Book) && !within(SimpleLogger);
 
 	public static void main(String[] args) throws Exception {
 		BasicTracingAspect.TRACELEVEL = 2;
