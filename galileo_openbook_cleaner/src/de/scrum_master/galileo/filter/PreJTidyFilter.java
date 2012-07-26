@@ -52,7 +52,7 @@ public class PreJTidyFilter extends BasicFilter
 	}
 
 	@Override
-	protected String getDebugLogMessage() {
+	protected String getLogMessage() {
 		return "Fixing HTML so as to enable JTidy to parse it";
 	}
 }

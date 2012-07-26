@@ -21,7 +21,7 @@ public abstract class BasicFilter implements Runnable
 	}
 
 	public void run() {
-		SimpleLogger.verbose(getDebugLogMessage(), IndentMode.INDENT_AFTER);
+		SimpleLogger.verbose(getLogMessage(), IndentMode.INDENT_AFTER);
 		try { filter(); }
 		catch (Exception e) { throw new RuntimeException(e); }
 		finally {
@@ -41,8 +41,8 @@ public abstract class BasicFilter implements Runnable
 	protected abstract void filter() throws Exception;
 
 	/**
-	 * @return a one-line text string to be printed in debug output, describing what the filter is
+	 * @return a one-line text string to be printed in log output, describing what the filter is
 	 * about to do, e.g. "Converting HTML into valid XHTML" or "Removing navigation elements".
 	 */
-	protected abstract String getDebugLogMessage();
+	protected abstract String getLogMessage();
 }

@@ -34,7 +34,7 @@ public class JTidyFilter extends BasicFilter
 	}
 
 	@Override
-	protected String getDebugLogMessage() {
+	protected String getLogMessage() {
 		return "Converting to clean, pretty-printed XHTML";
 	}
 }

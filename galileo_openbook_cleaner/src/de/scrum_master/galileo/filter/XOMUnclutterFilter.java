@@ -128,7 +128,7 @@ public class XOMUnclutterFilter extends BasicFilter
 	}
 
 	@Override
-	protected String getDebugLogMessage() {
+	protected String getLogMessage() {
 		return "Removing clutter (header, footer, navigation, ads) and fixing structure";
 	}
 
