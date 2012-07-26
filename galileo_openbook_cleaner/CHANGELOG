@@ -12,6 +12,10 @@ Version [###]
         * Option '-a' replaced by magic book ID 'all' which can be used instead
         * Options '-d'/'-v' replaced by '-l|--log-level=(0|1|2)' with a default of
           0 (normal). 1 is verbose, 2 is debug.
+        * New log level 3 (trace) activates a call trace output on System.err (lower log levels
+          still go to System.out). This is implemented via AspectJ and prints constructor and method
+          signatures. This is very technical and a nice toy if you want to avoid debugging the
+          source code in an IDE, but still see what is going on internally. 
         * download_dir is no longer a positional parameter, but a named option
          '-d|--download-dir' with default '.' (current directory)
         * Option '-s' replaced by '-t|--threading=(0|1)' with a default of 1 (multi)
