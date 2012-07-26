@@ -30,7 +30,7 @@ class Options extends OptionParser {
 			acceptsAll(asList("d", "download-dir"), "Download directory for openbooks; must exist")
 				.withRequiredArg().ofType(File.class).defaultsTo(new File("."));
 		OptionSpec<Integer> sp_logLevel =
-			acceptsAll(asList("l", "log-level"),    "Log level (0=normal, 1=verbose, 2=debug)")
+			acceptsAll(asList("l", "log-level"),    "Log level (0=normal, 1=verbose, 2=debug, 3=trace)")
 				.withRequiredArg().ofType(Integer.class).defaultsTo(0);
 		OptionSpec<Integer> sp_prettyPrint =
 			acceptsAll(asList("p", "pretty-print"), "Pretty-print after clean-up (0=no, 1=yes); no saves ~15% processing time")
@@ -64,8 +64,8 @@ class Options extends OptionParser {
 			throw new IllegalArgumentException("invalid download directory '" + downloadDir + "', does not exist");
 		if (prettyPrint < 0 || prettyPrint > 1)
 			throw new IllegalArgumentException("invalid pretty-print mode " + prettyPrint + ", must be 0 or 1");
-		if (logLevel < 0 || logLevel > 2)
-			throw new IllegalArgumentException("invalid log level " + logLevel + ", must be in [0..2]");
+		if (logLevel < 0 || logLevel > 3)
+			throw new IllegalArgumentException("invalid log level " + logLevel + ", must be in [0..3]");
 		if (threading < 0 || threading > 1)
 			throw new IllegalArgumentException("invalid threading mode " + threading + ", must be 0 or 1");
 
