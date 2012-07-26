@@ -14,6 +14,10 @@ privileged aspect LoggingAspect
 	pointcut cleanChapter()           : execution(* OpenbookCleaner.cleanChapter(Book, File));
 	pointcut runFilter(
 		BasicFilter filter)           : execution(* BasicFilter.run()) && this(filter);
+	pointcut createIndexLink()        : execution(* XOMUnclutterFilter.createIndexLink());
+	pointcut fixFaultyLinkTargets(
+		XOMUnclutterFilter xomFilter) : execution(* XOMUnclutterFilter.fixFaultyLinkTargets()) && this(xomFilter);
+	pointcut initialiseTitle()        : execution(* XOMUnclutterFilter.initialiseTitle(boolean));
 
 	void around(Book book) : processBook() && args(book) {
 		String message = "Book: " + book.unpackDirectory;
@@ -47,7 +51,27 @@ privileged aspect LoggingAspect
 		String message = filter.getLogMessage();
 		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
 		proceed(filter);
-		//SimpleLogger.verbose(message + " - done", IndentMode.DEDENT_BEFORE);
+		SimpleLogger.dedent();
+	}
+
+	void around() : createIndexLink() {
+		String message = "TOC file: creating index link";
+		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
+		proceed();
+		SimpleLogger.dedent();
+	}
+
+	void around(XOMUnclutterFilter xomFilter) : fixFaultyLinkTargets(xomFilter) {
+		String message = "TOC file: checking for faulty link targets";
+		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
+		proceed(xomFilter);
+		SimpleLogger.dedent();
+	}
+	
+	void around(boolean removeBookTitle) : initialiseTitle() && args(removeBookTitle) {
+		String message = "Initialising page title";
+		SimpleLogger.echo(message, IndentMode.INDENT_AFTER);
+		proceed(removeBookTitle);
 		SimpleLogger.dedent();
 	}
 }
