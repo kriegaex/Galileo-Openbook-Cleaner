@@ -6,7 +6,7 @@ import de.scrum_master.util.SimpleLogger;
 import de.scrum_master.util.SimpleLogger.IndentMode;
 import de.scrum_master.galileo.filter.*;
 
-aspect LoggingAspect
+privileged aspect LoggingAspect
 {
 	pointcut processBook()            : execution(* OpenbookCleaner.downloadAndCleanBook(Book));
 	pointcut download()               : execution(* Downloader.download());
