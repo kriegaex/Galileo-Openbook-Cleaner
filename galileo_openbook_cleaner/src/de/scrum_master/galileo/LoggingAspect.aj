@@ -4,6 +4,7 @@ import java.io.File;
 
 import de.scrum_master.util.SimpleLogger;
 import de.scrum_master.util.SimpleLogger.IndentMode;
+import de.scrum_master.galileo.filter.*;
 
 aspect LoggingAspect
 {
@@ -11,6 +12,8 @@ aspect LoggingAspect
 	pointcut download()     : execution(* Downloader.download());
 	pointcut cleanBook()    : execution(* OpenbookCleaner.cleanBook(Book));
 	pointcut cleanChapter() : execution(* OpenbookCleaner.cleanChapter(Book, File));
+	pointcut runFilter(
+		BasicFilter filter)           : execution(* BasicFilter.run()) && this(filter);
 
 	void around(Book book) : processBook() && args(book) {
 		String message = "Book: " + book.unpackDirectory;
@@ -38,5 +41,13 @@ aspect LoggingAspect
 		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
 		proceed(book, origFile);
 		SimpleLogger.verbose(message + " - done", IndentMode.DEDENT_BEFORE);
+	}
+
+	void around(BasicFilter filter) : runFilter(filter) {
+		String message = filter.getLogMessage();
+		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
+		proceed(filter);
+		//SimpleLogger.verbose(message + " - done", IndentMode.DEDENT_BEFORE);
+		SimpleLogger.dedent();
 	}
 }
