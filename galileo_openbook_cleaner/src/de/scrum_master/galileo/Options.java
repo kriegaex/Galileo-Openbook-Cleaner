@@ -73,6 +73,7 @@ class Options extends OptionParser {
 	}
 
 	public void printHelpOn(PrintStream sink, String errorMessage) throws IOException {
+		sink.println(OpenbookCleaner.class.getSimpleName() + " usage: java ... [options] <book_id>*\n");
 		printHelpOn(sink);
 		sink.println("book_id1 book_id2 ...                   Books to be downloaded & converted");
 		sink.println("\nLegal book IDs:");
