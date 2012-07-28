@@ -54,7 +54,7 @@ privileged aspect LoggingAspect
 
 	void around(boolean removeBookTitle) : initialiseTitle() && args(removeBookTitle) {
 		String message = "Initialising page title";
-		SimpleLogger.echo(message, IndentMode.INDENT_AFTER);
+		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
 		proceed(removeBookTitle);
 		SimpleLogger.dedent();
 	}
