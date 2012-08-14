@@ -28,5 +28,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/jsoup-1.6.3.jar" sourcepath="C:/Programme/Java/jsoup-1.6.3/src">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/Programme/Java/jsoup-1.6.3/doc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,0 +1,463 @@
+package de.scrum_master.galileo.filter;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
+
+import de.scrum_master.util.SimpleLogger;
+import de.scrum_master.util.SimpleLogger.IndentMode;
+
+public class JsoupFilter extends BasicFilter {
+	private PrintStream output;                    // Output stream for filtered document
+	private boolean     isTOCFile;                 // TOC = table of contents = index.htm*
+	private Document    document;                  // Jsoup document (DOM structure)
+	private Element     headTag;                   // XOM element pointing to HTML <head> tag
+	private Element     bodyTag;                   // XOM element pointing to HTML <body> tag
+	private String      pageTitle;                 // Content of HTML <title> tag
+	private boolean     hasStandardLayout = true;  // Known exception: "UNIX guru" book
+
+	protected static final String FILE_EXTENSION = ".jsoup";
+
+	private static final String nonStandardCSS =    // CSS style overrides for "UNIX guru" book
+		"body { font-size: 13px; }\n" +
+		"h1 a, h2 a, h3 a, h4 a { font-size: 16px; }\n" +
+		"pre { font-size: 12px; }\n";
+
+	private static enum XPath                       // XPath query strings mapped to symbolic names
+	{
+		HEAD                           ("head"),
+		TITLE                          ("head > title"),
+		SCRIPTS                        ("script"),
+
+		BODY                           ("body"),
+		BODY_NODES                     ("body > *"),
+
+		NON_STANDARD_MAIN_CONTENT      ("td.buchtext > *"),
+		HEADING_1_TO_4                 ("h1, h2, h3, h4"),
+		NON_STANDARD_TOP_NAVIGATION    ("body > " + HEADING_1_TO_4.query + " + *"),
+		NON_STANDARD_BOTTOM_NAVIGATION ("div.navigation"),
+
+		GREY_TABLE                     ("table[bgcolor=#eeeeee]"),
+		MAIN_CONTENT_1                 (GREY_TABLE.query + " > tr > td > div.main > *, " +
+		                                GREY_TABLE.query + " > tbody > tr > td > div.main > *"),
+		MAIN_CONTENT_2                 (GREY_TABLE.query + " > tr > td > *, " +
+		                                GREY_TABLE.query + " > tbody > tr > td > *"),
+
+		JUMP_TO_TOP_LINK               ("div:has(a[href=#top])"),
+		GRAPHICAL_PARAGRAPH_SEPARATOR  ("div:has(img[src=common/jupiters.gif])"),
+
+		HR_TAGS                        ("hr"),
+		FEEDBACK_FORM                  ("hr ~ form:has(input[name=openbookurl])"),
+
+		IMAGE_SMALL                    ("img[src*=klein/klein]"),
+		IMAGE_1                        ("div.bildbox img"),
+		IMAGE_2                        ("td.tabellentext img"),
+		IMAGE_3                        ("a[href=#bild] > img"),
+		IMAGE_4                        ("a[rel=lightbox] > img"),
+		IMAGE_5                        ("a[onclick*=OpenWin] > img"),
+		IMAGE_BOX_1                    ("div.bildbox"),
+		IMAGE_BOX_2                    ("td.tabellentext:has(img)"),
+		IMAGE_BOX_3                    ("a[href=#bild]:has(img)"),
+		IMAGE_BOX_4                    ("a[rel=lightbox]"),
+		IMAGE_BOX_5                    ("a[onclick*=OpenWin]:has(img)"),
+
+		TOC_HEADING_2                  ("h2:has(a)"),
+		INDEX_LINK                     ("a[href*=stichwort.htm]"),
+		AFTER_INDEX_LINK               (INDEX_LINK.query + " + *"),
+		ALL_LINKS                      ("a");
+
+		private final String query;
+
+		private XPath(String query) {
+			this.query = query;
+		}
+	}
+
+	private static enum Regex                       // Regex patterns mapped to symbolic names
+	{
+		// Subchapter no. in TOC link target
+		SUBCHAPTER_HREF          ("(.*_[0-9a-h]+_(?:[a-z0-9]+_)*)([0-9]+)(\\.htm.*)"),
+		// Subchapter no. in TOC link title
+		SUBCHAPTER_TEXT          ("^([0-9A-H]+\\.)([0-9]+)(.*)"),
+
+		// Book title contains dash - TODO: unify with TITLE_DASHED_BOOK_PREFIX? ###
+		TITLE_WITH_DASH          ("^(.*)(Ruby on Rails 2 .+Entwickler.+)$"),
+		// "Kapitel: " between book title and chapter
+		TITLE_INFIX              ("^(.*)(?:Kapitel: )(.*)$"),
+		// "Galileo Computing/Design" prefix and " openbook/index" postfix
+		TITLE_PREFIX_POSTFIX     ("^(?:Galileo (?:Computing|Design)(?: ::|:| [-–]) )?(.*?)(?: (?:[-–]|&ndash;|::)( openbook| index|))?$"),
+		// Text before dash for some books with " - " or " &ndash; " within the book title
+		TITLE_DASHED_BOOK_PREFIX ("^((?:Excel 2007|Java 7|Adobe.+CS4|Joomla! 1.5|Objektor.*mierung) [-–] )(.*)"),
+		// Get book chapter after title and separator
+		TITLE_CHAPTER            ("^(?:.+?) (?:[-–]|&ndash;|&#8211;) (.*)");
+
+		private final Pattern pattern;
+
+		private Regex(String regex) {
+			pattern = Pattern.compile(regex);
+		}
+	}
+
+	public JsoupFilter(InputStream in, OutputStream out, File origFile) throws UnsupportedEncodingException {
+		super(in, out, origFile);
+		output = new PrintStream(out, false, "windows-1252");
+		isTOCFile = origFile.getName().startsWith("index.htm");
+	}
+
+	@Override
+	protected String getLogMessage() {
+		return "Cleaning up HTML, removing clutter (header, footer, navigation, ads), fixing structure";
+	}
+
+	@Override
+	protected void filter() throws Exception {
+		parseDocument();
+		removeClutter();
+		fixStructure();
+		writeDocument();
+	}
+
+	private void parseDocument() throws Exception {
+		document = Jsoup.parse(in, "windows-1252", "");
+		headTag = xPathQuery(XPath.HEAD.query).first();
+		bodyTag = xPathQuery(XPath.BODY.query).first();
+		initialiseTitle(true);
+	}
+
+	private void removeClutter() {
+		fixNode429();
+		removeClutterAroundMainContent();
+		removeClutterWithinMainContent();
+	}
+
+	private void initialiseTitle(boolean removeBookTitle) {
+		// TODO: fix dashed titles (index.htm vs other chapters)
+		Element titleTag = (Element) xPathQuery(XPath.TITLE.query).first();
+		if (titleTag == null) {
+			// Should only happen for "teile.html" in book unix_guru
+			SimpleLogger.debug("No page title found");
+			return;
+		}
+		Matcher matcher;
+		pageTitle = titleTag.text();
+		matcher = Regex.TITLE_WITH_DASH.pattern.matcher(pageTitle);
+		if (isTOCFile && matcher.matches()) {
+			pageTitle = matcher.group(1) + "dummy - " + matcher.group(2);
+			SimpleLogger.debug("Step 0 Prep:       " + pageTitle);
+
+		}
+		SimpleLogger.debug("Original page title: " + pageTitle, IndentMode.INDENT_AFTER);
+
+
+		// Remove "Kapitel: " between book title and chapter
+		matcher = Regex.TITLE_INFIX.pattern.matcher(pageTitle);
+		if (matcher.matches())
+			pageTitle = matcher.group(1) + matcher.group(2);
+		SimpleLogger.debug("Step 1 In:         " + pageTitle);
+
+		// Remove "Galileo Computing/Design" prefix and " openbook/index" postfix
+		matcher = Regex.TITLE_PREFIX_POSTFIX.pattern.matcher(pageTitle);
+		if (matcher.matches())
+			pageTitle = matcher.group(1);
+		SimpleLogger.debug("Step 2 PrePost:    " + pageTitle);
+
+		if (removeBookTitle) {
+			// Get text before dash for some books with " - " or " &ndash; " within the book title
+			matcher = Regex.TITLE_DASHED_BOOK_PREFIX.pattern.matcher(pageTitle);
+			String titlePrefix = "";
+			if (matcher.matches()) {
+				titlePrefix = matcher.group(1);
+				pageTitle = matcher.group(2);
+			}
+			SimpleLogger.debug("Step 3 DashedBook: " + pageTitle);
+
+			// Remove book title, only chapter number + name remain
+			matcher = Regex.TITLE_CHAPTER.pattern.matcher(pageTitle);
+			if (matcher.matches())
+				pageTitle = matcher.group(1);
+			else
+				pageTitle = titlePrefix + pageTitle;
+			SimpleLogger.debug("Step 4 Chapter:    " + pageTitle);
+		}
+		SimpleLogger.debug("Clean page title:    " + pageTitle, IndentMode.DEDENT_BEFORE);
+
+		titleTag.text(pageTitle);
+//		titleTag.appendChild(pageTitle);
+	}
+
+	private void fixStructure() {
+		if (!hasStandardLayout) {
+			fixFontSizesForNonStandardLayout();
+			return;
+		}
+
+		overrideBackgroundImage();
+		fixImages();
+		removeRedundantGreyTable();
+
+		if (isTOCFile) {
+			if (! hasIndexLink())
+				createIndexLink();
+			fixFaultyLinkTargets();
+			removeContentAfterIndexLink();
+		}
+	}
+
+	private void writeDocument() throws Exception {
+		output.print(document);
+//		new Serializer(out, "ISO-8859-1").write(document);
+	}
+
+	/**
+	 * Individual fix for a buggy heading in "Unix Guru" book's node429.html
+	 * which would later make deletion of XPath.NON_STANDARD_TOP_NAVIGATION fail
+	 * in method removeClutterWithinMainContent().
+	 */
+	private void fixNode429() {
+		if (! (origFile.getName().equals("node429.html") && pageTitle.contains("unix")))
+			return;
+		SimpleLogger.debug("Fixing buggy heading");
+		Element buggyParagraph = xPathQuery("p:containsOwn(gpGlossar18133)").first();
+		buggyParagraph.html("<h1><a>unix</a></h1>");
+	}
+
+	private void removeClutterAroundMainContent() {
+		// Keep JavaScript for source code colouring ('prettyPrint' function) in some books
+		// deleteNodes(XPath.SCRIPTS.query);
+
+		Elements mainContent = xPathQuery(XPath.NON_STANDARD_MAIN_CONTENT.query);
+		if (mainContent.size() > 0)
+			hasStandardLayout = false;
+		else {
+			mainContent = xPathQuery(XPath.MAIN_CONTENT_1.query);
+			if (mainContent.size() == 0)
+				mainContent = xPathQuery(XPath.MAIN_CONTENT_2.query);
+		}
+		deleteNodes(XPath.BODY_NODES.query);
+		moveNodesTo(mainContent, bodyTag);
+	}
+
+	private void removeClutterWithinMainContent() {
+		if (hasStandardLayout) {
+			deleteNodes(XPath.JUMP_TO_TOP_LINK.query);
+			deleteNodes(XPath.GRAPHICAL_PARAGRAPH_SEPARATOR.query);
+			removeFeedbackForm();
+		}
+		else {
+			deleteNodes(XPath.NON_STANDARD_TOP_NAVIGATION.query);
+			deleteNodes(XPath.NON_STANDARD_BOTTOM_NAVIGATION.query);
+		}
+	}
+
+	/**
+	 * Remove user feedback form plus all following siblings plus preceding siblings starting at last HR tag
+	 * in document plus optionally BR tag directly preceding the HR tag. So we remove a structure roughly looking
+	 * like this (with no surrounding tags):
+	 * <pre>
+	 *   BR
+	 *   HR
+	 *   ...
+	 *   FORM
+	 *       ...
+	 *       INPUT[name=openbookurl]
+	 *       ...
+	 *   ...
+	 * </pre>
+	 */
+	private void removeFeedbackForm() {
+		Element lastHrTag = xPathQuery(XPath.HR_TAGS.query).last();
+		if (lastHrTag == null)
+			return;
+		int lastHrTagIndex = lastHrTag.siblingIndex();
+		List<Node> feedbackFormEtc = new ArrayList<Node>();
+		if (lastHrTag.siblingNodes().contains(xPathQuery(XPath.FEEDBACK_FORM.query).first())) {
+			for (Node node : lastHrTag.parent().childNodes()) {
+				if (node.siblingIndex() >= lastHrTagIndex || node.siblingIndex() == lastHrTagIndex - 1 &&
+					"br".equals(node.nodeName()))
+					feedbackFormEtc.add(node);
+			}
+			for (Node node : feedbackFormEtc)
+				node.remove();
+		}
+	}
+
+	private void overrideBackgroundImage() {
+		bodyTag.attr("style", "background: none");
+	}
+
+	private void fixImages() {
+		replaceByBigImages(xPathQuery(XPath.IMAGE_SMALL.query));
+		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_1.query), xPathQuery(XPath.IMAGE_1.query));
+		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_2.query), xPathQuery(XPath.IMAGE_2.query));
+		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_3.query), xPathQuery(XPath.IMAGE_3.query));
+		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_4.query), xPathQuery(XPath.IMAGE_4.query));
+		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_5.query), xPathQuery(XPath.IMAGE_5.query));
+	}
+
+	/*
+	 * There is one known occurrence (the "PHP PEAR" book) where there are two grey tables
+	 * (background colour #eeeeee) within one document. It is actually a bug in the book's
+	 * TOC (index.htm) because there are three lines of HTML code which are repeated erroneously.
+	 * JTidy interprets them as two nested tables, handling them gracefully. But after
+	 * removeClutterAroundMainContent() there still is a leftover grey table which needs
+	 * to be removed. This is done here.
+	 */
+	private void removeRedundantGreyTable() {
+		deleteNodes(XPath.GREY_TABLE.query);
+	}
+
+	/*
+	 * Font sizes for non-standard layout book "UNIX guru" are too small in general and
+	 * for page heading in particular. Fix it by adding a custom CSS style tag to each page.
+	 */
+	private void fixFontSizesForNonStandardLayout() {
+//		Element styleTag = new Element("style");
+//		styleTag.addAttribute(new Attribute("type", "text/css"));
+//		styleTag.appendChild(nonStandardCSS);
+//		headTag.appendChild(styleTag);
+		headTag.append("<style type=\"text/css\">\n" + nonStandardCSS + "</style>\n");
+	}
+
+	/*
+	 * Find out if this page contains a link to the index (stichwort.htm*).
+	 */
+	private boolean hasIndexLink() {
+		return xPathQuery(XPath.INDEX_LINK.query).size() > 0;
+	}
+
+	/**
+	 * Many Galileo Openbooks' tables of contents (TOC, index.htm*) are missing
+	 * links to their respective indexes (stichwort.htm*).
+	 *
+	 * This is a problem because after clean-up there is no direct way to reach
+	 * the index other than from the TOC. This also results in missing pages within
+	 * EPUB books created by Calibre, for example. So we need to do something about it,
+	 * i.e. insert missing links at the end of the respective TOC.
+	 */
+	private void createIndexLink() {
+		if (pageTitle.contains("Ruby on Rails")) {
+			SimpleLogger.debug("Book is an exception - not creating index link (no stichwort.htm*)");
+			return;
+		}
+		Element indexLink = (Element) xPathQuery(XPath.TOC_HEADING_2.query).first().clone();
+		String fileExtension = indexLink.childNode(1).attr("href").contains(".html") ? ".html" : ".htm";
+		indexLink.childNode(1).attr("href", "stichwort" + fileExtension);
+		((Element) indexLink.childNode(1)).text("Index");
+		bodyTag.appendChild(indexLink);
+	}
+
+	/**
+	 * There is a strange quirk in the table of contents (TOC, index.htm*) of
+	 * several (ca. 10) Galileo Openbooks:
+	 *
+	 * Some links for subchapters *.x point to the file for subchapter *.(x-1).
+	 * The problem there is that after we have removed the surrounding clutter,
+	 * there is no more redundant TOC column on the left, so there is no direct way
+	 * to reach the missing chapters which have no reference in the TOC. This also
+	 * results in missing pages within EPUB books created by Calibre, for example.
+	 * So we need to do something about it, i.e. detect and fix the faulty links.
+	 *
+	 * Faulty example (abbreviated) from "Ubuntu 11.04" book:
+	 * <pre>
+	 * &lt;a href="ubuntu_01_001.htm"&gt;1.2.* Blah&lt;/a&gt;
+	 * </pre>
+	 * For chapter x.2.* the href must be corrected to ubuntu_0x_002.htm.
+	 *
+	 * It further complicates the fixing task that there are some (ca. 2) books
+	 * which show a similar one-off behaviour for <i>all</i> subchapters by design,
+	 * because they have a different numbering scheme. Those books are OK, though,
+	 * thus we need to explicitly exclude them from "fixing". <tt>:-(</tt>
+	 */
+	private void fixFaultyLinkTargets() {
+		// Exclude the 3 know exceptions and immediately return if one is found
+		if (pageTitle.matches(".*(ActionScript 1 und 2|Microsoft-Netzwerk|Shell-Programmierung).*")) {
+			SimpleLogger.debug("Book is an exception - no link fixing done");
+			return;
+		}
+
+		int fixedLinksCount = 0;
+		Elements links = xPathQuery(XPath.ALL_LINKS.query);
+		for (Element link : links) {
+			String href = link.attr("href");
+			String text = link.text();
+			Matcher hrefMatcher = Regex.SUBCHAPTER_HREF.pattern.matcher(href);
+			Matcher textMatcher = Regex.SUBCHAPTER_TEXT.pattern.matcher(text);
+			if (hrefMatcher.matches() && textMatcher.matches()) {
+				int hrefNumber = Integer.parseInt(hrefMatcher.group(2));
+				int textNumber = Integer.parseInt(textMatcher.group(2));
+				if (hrefNumber != textNumber) {
+					SimpleLogger.debug("Chapter " + text);
+					SimpleLogger.debug("  Faulty: " + href);
+					String numberFormat = "%0" + hrefMatcher.group(2).length() + "d";
+					href = hrefMatcher.group(1) + String.format(numberFormat, textNumber) + hrefMatcher.group(3);
+					SimpleLogger.debug("  Fixed:  " + href);
+					link.attr("href", href);
+					fixedLinksCount++;
+				}
+			}
+		}
+		SimpleLogger.debug("Number of fixed links = " + fixedLinksCount);
+	}
+
+	/*
+	 * There is one known occurrence (the "JavaScript and AJAX" book) where there is
+	 * erroneous trailing text after the last TOC entry (the index link pointing to
+	 * stichwort.htm*). Because it looks ugly, we remove everything after the index link.
+	 */
+	private void removeContentAfterIndexLink() {
+		deleteNodes(XPath.AFTER_INDEX_LINK.query);
+	}
+
+	private static void replaceByBigImages(Elements smallImages) {
+		for (Element image : smallImages)
+			image.attr("src", image.attr("src").replaceFirst("klein/klein", "/"));
+	}
+
+	private static void replaceBoxesByImages(Elements smallImageBoxes, Elements smallImages) {
+		for (int i = 0; i < smallImageBoxes.size(); i++)
+			replaceNodeBy(smallImageBoxes.get(i), smallImages.get(i));
+	}
+
+	/*
+	 * ============================================================================================
+	 * GENERAL PURPOSE HELPER METHODS
+	 * ============================================================================================
+	 */
+
+	private Elements xPathQuery(String query) {
+		return document.select(query);
+	}
+
+	private static void deleteNodes(Elements nodes) {
+		for (Element element : nodes)
+			element.remove();
+	}
+
+	private void deleteNodes(String xPathQuery) {
+		deleteNodes(xPathQuery(xPathQuery));
+	}
+
+	private static void moveNodesTo(Elements sourceNodes, Element targetElement) {
+		for (Element element : sourceNodes) {
+			element.remove();
+			targetElement.appendChild(element);
+		}
+	}
+
+	private static void replaceNodeBy(Element original, Element replacement) {
+		replacement.remove();
+		original.replaceWith(replacement);
+	}
+}

@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -69,20 +70,22 @@ public class OpenbookCleaner
 	}
 
 	private static FilterChain getFilterChain(Book book, File origFile, File source, File target)
-		throws FileNotFoundException
+		throws FileNotFoundException, UnsupportedEncodingException
 	{
 		Queue<Class<? extends BasicFilter>> filters = new LinkedList<Class<? extends BasicFilter>>();
 
 		// Step 1: clean up raw HTML where necessary to make it parseable by JTidy
-		if (book.equals(Book.RUBY_ON_RAILS_2))
-			filters.add(PreJTidyFilter.class);
+//		if (book.equals(Book.RUBY_ON_RAILS_2))
+//			filters.add(PreJTidyFilter.class);
 		// Step 2: convert raw HTML into valid XHTML using JTidy
-		filters.add(JTidyFilter.class);
+//		filters.add(JTidyFilter.class);
+		filters.add(JsoupFilter.class);
 		// Step 3: remove clutter (header, footer, navigation, ads) using XOM
-		filters.add(XOMUnclutterFilter.class);
+//		filters.add(XOMUnclutterFilter.class);
 		// Step 4: pretty-print XOM output again using JTidy (optional)
-		if (options.prettyPrint != 0)
-			filters.add(JTidyFilter.class);
+//		if (options.prettyPrint != 0)
+//			filters.add(JsoupFilter.class);
+//			filters.add(JTidyFilter.class);
 
 		return new FilterChain(origFile, source, target, options.threading == 1, filters);
 	}
