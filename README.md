@@ -2,112 +2,62 @@ HTML cleaner for Galileo openbooks
 ==================================
 
 This is a tool for cleaning up [Galileo Computing openbooks](http://www.galileocomputing.de/openbook)
-before converting them to EPUB or PDF format. It is meant to be an improved reimplementation of my
-[bash shell script using xml2](https://github.com/kriegaex/html_book_cleaner). While the old script
-is just a proof of concept for two books, this tool was made to convert *__all__* books.
+before converting them to EPUB or PDF format.
 
-__Current state of development:__ v0.9.1 is feature complete, i.e. it can download, MD5-verify, unpack
+__Current state of development:__ v1.0 is feature complete, i.e. it can download, MD5-verify, unpack
 and convert all 32 openbooks available at release time.
+
+__Attention:__ If you are still using the previous release v0.9.1.1, please read the
+[description for the old version](https://github.com/kriegaex/Galileo-Openbook-Cleaner/tree/v0.9.1.1),
+not this one.
 
 __Usage:__
 
-    $ java -jar galileo_openbook_cleaner-0.9.1.jar
-    Usage: java de.scrum_master.galileo.OpenbookCleaner [-?] | [options] <download_dir> [<book_id>]*
-    
-    Options:
-      -?  Show this help text
-      -n  No pretty-printing after structural clean-up (saves ~15% processing time)
-      -a  Download & clean *all* books
-      -v  Verbose output
-      -d  Debug output (implies -v)
-      -s  Single-threaded mode with intermediate files (for diagnostics)
-    
-    Parameters:
-      download_dir  Download directory for openbook archives (*.zip); must exist
-      book_id       Book ID; book will be unpacked to subdirectory <download_dir>/<book_id>.
-                    You can specify multiple book IDs separated by spaces.
-                    If -a is specified, the book_id list will be ignored.
-    
-    List of legal book_id values (case-insensitive):
-      actionscript_1_und_2
-      actionscript_einstieg
-      apps_iphone
-      c_von_a_bis_z
-      dreamweaver_8
-      excel_2007
-      hdr_fotografie
-      it_handbuch
-      java_7
-      java_insel
-      javascript_ajax
-      joomla_1_5
-      linux
-      linux_unix_prog
-      microsoft_netzwerk
-      oop
-      photoshop_cs2
-      photoshop_cs4
-      php_pear
-      python
-      ruby_on_rails_2
-      shell_prog
-      ubuntu_10_04
-      ubuntu_11_04
-      unix_guru
-      vb_2008
-      vb_2008_einstieg
-      vb_2010_einstieg
-      vcsharp_2008
-      vcsharp_2010
-      vmware
-      windows_server_2008
+    $ java -jar galileo_openbook_cleaner-1.0.jar --help
 
-__Dependencies:__ The tool was developed in Java 7 with compiler compliance level 1.5 (Java 5).
-It also uses a few open source libraries:
-  * [JTidy r938](http://jtidy.sourceforge.net/) for converting the original Galileo files from
-    unclean HTML into XHTML and also for pretty-printing the final result (XOM does not pretty-print).
-    *__Please note__* that *JTidy* itself needs two patches I created because otherwise it cannot
-    handle all of Galileo's faulty HTML. The patched files are part of this repository, so they will
-    overrule the original classes as long as they come first in the Java classpath.
-    Direct JAR download: [jtidy-r938.jar](http://sourceforge.net/projects/jtidy/files/JTidy/r938/jtidy-r938.jar/download)
-    You can also find the patches in the following *JTidy* bug tickets:
-      * [BR within PRE rendered with additional linefeeds - ID: 3532720]
-        (http://sourceforge.net/tracker/?func=detail&aid=3532720&group_id=13153&atid=113153)
-      * [Non-breaking space in HEAD rejected - ID: 3532726]
-        (http://sourceforge.net/tracker/?func=detail&aid=3532726&group_id=13153&atid=113153)
-  * [XOM 1.2.8](http://www.xom.nu/) is an XML library used for parsing the XHTML output of *JTidy*
-    into a DOM representation which can then be manipulated via XPath queries. The main part of the
-    clean-up work is done using *XOM*.
-    Direct JAR download: [xom-1.2.8.jar](http://www.cafeconleche.org/XOM/xom-1.2.8.jar)
-  * [TagSoup 1.2.1](http://ccil.org/~cowan/XML/tagsoup/) is a SAX-compliant HTML parser which nicely
-    integrates into *XOM*. Initially I had planned to use it directly for parsing the original HTML
-    files, but it could not handle them well, so I added *JTidy* to the mix. Unfortunately *JTidy*
-    has no direct *XOM* integration because it is not SAX-compliant, so it cannot replace *TagSoup*.
-    This is how I ended up using both libraries. Maybe I will find a way to remove one of them in
-    the future.
-    Direct JAR download: [tagsoup-1.2.1.jar](http://ccil.org/~cowan/XML/tagsoup/tagsoup-1.2.1.jar)
+    OpenbookCleaner usage: java ... [options] <book_id>*
 
-__To do:__
-* I have refactored the code structure from v0.8 to v0.9.1, but still there are several things I dislike
-  from a design and [software craftsmanship](http://en.wikipedia.org/wiki/Software_craftsmanship) perspective.
-  See also the book [Clean Code](http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882)
-  by Robert C. Martin.
-* For example I would like to have a more flexible CLI (command line interface). The way parameters are
-  handled presently (with JRE on-board classes) is not very nice and flexible. I might switch to a CLI
-  framework like JCommander, JOpt Simple, JewelCli or JSAP.
-* Another clean code issue are cross-cutting concerns like threading, logging and timing. I would like to get
-  them out of the application logic via an [AOP](http://en.wikipedia.org/wiki/Aspect-oriented_programming)
-  framework like [AspectJ](http://en.wikipedia.org/wiki/AspectJ). This would make building and packaging a
-  little more complex, but the code cleaner and more maintainable. Because I want to practice more AOP
-  anyway, this little project would be a nice playground. *[Update on threading: In 0.9.1 threading was
-  encapsulated in class FilterChain, which is better than before.]*
-* I am not sure about it, but I might start writing *unit tests* for the tool if I ever feel like it.
-  Practicing a bit of TDD is something I have not done in a long time, except for recommending and
-  introducing it to my clients as an agile coach. I would not consider myself a professional developer
-  without practicing TDD, but after all I am no longer a professional developer. ;-)
+    Option                                  Description
+    ------                                  -----------
+    -?, --help                              Display this help text
+    -d, --download-dir <File>               Download directory for openbooks; must
+                                              exist (default: .)
+    -l, --log-level <Integer>               Log level (0=normal, 1=verbose,
+                                              2=debug, 3=trace) (default: 0)
+    -t, --threading <Integer>               Threading mode (0=single, 1=multi);
+                                              single is slower, but better for
+                                              diagnostics) (default: 1)
+    book_id1 book_id2 ...                   Books to be downloaded & converted
+
+    Legal book IDs:
+      all (magic value: all books), actionscript_1_und_2, actionscript_einstieg,
+      apps_iphone, c_von_a_bis_z, dreamweaver_8, excel_2007, hdr_fotografie,
+      it_handbuch, java_7, java_insel, javascript_ajax, joomla_1_5, linux,
+      linux_unix_prog, microsoft_netzwerk, oop, photoshop_cs2, photoshop_cs4,
+      php_pear, python, ruby_on_rails_2, shell_prog, ubuntu_10_04, ubuntu_11_04,
+      unix_guru, vb_2008, vb_2008_einstieg, vb_2010_einstieg, vcsharp_2008,
+      vcsharp_2010, vmware, windows_server_2008
+
+__Dependencies:__ Openbook cleaner was developed in Java 7 with compiler compliance level 1.6 (Java 6). So you
+should be fine with a JRE or JDK for Java 6. It also uses a few open source libraries (see
+[readme.txt](https://github.com/kriegaex/Galileo-Openbook-Cleaner/tree/master/galileo_openbook_cleaner/lib)
+for download links and installation instructions):
+
+  * __jsoup 1.6.3__ for parsing the "dirty" openbook HTML, selecting DOM elements and editing them, removing
+    navigation elements, ads and other types of clutter, and finally write a clean, pretty-printed HTML
+    document back to disk
+  * __JOpt Simple 4.3__ for parsing command-line parameters and showing a help page (usage info)
+  * __Apache Commons Compress 1.4.1__ for unzipping downloaded openbook archives. *Note: When Java 7 is
+    available on MacOS, this library might be removed again and we can revert to using the built-in Java
+    classes.*
+  * __AspectJ 1.7.0__ for cross-cutting concerns like logging, timing, tracing which are not part of the
+    main application logic. This helps to keep the core code clean and free from scattered code addressing
+    secondary concerns. The AspectJ runtime is part of the pre-packaged JAR available for [download]
+    (https://github.com/kriegaex/Galileo-Openbook-Cleaner/downloads), so you only need to install AspectJ if
+    you want to build the application by yourself.
 
 Because later I might want to use this *Git* repository as a refactoring showcase for my developer workshops,
-I am going to do the refactoring step by step, documenting progress in small, fine-granular *Git* changesets,
+I am going to do any refactoring step by step, documenting progress in small, fine-granular *Git* changesets,
 so later on I can review the evolutionary progress with others.
 
 As you can see, I am mostly doing this little project for myself, but I like to share the results and
