@@ -9,8 +9,8 @@ Version [###]
       cross-cutting concerns like timing and logging to keep the main application code cleaner
       and more readable, no longer cluttering it with calls to functionality outside the main
       scope of cleaning openbooks.
-    - Some minor bugs in page titles and layout (e.g. garbled keyboard symbols in Excel 2007 book,
-      appendix A, "Tastenkombinationen") were fixed.
+    - Some minor bugs in page titles and layout (e.g. font sizes in "UNIX guru" book, garbled keyboard
+      symbols in "Excel 2007" book [appendix A, "Tastenkombinationen"]) were fixed.
   Changed features
     - CLI (command line interface)
         * Option '-a' replaced by magic book ID 'all' which can be used instead
