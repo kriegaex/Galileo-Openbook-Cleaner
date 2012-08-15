@@ -2,21 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/jtidy-r938.jar" sourcepath="C:/Programme/Java/jtidy-r938/jtidy-r938-sources/src/main/java">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/Programme/Java/jtidy-r938/javadoc/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/tagsoup-1.2.1.jar" sourcepath="C:/Programme/Java/tagsoup-1.2.1/src">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/Programme/Java/tagsoup-1.2.1/doc/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/xom-1.2.8.jar" sourcepath="C:/Programme/Java/xom-1.2.8/src">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/Programme/Java/xom-1.2.8/apidocs/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/commons-compress-1.4.1.jar" sourcepath="C:/Programme/Java/commons-compress-1.4.1/commons-compress-1.4.1-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/C:/Programme/Java/commons-compress-1.4.1/apidocs/"/>
