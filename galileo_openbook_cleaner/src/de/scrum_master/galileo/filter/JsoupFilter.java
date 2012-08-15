@@ -71,7 +71,7 @@ public class JsoupFilter extends BasicFilter {
 		IMAGE_4                        ("a[rel=lightbox] > img"),
 		IMAGE_5                        ("a[onclick*=OpenWin] > img"),
 		IMAGE_BOX_1                    ("div.bildbox"),
-		IMAGE_BOX_2                    ("td.tabellentext:has(img)"),
+		IMAGE_BOX_2                    ("td.tabellentext:has(" + IMAGE_SMALL.query + ")"),
 		IMAGE_BOX_3                    ("a[href=#bild]:has(img)"),
 		IMAGE_BOX_4                    ("a[rel=lightbox]"),
 		IMAGE_BOX_5                    ("a[onclick*=OpenWin]:has(img)"),
