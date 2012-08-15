@@ -11,11 +11,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
+import de.scrum_master.galileo.Book;
 import de.scrum_master.util.SimpleLogger;
 import de.scrum_master.util.SimpleLogger.IndentMode;
 
@@ -31,9 +33,11 @@ public class JsoupFilter extends BasicFilter {
 	protected static final String FILE_EXTENSION = ".jsoup";
 
 	private static final String nonStandardCSS =    // CSS style overrides for "UNIX guru" book
-		"body { font-size: 13px; }\n" +
-		"h1 a, h2 a, h3 a, h4 a { font-size: 16px; }\n" +
-		"pre { font-size: 12px; }\n";
+		"body, p, a, tr, td, td.nav1, td.nav2, .weiter a, .zurueck a, " +
+			".themen, .white, .merksatz, .warnung, .beispiel, .anleser " +
+			"{ font-size: 13px; }\n" +
+		"h1 a, h2 a, h3 a, h4 a, h5 a { font-size: 16px; }\n" +
+		"pre, code { font-size: 12px; }\n";
 
 	private static enum XPath                       // XPath query strings mapped to symbolic names
 	{
@@ -45,8 +49,7 @@ public class JsoupFilter extends BasicFilter {
 		BODY_NODES                     ("body > *"),
 
 		NON_STANDARD_MAIN_CONTENT      ("td.buchtext > *"),
-		HEADING_1_TO_4                 ("h1, h2, h3, h4"),
-		NON_STANDARD_TOP_NAVIGATION    ("body > " + HEADING_1_TO_4.query + " + *"),
+		TOP_LEVEL_HEADINGS             ("body h1, h2, h3, h4"),
 		NON_STANDARD_BOTTOM_NAVIGATION ("div.navigation"),
 
 		GREY_TABLE                     ("table[bgcolor=#eeeeee]"),
@@ -92,8 +95,6 @@ public class JsoupFilter extends BasicFilter {
 		// Subchapter no. in TOC link title
 		SUBCHAPTER_TEXT          ("^([0-9A-H]+\\.)([0-9]+)(.*)"),
 
-		// Book title contains dash - TODO: unify with TITLE_DASHED_BOOK_PREFIX? ###
-		TITLE_WITH_DASH          ("^(.*)(Ruby on Rails 2 .+Entwickler.+)$"),
 		// "Kapitel: " between book title and chapter
 		TITLE_INFIX              ("^(.*)(?:Kapitel: )(.*)$"),
 		// "Galileo Computing/Design" prefix and " openbook/index" postfix
@@ -110,8 +111,8 @@ public class JsoupFilter extends BasicFilter {
 		}
 	}
 
-	public JsoupFilter(InputStream in, OutputStream out, File origFile) throws UnsupportedEncodingException {
-		super(in, out, origFile);
+	public JsoupFilter(InputStream in, OutputStream out, Book book, File origFile) throws UnsupportedEncodingException {
+		super(in, out, book, origFile);
 		output = new PrintStream(out, false, "windows-1252");
 		isTOCFile = origFile.getName().startsWith("index.htm");
 	}
@@ -143,58 +144,56 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void initialiseTitle(boolean removeBookTitle) {
-		// TODO: fix dashed titles (index.htm vs other chapters)
 		Element titleTag = (Element) xPathQuery(XPath.TITLE.query).first();
 		if (titleTag == null) {
 			// Should only happen for "teile.html" in book unix_guru
 			SimpleLogger.debug("No page title found");
 			return;
 		}
+
 		Matcher matcher;
 		pageTitle = titleTag.text();
-		matcher = Regex.TITLE_WITH_DASH.pattern.matcher(pageTitle);
-		if (isTOCFile && matcher.matches()) {
-			pageTitle = matcher.group(1) + "dummy - " + matcher.group(2);
-			SimpleLogger.debug("Step 0 Prep:       " + pageTitle);
-
-		}
 		SimpleLogger.debug("Original page title: " + pageTitle, IndentMode.INDENT_AFTER);
 
+		if (isTOCFile) {
+			// TOC file (index.htm*) gets preconfigured title
+			pageTitle = book.title;
+		}
+		else {
+			// Remove "Kapitel: " between book title and chapter
+			matcher = Regex.TITLE_INFIX.pattern.matcher(pageTitle);
+			if (matcher.matches())
+				pageTitle = matcher.group(1) + matcher.group(2);
+			SimpleLogger.debug("Step 1 In:         " + pageTitle);
 
-		// Remove "Kapitel: " between book title and chapter
-		matcher = Regex.TITLE_INFIX.pattern.matcher(pageTitle);
-		if (matcher.matches())
-			pageTitle = matcher.group(1) + matcher.group(2);
-		SimpleLogger.debug("Step 1 In:         " + pageTitle);
-
-		// Remove "Galileo Computing/Design" prefix and " openbook/index" postfix
-		matcher = Regex.TITLE_PREFIX_POSTFIX.pattern.matcher(pageTitle);
-		if (matcher.matches())
-			pageTitle = matcher.group(1);
-		SimpleLogger.debug("Step 2 PrePost:    " + pageTitle);
-
-		if (removeBookTitle) {
-			// Get text before dash for some books with " - " or " &ndash; " within the book title
-			matcher = Regex.TITLE_DASHED_BOOK_PREFIX.pattern.matcher(pageTitle);
-			String titlePrefix = "";
-			if (matcher.matches()) {
-				titlePrefix = matcher.group(1);
-				pageTitle = matcher.group(2);
-			}
-			SimpleLogger.debug("Step 3 DashedBook: " + pageTitle);
-
-			// Remove book title, only chapter number + name remain
-			matcher = Regex.TITLE_CHAPTER.pattern.matcher(pageTitle);
+			// Remove "Galileo Computing/Design" prefix and " openbook/index" postfix
+			matcher = Regex.TITLE_PREFIX_POSTFIX.pattern.matcher(pageTitle);
 			if (matcher.matches())
 				pageTitle = matcher.group(1);
-			else
-				pageTitle = titlePrefix + pageTitle;
-			SimpleLogger.debug("Step 4 Chapter:    " + pageTitle);
+			SimpleLogger.debug("Step 2 PrePost:    " + pageTitle);
+
+			if (removeBookTitle) {
+				// Get text before dash for some books with " - " or " &ndash; " within the book title
+				matcher = Regex.TITLE_DASHED_BOOK_PREFIX.pattern.matcher(pageTitle);
+				String titlePrefix = "";
+				if (matcher.matches()) {
+					titlePrefix = matcher.group(1);
+					pageTitle = matcher.group(2);
+				}
+				SimpleLogger.debug("Step 3 DashedBook: " + pageTitle);
+
+				// Remove book title, only chapter number + name remain
+				matcher = Regex.TITLE_CHAPTER.pattern.matcher(pageTitle);
+				if (matcher.matches())
+					pageTitle = matcher.group(1);
+				else
+					pageTitle = titlePrefix + pageTitle;
+				SimpleLogger.debug("Step 4 Chapter:    " + pageTitle);
+			}
 		}
 		SimpleLogger.debug("Clean page title:    " + pageTitle, IndentMode.DEDENT_BEFORE);
 
 		titleTag.text(pageTitle);
-//		titleTag.appendChild(pageTitle);
 	}
 
 	private void fixStructure() {
@@ -222,7 +221,7 @@ public class JsoupFilter extends BasicFilter {
 
 	/**
 	 * Individual fix for a buggy heading in "Unix Guru" book's node429.html
-	 * which would later make deletion of XPath.NON_STANDARD_TOP_NAVIGATION fail
+	 * which would later make deletion of XPath.FIRST_HEADING fail
 	 * in method removeClutterWithinMainContent().
 	 */
 	private void fixNode429() {
@@ -245,8 +244,22 @@ public class JsoupFilter extends BasicFilter {
 			if (mainContent.size() == 0)
 				mainContent = xPathQuery(XPath.MAIN_CONTENT_2.query);
 		}
+		deleteNodes(XPath.COMMENTS.query);
+		removeComments();
 		deleteNodes(XPath.BODY_NODES.query);
 		moveNodesTo(mainContent, bodyTag);
+	}
+
+	private void removeComments() {
+		for (Element element : document.getAllElements()) {
+			List<Node> comments = new ArrayList<Node>();
+			for (Node node : element.childNodes()) {
+				if (node instanceof Comment)
+					comments.add(node);
+			}
+			for (Node node : comments)
+				node.remove();
+		}
 	}
 
 	private void removeClutterWithinMainContent() {
@@ -256,7 +269,7 @@ public class JsoupFilter extends BasicFilter {
 			removeFeedbackForm();
 		}
 		else {
-			deleteNodes(XPath.NON_STANDARD_TOP_NAVIGATION.query);
+			removeNonStandardTopNavigation();
 			deleteNodes(XPath.NON_STANDARD_BOTTOM_NAVIGATION.query);
 		}
 	}
@@ -282,15 +295,31 @@ public class JsoupFilter extends BasicFilter {
 			return;
 		int lastHrTagIndex = lastHrTag.siblingIndex();
 		List<Node> feedbackFormEtc = new ArrayList<Node>();
-		if (lastHrTag.siblingNodes().contains(xPathQuery(XPath.FEEDBACK_FORM.query).first())) {
-			for (Node node : lastHrTag.parent().childNodes()) {
-				if (node.siblingIndex() >= lastHrTagIndex || node.siblingIndex() == lastHrTagIndex - 1 &&
-					"br".equals(node.nodeName()))
-					feedbackFormEtc.add(node);
-			}
-			for (Node node : feedbackFormEtc)
-				node.remove();
+		if (!lastHrTag.siblingNodes().contains(xPathQuery(XPath.FEEDBACK_FORM.query).first()))
+			return;
+		for (Node node : lastHrTag.parent().childNodes()) {
+			if (
+				node.siblingIndex() >= lastHrTagIndex ||
+				node.siblingIndex() == lastHrTagIndex - 1 && "br".equals(node.nodeName())
+			)
+				feedbackFormEtc.add(node);
 		}
+		for (Node node : feedbackFormEtc)
+			node.remove();
+	}
+
+	private void removeNonStandardTopNavigation() {
+		Element firstHeading = xPathQuery(XPath.TOP_LEVEL_HEADINGS.query).first();
+		if (firstHeading == null)
+			return;
+		int firstHeadingIndex = firstHeading.siblingIndex();
+		List<Node> topNavigationEtc = new ArrayList<Node>();
+		for (Node node : firstHeading.parent().childNodes()) {
+			if (node.siblingIndex() < firstHeadingIndex)
+				topNavigationEtc.add(node);
+		}
+		for (Node node : topNavigationEtc)
+			node.remove();
 	}
 
 	private void overrideBackgroundImage() {

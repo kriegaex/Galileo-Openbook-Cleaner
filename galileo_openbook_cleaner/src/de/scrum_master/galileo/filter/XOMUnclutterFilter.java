@@ -41,9 +41,11 @@ public class XOMUnclutterFilter extends BasicFilter
 		new XPathContext("html", "http://www.w3.org/1999/xhtml");
 
 	private static final String nonStandardCSS =    // CSS style overrides for "UNIX guru" book
-		"body { font-size: 13px; }" +
-		"h1 a, h2 a, h3 a, h4 a { font-size: 16px; }" +
-		"pre { font-size: 12px; }";
+		"body, p, a, tr, td, td.nav1, td.nav2, .weiter a, .zurueck a, " +
+			".themen, .white, .merksatz, .warnung, .beispiel, .anleser " +
+			"{ font-size: 13px; }\n" +
+		"h1 a, h2 a, h3 a, h4 a, h5 a { font-size: 16px; }\n" +
+		"pre, code { font-size: 12px; }\n";
 
 	private static enum XPath                       // XPath query strings mapped to symbolic names
 	{
