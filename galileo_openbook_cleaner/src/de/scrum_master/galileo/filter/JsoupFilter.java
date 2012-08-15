@@ -39,7 +39,7 @@ public class JsoupFilter extends BasicFilter {
 		"h1 a, h2 a, h3 a, h4 a, h5 a { font-size: 16px; }\n" +
 		"pre, code { font-size: 12px; }\n";
 
-	private static enum XPath                       // XPath query strings mapped to symbolic names
+	private static enum Selector                   // Selector query strings mapped to symbolic names
 	{
 		HEAD                           ("head"),
 		TITLE                          ("head > title"),
@@ -83,7 +83,7 @@ public class JsoupFilter extends BasicFilter {
 
 		private final String query;
 
-		private XPath(String query) {
+		private Selector(String query) {
 			this.query = query;
 		}
 	}
@@ -132,8 +132,8 @@ public class JsoupFilter extends BasicFilter {
 
 	private void parseDocument() throws Exception {
 		document = Jsoup.parse(in, "windows-1252", "");
-		headTag = xPathQuery(XPath.HEAD.query).first();
-		bodyTag = xPathQuery(XPath.BODY.query).first();
+		headTag = selectorQuery(Selector.HEAD.query).first();
+		bodyTag = selectorQuery(Selector.BODY.query).first();
 		initialiseTitle(true);
 	}
 
@@ -144,7 +144,7 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void initialiseTitle(boolean removeBookTitle) {
-		Element titleTag = (Element) xPathQuery(XPath.TITLE.query).first();
+		Element titleTag = (Element) selectorQuery(Selector.TITLE.query).first();
 		if (titleTag == null) {
 			// Should only happen for "teile.html" in book unix_guru
 			SimpleLogger.debug("No page title found");
@@ -220,33 +220,31 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	/**
-	 * Individual fix for a buggy heading in "Unix Guru" book's node429.html
-	 * which would later make deletion of XPath.FIRST_HEADING fail
-	 * in method removeClutterWithinMainContent().
+	 * Individual fix for a buggy heading in "Unix Guru" book's node429.html which would later make
+	 * deletion of top navigation fail in method removeClutterWithinMainContent().
 	 */
 	private void fixNode429() {
 		if (! (origFile.getName().equals("node429.html") && pageTitle.contains("unix")))
 			return;
 		SimpleLogger.debug("Fixing buggy heading");
-		Element buggyParagraph = xPathQuery("p:containsOwn(gpGlossar18133)").first();
+		Element buggyParagraph = selectorQuery("p:containsOwn(gpGlossar18133)").first();
 		buggyParagraph.html("<h1><a>unix</a></h1>");
 	}
 
 	private void removeClutterAroundMainContent() {
 		// Keep JavaScript for source code colouring ('prettyPrint' function) in some books
-		// deleteNodes(XPath.SCRIPTS.query);
+		// deleteNodes(Selector.SCRIPTS.query);
 
-		Elements mainContent = xPathQuery(XPath.NON_STANDARD_MAIN_CONTENT.query);
+		Elements mainContent = selectorQuery(Selector.NON_STANDARD_MAIN_CONTENT.query);
 		if (mainContent.size() > 0)
 			hasStandardLayout = false;
 		else {
-			mainContent = xPathQuery(XPath.MAIN_CONTENT_1.query);
+			mainContent = selectorQuery(Selector.MAIN_CONTENT_1.query);
 			if (mainContent.size() == 0)
-				mainContent = xPathQuery(XPath.MAIN_CONTENT_2.query);
+				mainContent = selectorQuery(Selector.MAIN_CONTENT_2.query);
 		}
-		deleteNodes(XPath.COMMENTS.query);
 		removeComments();
-		deleteNodes(XPath.BODY_NODES.query);
+		deleteNodes(Selector.BODY_NODES.query);
 		moveNodesTo(mainContent, bodyTag);
 	}
 
@@ -264,13 +262,13 @@ public class JsoupFilter extends BasicFilter {
 
 	private void removeClutterWithinMainContent() {
 		if (hasStandardLayout) {
-			deleteNodes(XPath.JUMP_TO_TOP_LINK.query);
-			deleteNodes(XPath.GRAPHICAL_PARAGRAPH_SEPARATOR.query);
+			deleteNodes(Selector.JUMP_TO_TOP_LINK.query);
+			deleteNodes(Selector.GRAPHICAL_PARAGRAPH_SEPARATOR.query);
 			removeFeedbackForm();
 		}
 		else {
 			removeNonStandardTopNavigation();
-			deleteNodes(XPath.NON_STANDARD_BOTTOM_NAVIGATION.query);
+			deleteNodes(Selector.NON_STANDARD_BOTTOM_NAVIGATION.query);
 		}
 	}
 
@@ -290,12 +288,12 @@ public class JsoupFilter extends BasicFilter {
 	 * </pre>
 	 */
 	private void removeFeedbackForm() {
-		Element lastHrTag = xPathQuery(XPath.HR_TAGS.query).last();
+		Element lastHrTag = selectorQuery(Selector.HR_TAGS.query).last();
 		if (lastHrTag == null)
 			return;
 		int lastHrTagIndex = lastHrTag.siblingIndex();
 		List<Node> feedbackFormEtc = new ArrayList<Node>();
-		if (!lastHrTag.siblingNodes().contains(xPathQuery(XPath.FEEDBACK_FORM.query).first()))
+		if (!lastHrTag.siblingNodes().contains(selectorQuery(Selector.FEEDBACK_FORM.query).first()))
 			return;
 		for (Node node : lastHrTag.parent().childNodes()) {
 			if (
@@ -309,7 +307,7 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void removeNonStandardTopNavigation() {
-		Element firstHeading = xPathQuery(XPath.TOP_LEVEL_HEADINGS.query).first();
+		Element firstHeading = selectorQuery(Selector.TOP_LEVEL_HEADINGS.query).first();
 		if (firstHeading == null)
 			return;
 		int firstHeadingIndex = firstHeading.siblingIndex();
@@ -327,12 +325,12 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void fixImages() {
-		replaceByBigImages(xPathQuery(XPath.IMAGE_SMALL.query));
-		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_1.query), xPathQuery(XPath.IMAGE_1.query));
-		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_2.query), xPathQuery(XPath.IMAGE_2.query));
-		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_3.query), xPathQuery(XPath.IMAGE_3.query));
-		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_4.query), xPathQuery(XPath.IMAGE_4.query));
-		replaceBoxesByImages(xPathQuery(XPath.IMAGE_BOX_5.query), xPathQuery(XPath.IMAGE_5.query));
+		replaceByBigImages(selectorQuery(Selector.IMAGE_SMALL.query));
+		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_1.query), selectorQuery(Selector.IMAGE_1.query));
+		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_2.query), selectorQuery(Selector.IMAGE_2.query));
+		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_3.query), selectorQuery(Selector.IMAGE_3.query));
+		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_4.query), selectorQuery(Selector.IMAGE_4.query));
+		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_5.query), selectorQuery(Selector.IMAGE_5.query));
 	}
 
 	/*
@@ -344,7 +342,7 @@ public class JsoupFilter extends BasicFilter {
 	 * to be removed. This is done here.
 	 */
 	private void removeRedundantGreyTable() {
-		deleteNodes(XPath.GREY_TABLE.query);
+		deleteNodes(Selector.GREY_TABLE.query);
 	}
 
 	/*
@@ -363,7 +361,7 @@ public class JsoupFilter extends BasicFilter {
 	 * Find out if this page contains a link to the index (stichwort.htm*).
 	 */
 	private boolean hasIndexLink() {
-		return xPathQuery(XPath.INDEX_LINK.query).size() > 0;
+		return selectorQuery(Selector.INDEX_LINK.query).size() > 0;
 	}
 
 	/**
@@ -380,7 +378,7 @@ public class JsoupFilter extends BasicFilter {
 			SimpleLogger.debug("Book is an exception - not creating index link (no stichwort.htm*)");
 			return;
 		}
-		Element indexLink = (Element) xPathQuery(XPath.TOC_HEADING_2.query).first().clone();
+		Element indexLink = (Element) selectorQuery(Selector.TOC_HEADING_2.query).first().clone();
 		String fileExtension = indexLink.childNode(1).attr("href").contains(".html") ? ".html" : ".htm";
 		indexLink.childNode(1).attr("href", "stichwort" + fileExtension);
 		((Element) indexLink.childNode(1)).text("Index");
@@ -417,7 +415,7 @@ public class JsoupFilter extends BasicFilter {
 		}
 
 		int fixedLinksCount = 0;
-		Elements links = xPathQuery(XPath.ALL_LINKS.query);
+		Elements links = selectorQuery(Selector.ALL_LINKS.query);
 		for (Element link : links) {
 			String href = link.attr("href");
 			String text = link.text();
@@ -446,7 +444,7 @@ public class JsoupFilter extends BasicFilter {
 	 * stichwort.htm*). Because it looks ugly, we remove everything after the index link.
 	 */
 	private void removeContentAfterIndexLink() {
-		deleteNodes(XPath.AFTER_INDEX_LINK.query);
+		deleteNodes(Selector.AFTER_INDEX_LINK.query);
 	}
 
 	private static void replaceByBigImages(Elements smallImages) {
@@ -465,7 +463,7 @@ public class JsoupFilter extends BasicFilter {
 	 * ============================================================================================
 	 */
 
-	private Elements xPathQuery(String query) {
+	private Elements selectorQuery(String query) {
 		return document.select(query);
 	}
 
@@ -474,8 +472,8 @@ public class JsoupFilter extends BasicFilter {
 			element.remove();
 	}
 
-	private void deleteNodes(String xPathQuery) {
-		deleteNodes(xPathQuery(xPathQuery));
+	private void deleteNodes(String query) {
+		deleteNodes(selectorQuery(query));
 	}
 
 	private static void moveNodesTo(Elements sourceNodes, Element targetElement) {
