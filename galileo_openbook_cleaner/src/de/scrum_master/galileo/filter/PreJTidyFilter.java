@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.scrum_master.galileo.Book;
 import de.scrum_master.util.SimpleLogger;
 
 /**
@@ -27,8 +28,8 @@ public class PreJTidyFilter extends BasicFilter
 	private static final Pattern REGEX_TITLE      = Pattern.compile("(<title>.+)(Ruby on Rails 2 .+Entwickler.+)");
 	private static final Pattern REGEX_MAIN_TABLE = Pattern.compile("<table .*bgcolor=.#eeeeee.*");
 
-	public PreJTidyFilter(InputStream in, OutputStream out, File origFile) {
-		super(in, out, origFile);
+	public PreJTidyFilter(InputStream in, OutputStream out, Book book, File origFile) {
+		super(in, out, book, origFile);
 		input = new BufferedReader(new InputStreamReader(in));
 		output = new PrintStream(out);
 	}

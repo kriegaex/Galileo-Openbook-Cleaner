@@ -12,7 +12,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import de.scrum_master.galileo.Book;
+
 public class FilterChain implements Runnable {
+	private Book book;
 	private File origFile;
 	private InputStream source;
 	private OutputStream target;
@@ -20,10 +23,12 @@ public class FilterChain implements Runnable {
 	private Queue<Class<? extends BasicFilter>> filters;
 
 	public FilterChain(
-		File origFile, InputStream source, OutputStream target,
+		Book book, File origFile,
+		InputStream source, OutputStream target,
 		boolean runMultiThreaded,
 		Queue<Class<? extends BasicFilter>> filters
 	) {
+		this.book = book;
 		this.origFile = origFile;
 		this.source = source;
 		this.target = target;
@@ -32,12 +37,14 @@ public class FilterChain implements Runnable {
 	}
 
 	public FilterChain(
-		File origFile, File source, File target,
+		Book book, File origFile,
+		File source, File target,
 		boolean runMultiThreaded,
 		Queue<Class<? extends BasicFilter>> filters
 	) throws FileNotFoundException {
 		this(
-			origFile, new FileInputStream(source), new FileOutputStream(target),
+			book, origFile,
+			new FileInputStream(source), new FileOutputStream(target),
 			runMultiThreaded,
 			filters
 		);
@@ -96,8 +103,8 @@ public class FilterChain implements Runnable {
 
 				// Instantiate filter and add it to list for running it later
 				BasicFilter filter = filterClass
-					.getConstructor(InputStream.class, OutputStream.class, File.class)
-					.newInstance(in, out, origFile);
+					.getConstructor(InputStream.class, OutputStream.class, Book.class, File.class)
+					.newInstance(in, out, book, origFile);
 				filterInstances.add(filter);
 			}
 			for (BasicFilter filter : filterInstances) {

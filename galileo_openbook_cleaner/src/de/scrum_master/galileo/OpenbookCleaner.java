@@ -87,6 +87,6 @@ public class OpenbookCleaner
 //			filters.add(JsoupFilter.class);
 //			filters.add(JTidyFilter.class);
 
-		return new FilterChain(origFile, source, target, options.threading == 1, filters);
+		return new FilterChain(book, origFile, source, target, options.threading == 1, filters);
 	}
 }

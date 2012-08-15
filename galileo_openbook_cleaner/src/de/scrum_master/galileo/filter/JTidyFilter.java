@@ -6,6 +6,8 @@ import java.io.OutputStream;
 
 import org.w3c.tidy.Tidy;
 
+import de.scrum_master.galileo.Book;
+
 
 public class JTidyFilter extends BasicFilter
 {
@@ -13,8 +15,8 @@ public class JTidyFilter extends BasicFilter
 
 	protected static final String FILE_EXTENSION = ".tidy";
 
-	public JTidyFilter(InputStream in, OutputStream out, File origFile) {
-		super(in, out, origFile);
+	public JTidyFilter(InputStream in, OutputStream out, Book book, File origFile) {
+		super(in, out, book, origFile);
 
 		tidy.setXHTML(true);
 		tidy.setQuiet(true);

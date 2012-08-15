@@ -5,15 +5,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import de.scrum_master.galileo.Book;
+
 public abstract class BasicFilter implements Runnable
 {
 	protected InputStream in;          // Where to read input from
 	protected OutputStream out;        // Where to write conversion result to
+	protected Book book;               // The book we are currently dealing with
 	protected File origFile;           // Needed to determine special files like index.htm
 
-	protected BasicFilter(InputStream in, OutputStream out, File origFile) {
+	protected BasicFilter(InputStream in, OutputStream out, Book book, File origFile) {
 		this.in  = in;
 		this.out = out;
+		this.book = book;
 		this.origFile = origFile;
 	}
 

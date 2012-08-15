@@ -20,6 +20,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import de.scrum_master.galileo.Book;
 import de.scrum_master.util.SimpleLogger;
 import de.scrum_master.util.SimpleLogger.IndentMode;
 
@@ -119,10 +120,10 @@ public class XOMUnclutterFilter extends BasicFilter
 		}
 	}
 
-	public XOMUnclutterFilter(InputStream in, OutputStream out, File origFile)
+	public XOMUnclutterFilter(InputStream in, OutputStream out, Book book, File origFile)
 		throws SAXException
 	{
-		super(in, out, origFile);
+		super(in, out, book, origFile);
 		isTOCFile = origFile.getName().startsWith("index.htm");
 		tagsoup = XMLReaderFactory.createXMLReader("org.ccil.cowan.tagsoup.Parser");
 		builder = new Builder(tagsoup);
@@ -156,40 +157,51 @@ public class XOMUnclutterFilter extends BasicFilter
 
 	private void initialiseTitle(boolean removeBookTitle) {
 		Element titleTag = (Element) xPathQuery(XPath.TITLE.query).get(0);
+		if (titleTag == null) {
+			// Should only happen for "teile.html" in book unix_guru
+			SimpleLogger.debug("No page title found");
+			return;
+		}
+
+		Matcher matcher;
 		pageTitle = titleTag.getValue();
 		SimpleLogger.debug("Original page title: " + pageTitle, IndentMode.INDENT_AFTER);
 
-		Matcher matcher;
+		if (isTOCFile) {
+			// TOC file (index.htm*) gets preconfigured title
+			pageTitle = book.title;
+		}
+		else {
+			// Remove "Kapitel: " between book title and chapter
+			matcher = Regex.TITLE_INFIX.pattern.matcher(pageTitle);
+			if (matcher.matches())
+				pageTitle = matcher.group(1) + matcher.group(2);
+			SimpleLogger.debug("Step 1 In:         " + pageTitle);
 
-		// Remove "Kapitel: " between book title and chapter
-		matcher = Regex.TITLE_INFIX.pattern.matcher(pageTitle);
-		if (matcher.matches())
-			pageTitle = matcher.group(1) + matcher.group(2);
-		SimpleLogger.debug("Step 1 In:         " + pageTitle);
-
-		// Remove "Galileo Computing/Design" prefix and " openbook/index" postfix
-		matcher = Regex.TITLE_PREFIX_POSTFIX.pattern.matcher(pageTitle);
-		if (matcher.matches())
-			pageTitle = matcher.group(1);
-		SimpleLogger.debug("Step 2 PrePost:    " + pageTitle);
-
-		if (removeBookTitle) {
-			// Get text before dash for some books with " - " or " &ndash; " within the book title
-			matcher = Regex.TITLE_DASHED_BOOK_PREFIX.pattern.matcher(pageTitle);
-			String titlePrefix = "";
-			if (matcher.matches()) {
-				titlePrefix = matcher.group(1);
-				pageTitle = matcher.group(2);
-			}
-			SimpleLogger.debug("Step 3 DashedBook: " + pageTitle);
-
-			// Remove book title, only chapter number + name remain
-			matcher = Regex.TITLE_CHAPTER.pattern.matcher(pageTitle);
+			// Remove "Galileo Computing/Design" prefix and " openbook/index" postfix
+			matcher = Regex.TITLE_PREFIX_POSTFIX.pattern.matcher(pageTitle);
 			if (matcher.matches())
 				pageTitle = matcher.group(1);
-			else
-				pageTitle = titlePrefix + pageTitle;
-			SimpleLogger.debug("Step 4 Chapter:    " + pageTitle);
+			SimpleLogger.debug("Step 2 PrePost:    " + pageTitle);
+
+			if (removeBookTitle) {
+				// Get text before dash for some books with " - " or " &ndash; " within the book title
+				matcher = Regex.TITLE_DASHED_BOOK_PREFIX.pattern.matcher(pageTitle);
+				String titlePrefix = "";
+				if (matcher.matches()) {
+					titlePrefix = matcher.group(1);
+					pageTitle = matcher.group(2);
+				}
+				SimpleLogger.debug("Step 3 DashedBook: " + pageTitle);
+
+				// Remove book title, only chapter number + name remain
+				matcher = Regex.TITLE_CHAPTER.pattern.matcher(pageTitle);
+				if (matcher.matches())
+					pageTitle = matcher.group(1);
+				else
+					pageTitle = titlePrefix + pageTitle;
+				SimpleLogger.debug("Step 4 Chapter:    " + pageTitle);
+			}
 		}
 		SimpleLogger.debug("Clean page title:    " + pageTitle, IndentMode.DEDENT_BEFORE);
 
