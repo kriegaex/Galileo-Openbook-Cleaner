@@ -379,9 +379,18 @@ public class JsoupFilter extends BasicFilter {
 			return;
 		}
 		Element indexLink = (Element) selectorQuery(Selector.TOC_HEADING_2.query).first().clone();
-		String fileExtension = indexLink.childNode(1).attr("href").contains(".html") ? ".html" : ".htm";
-		indexLink.childNode(1).attr("href", "stichwort" + fileExtension);
-		((Element) indexLink.childNode(1)).text("Index");
+		String fileExtension = ".htm";
+		Node ankerNode = null;
+		for (Node node : indexLink.childNodes()) {
+			if (node.hasAttr("href")) {
+				ankerNode = node;
+				if (ankerNode.attr("href").contains(".html"))
+					fileExtension = ".html";
+				break;
+			}
+		}
+		ankerNode.attr("href", "stichwort" + fileExtension);
+		((Element) ankerNode).text("Index");
 		bodyTag.appendChild(indexLink);
 	}
 
