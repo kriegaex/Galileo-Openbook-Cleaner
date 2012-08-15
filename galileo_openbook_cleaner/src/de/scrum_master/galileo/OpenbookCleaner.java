@@ -74,18 +74,24 @@ public class OpenbookCleaner
 	{
 		Queue<Class<? extends BasicFilter>> filters = new LinkedList<Class<? extends BasicFilter>>();
 
-		// Step 1: clean up raw HTML where necessary to make it parseable by JTidy
-//		if (book.equals(Book.RUBY_ON_RAILS_2))
-//			filters.add(PreJTidyFilter.class);
-		// Step 2: convert raw HTML into valid XHTML using JTidy
-//		filters.add(JTidyFilter.class);
-		filters.add(JsoupFilter.class);
-		// Step 3: remove clutter (header, footer, navigation, ads) using XOM
-//		filters.add(XOMUnclutterFilter.class);
-		// Step 4: pretty-print XOM output again using JTidy (optional)
-//		if (options.prettyPrint != 0)
-//			filters.add(JsoupFilter.class);
-//			filters.add(JTidyFilter.class);
+		final boolean useOldFilterChain = false;
+
+		if (useOldFilterChain) {
+			// Step 1: clean up raw HTML where necessary to make it parseable by JTidy
+			if (book.equals(Book.RUBY_ON_RAILS_2))
+				filters.add(PreJTidyFilter.class);
+			// Step 2: convert raw HTML into valid XHTML using JTidy
+			filters.add(JTidyFilter.class);
+			// Step 3: remove clutter (header, footer, navigation, ads) using XOM
+			filters.add(XOMUnclutterFilter.class);
+			// Step 4: pretty-print XOM output again using JTidy (optional)
+			if (options.prettyPrint != 0)
+				filters.add(JTidyFilter.class);
+		}
+		else {
+			// The all new and shiny one-in-all filter :)
+			filters.add(JsoupFilter.class);
+		}
 
 		return new FilterChain(book, origFile, source, target, options.threading == 1, filters);
 	}
