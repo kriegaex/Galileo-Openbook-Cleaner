@@ -24,7 +24,6 @@ class Options extends OptionParser {
 		OptionSpec<Void>    sp_showHelp    = makeOptionSpec("?", "help",         "Display this help text", null);
 		OptionSpec<File>    sp_downloadDir = makeOptionSpec("d", "download-dir", "Download directory for openbooks; must exist", new File("."));
 		OptionSpec<Integer> sp_logLevel    = makeOptionSpec("l", "log-level",    "Log level (0=normal, 1=verbose, 2=debug, 3=trace)", 0);
-		OptionSpec<Integer> sp_prettyPrint = makeOptionSpec("p", "pretty-print", "Pretty-print after clean-up (0=no, 1=yes); no saves ~15% processing time", 1);
 		OptionSpec<Integer> sp_threading   = makeOptionSpec("t", "threading",    "Threading mode (0=single, 1=multi); single is slower, but better for diagnostics)", 1);
 
 		// Parse options
@@ -34,7 +33,6 @@ class Options extends OptionParser {
 		showHelp = optionSet.has(sp_showHelp);
 		downloadDir = sp_downloadDir.value(optionSet);
 		logLevel = sp_logLevel.value(optionSet);
-		prettyPrint = sp_prettyPrint.value(optionSet);
 		threading = sp_threading.value(optionSet);
 		for (String book_id : optionSet.nonOptionArguments()) {
 			if ("all".equalsIgnoreCase(book_id)) {

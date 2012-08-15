@@ -24,7 +24,9 @@ Version [###]
          '-d|--download-dir' with default '.' (current directory)
         * Option '-s' replaced by '-t|--threading=(0|1)' with a default of 1 (multi)
         * Option '-n' replaced by '-p|--pretty-print=(0|1)' with a default of 1 (pretty).
-          This avoids the negative flag "no pretty-print".
+          This avoids the negative flag "no pretty-print". Later this option was removed altogether
+          because the old filter chain was removed and jsoup introduced. So the flag became redundant
+          because jsoup always pretty-prints.
         * Option '-?' can also be written as '--help' now
   Bugfixes
   Internal changes
