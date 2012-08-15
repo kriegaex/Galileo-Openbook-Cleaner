@@ -1,12 +1,16 @@
 Version [###]
   New features
-    - The souce code is now explicitly licenced under GPLv3 (see file COPYING)
+    - The souce code is now explicitly licenced under GPLv3 (see file COPYING).
+    - Openbook conversion is now much faster because the switch to jsoup (see "internal changes").
+    - For the same reason the runnable JAR file is now smaller, containing fewer libraries. 
     - Not a new feature, but a new requirement for developers wishing to edit the code or build
       the program from source: The Eclipse project is no longer a plain Java project, but an
       AspectJ project because I now use AOP (aspect-oriented programming) techniques for
       cross-cutting concerns like timing and logging to keep the main application code cleaner
       and more readable, no longer cluttering it with calls to functionality outside the main
-      scope of cleaning openbooks. 
+      scope of cleaning openbooks.
+    - Some minor bugs in page titles and layout (e.g. garbled keyboard symbols in Excel 2007 book,
+      appendix A, "Tastenkombinationen") were fixed.
   Changed features
     - CLI (command line interface)
         * Option '-a' replaced by magic book ID 'all' which can be used instead
@@ -24,7 +28,8 @@ Version [###]
         * Option '-?' can also be written as '--help' now
   Bugfixes
   Internal changes
-    - Rename BookInfo to just Book
+    - Rename BookInfo to just Book and add member 'title' containing a book title to be used on the
+      TOC page (index.htm*).
     - Temporarily add JCommander 1.26 as CLI parsing tool. Later upgraded to 1.27 and then removed
       again because of the switch to JOpt Simple. JCommander ist still available in branch
       cli_jcommander at the time of writing this (commit 0050d681).

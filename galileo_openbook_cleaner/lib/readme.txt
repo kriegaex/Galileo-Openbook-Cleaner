@@ -1,13 +1,7 @@
 You need to add the following JAR files here in order to make the Eclipse build work:
 
-  JTidy r938
-    http://sourceforge.net/projects/jtidy/files/JTidy/r938/jtidy-r938.jar/download
-
-  XOM 1.2.8
-    http://www.cafeconleche.org/XOM/xom-1.2.8.jar
-
-  TagSoup 1.2.1
-    http://ccil.org/~cowan/XML/tagsoup/tagsoup-1.2.1.jar
+  jsoup 1.6.3
+    http://jsoup.org/packages/jsoup-1.6.3.jar
 
   JOpt Simple 4.3
     http://central.maven.org/maven2/net/sf/jopt-simple/jopt-simple/4.3/jopt-simple-4.3.jar
@@ -27,3 +21,16 @@ You need to add the following JAR files here in order to make the Eclipse build 
     but Juno (3.8 and 4.2) is already available and should probably be your IDE version of
     choice if you do a fresh install. 4.2 is the new reference platform, so maybe you want
     to choose 4.2.
+
+The following JAR files are no longer needed and only listed for historic reasons or in case
+somebody wants to use them again (last version using them is tagged 'selectable_filter_chain'):
+
+  JTidy r938
+    http://sourceforge.net/projects/jtidy/files/JTidy/r938/jtidy-r938.jar/download
+
+  XOM 1.2.8
+    http://www.cafeconleche.org/XOM/xom-1.2.8.jar
+
+  TagSoup 1.2.1
+    http://ccil.org/~cowan/XML/tagsoup/tagsoup-1.2.1.jar
+
