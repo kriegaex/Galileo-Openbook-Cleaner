@@ -254,8 +254,7 @@ public class JsoupFilter extends BasicFilter {
 				if (node instanceof Comment)
 					comments.add(node);
 			}
-			for (Node node : comments)
-				node.remove();
+			deleteNodes(comments);
 		}
 	}
 
@@ -354,8 +353,7 @@ public class JsoupFilter extends BasicFilter {
 			if (node.siblingIndex() < firstHeadingIndex)
 				topNavigationEtc.add(node);
 		}
-		for (Node node : topNavigationEtc)
-			node.remove();
+		deleteNodes(topNavigationEtc);
 	}
 
 	private void overrideBackgroundImage() {
