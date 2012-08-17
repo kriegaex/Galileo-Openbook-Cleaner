@@ -33,13 +33,6 @@ public class JsoupFilter extends BasicFilter {
 
 	protected static final String FILE_EXTENSION = ".jsoup";
 
-	private static final String nonStandardCSS =    // CSS style overrides for "UNIX guru" book
-		"body, p, a, tr, td, td.nav1, td.nav2, .weiter a, .zurueck a, " +
-			".themen, .white, .merksatz, .warnung, .beispiel, .anleser " +
-			"{ font-size: 13px; }\n" +
-		"h1 a, h2 a, h3 a, h4 a, h5 a { font-size: 16px; }\n" +
-		"pre, code { font-size: 12px; }\n";
-
 	private static enum Selector                   // Selector query strings mapped to symbolic names
 	{
 		HEAD                           ("head"),
@@ -384,11 +377,19 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	/*
-	 * Font sizes for non-standard layout book "UNIX guru" are too small in general and
-	 * for page heading in particular. Fix it by adding a custom CSS style tag to each page.
+	 * Font sizes for non-standard layout book "UNIX guru" are too small in general and for
+	 * page heading in particular. Fix it by adding a custom CSS style tag to each page
+	 * so as to avoid having to patch the stylesheet file.
 	 */
 	private void fixFontSizesForNonStandardLayout() {
-		headTag.append("<style type=\"text/css\">\n" + nonStandardCSS + "</style>\n");
+		headTag.append(
+			"<style type=\"text/css\">\n" +
+				"body, p, a, tr, td, td.nav1, td.nav2, .weiter a, .zurueck a, " +
+				".themen, .white, .merksatz, .warnung, .beispiel, .anleser { font-size: 13px; }\n" +
+				"h1 a, h2 a, h3 a, h4 a, h5 a { font-size: 16px; }\n" +
+				"pre, code { font-size: 12px; }\n" +
+			"</style>\n"
+		);
 	}
 
 	/*
