@@ -350,10 +350,6 @@ public class JsoupFilter extends BasicFilter {
 	 * for page heading in particular. Fix it by adding a custom CSS style tag to each page.
 	 */
 	private void fixFontSizesForNonStandardLayout() {
-//		Element styleTag = new Element("style");
-//		styleTag.addAttribute(new Attribute("type", "text/css"));
-//		styleTag.appendChild(nonStandardCSS);
-//		headTag.appendChild(styleTag);
 		headTag.append("<style type=\"text/css\">\n" + nonStandardCSS + "</style>\n");
 	}
 
