@@ -216,7 +216,6 @@ public class JsoupFilter extends BasicFilter {
 
 	private void writeDocument() throws Exception {
 		output.print(document);
-//		new Serializer(out, "ISO-8859-1").write(document);
 	}
 
 	/**
