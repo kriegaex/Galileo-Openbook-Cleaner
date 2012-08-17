@@ -76,6 +76,8 @@ public class JsoupFilter extends BasicFilter {
 		IMAGE_BOX_4                    ("a[rel=lightbox]"),
 		IMAGE_BOX_5                    ("a[onclick*=OpenWin]:has(img)"),
 
+		NODE429_BUGGY_PARAGRAPH        ("p:containsOwn(gpGlossar18133)"),
+
 		TOC_HEADING_2                  ("h2:has(a)"),
 		INDEX_LINK                     ("a[href*=stichwort.htm]"),
 		AFTER_INDEX_LINK               (INDEX_LINK.query + " + *"),
@@ -132,8 +134,8 @@ public class JsoupFilter extends BasicFilter {
 
 	private void parseDocument() throws Exception {
 		document = Jsoup.parse(in, "windows-1252", "");
-		headTag = selectorQuery(Selector.HEAD.query).first();
-		bodyTag = selectorQuery(Selector.BODY.query).first();
+		headTag = selectorQuery(Selector.HEAD).first();
+		bodyTag = selectorQuery(Selector.BODY).first();
 		initialiseTitle(true);
 	}
 
@@ -144,7 +146,7 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void initialiseTitle(boolean removeBookTitle) {
-		Element titleTag = (Element) selectorQuery(Selector.TITLE.query).first();
+		Element titleTag = (Element) selectorQuery(Selector.TITLE).first();
 		if (titleTag == null) {
 			// Should only happen for "teile.html" in book unix_guru
 			SimpleLogger.debug("No page title found");
@@ -226,24 +228,24 @@ public class JsoupFilter extends BasicFilter {
 		if (! (origFile.getName().equals("node429.html") && pageTitle.contains("unix")))
 			return;
 		SimpleLogger.debug("Fixing buggy heading");
-		Element buggyParagraph = selectorQuery("p:containsOwn(gpGlossar18133)").first();
+		Element buggyParagraph = selectorQuery(Selector.NODE429_BUGGY_PARAGRAPH).first();
 		buggyParagraph.html("<h1><a>unix</a></h1>");
 	}
 
 	private void removeClutterAroundMainContent() {
 		// Keep JavaScript for source code colouring ('prettyPrint' function) in some books
-		// deleteNodes(Selector.SCRIPTS.query);
+		// deleteNodes(Selector.SCRIPTS);
 
-		Elements mainContent = selectorQuery(Selector.NON_STANDARD_MAIN_CONTENT.query);
+		Elements mainContent = selectorQuery(Selector.NON_STANDARD_MAIN_CONTENT);
 		if (mainContent.size() > 0)
 			hasStandardLayout = false;
 		else {
-			mainContent = selectorQuery(Selector.MAIN_CONTENT_1.query);
+			mainContent = selectorQuery(Selector.MAIN_CONTENT_1);
 			if (mainContent.size() == 0)
-				mainContent = selectorQuery(Selector.MAIN_CONTENT_2.query);
+				mainContent = selectorQuery(Selector.MAIN_CONTENT_2);
 		}
 		removeComments();
-		deleteNodes(Selector.BODY_NODES.query);
+		deleteNodes(Selector.BODY_NODES);
 		moveNodesTo(mainContent, bodyTag);
 	}
 
@@ -260,13 +262,13 @@ public class JsoupFilter extends BasicFilter {
 
 	private void removeClutterWithinMainContent() {
 		if (hasStandardLayout) {
-			deleteNodes(Selector.JUMP_TO_TOP_LINK.query);
-			deleteNodes(Selector.GRAPHICAL_PARAGRAPH_SEPARATOR.query);
+			deleteNodes(Selector.JUMP_TO_TOP_LINK);
+			deleteNodes(Selector.GRAPHICAL_PARAGRAPH_SEPARATOR);
 			removeFeedbackForm();
 		}
 		else {
 			removeNonStandardTopNavigation();
-			deleteNodes(Selector.NON_STANDARD_BOTTOM_NAVIGATION.query);
+			deleteNodes(Selector.NON_STANDARD_BOTTOM_NAVIGATION);
 		}
 	}
 
@@ -277,7 +279,7 @@ public class JsoupFilter extends BasicFilter {
 	 *   - everything after the feedback form until the rest of the document
 	 */
 	private void removeFeedbackForm() {
-		Element feedbackForm = selectorQuery(Selector.FEEDBACK_FORM.query).first();
+		Element feedbackForm = selectorQuery(Selector.FEEDBACK_FORM).first();
 		if (feedbackForm == null) {
 			SimpleLogger.debug("No feedback form found -> nothing to remove");
 			return;
@@ -344,7 +346,7 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void removeNonStandardTopNavigation() {
-		Element firstHeading = selectorQuery(Selector.TOP_LEVEL_HEADINGS.query).first();
+		Element firstHeading = selectorQuery(Selector.TOP_LEVEL_HEADINGS).first();
 		if (firstHeading == null)
 			return;
 		int firstHeadingIndex = firstHeading.siblingIndex();
@@ -361,12 +363,12 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void fixImages() {
-		replaceByBigImages(selectorQuery(Selector.IMAGE_SMALL.query));
-		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_1.query), selectorQuery(Selector.IMAGE_1.query));
-		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_2.query), selectorQuery(Selector.IMAGE_2.query));
-		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_3.query), selectorQuery(Selector.IMAGE_3.query));
-		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_4.query), selectorQuery(Selector.IMAGE_4.query));
-		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_5.query), selectorQuery(Selector.IMAGE_5.query));
+		replaceByBigImages(selectorQuery(Selector.IMAGE_SMALL));
+		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_1), selectorQuery(Selector.IMAGE_1));
+		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_2), selectorQuery(Selector.IMAGE_2));
+		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_3), selectorQuery(Selector.IMAGE_3));
+		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_4), selectorQuery(Selector.IMAGE_4));
+		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_5), selectorQuery(Selector.IMAGE_5));
 	}
 
 	/*
@@ -378,7 +380,7 @@ public class JsoupFilter extends BasicFilter {
 	 * to be removed. This is done here.
 	 */
 	private void removeRedundantGreyTable() {
-		deleteNodes(Selector.GREY_TABLE.query);
+		deleteNodes(Selector.GREY_TABLE);
 	}
 
 	/*
@@ -393,7 +395,7 @@ public class JsoupFilter extends BasicFilter {
 	 * Find out if this page contains a link to the index (stichwort.htm*).
 	 */
 	private boolean hasIndexLink() {
-		return selectorQuery(Selector.INDEX_LINK.query).size() > 0;
+		return selectorQuery(Selector.INDEX_LINK).size() > 0;
 	}
 
 	/**
@@ -410,7 +412,7 @@ public class JsoupFilter extends BasicFilter {
 			SimpleLogger.debug("Book is an exception - not creating index link (no stichwort.htm*)");
 			return;
 		}
-		Element indexLink = (Element) selectorQuery(Selector.TOC_HEADING_2.query).first().clone();
+		Element indexLink = (Element) selectorQuery(Selector.TOC_HEADING_2).first().clone();
 		String fileExtension = ".htm";
 		Node ankerNode = null;
 		for (Node node : indexLink.childNodes()) {
@@ -456,7 +458,7 @@ public class JsoupFilter extends BasicFilter {
 		}
 
 		int fixedLinksCount = 0;
-		Elements links = selectorQuery(Selector.ALL_LINKS.query);
+		Elements links = selectorQuery(Selector.ALL_LINKS);
 		for (Element link : links) {
 			String href = link.attr("href");
 			String text = link.text();
@@ -485,7 +487,7 @@ public class JsoupFilter extends BasicFilter {
 	 * stichwort.htm*). Because it looks ugly, we remove everything after the index link.
 	 */
 	private void removeContentAfterIndexLink() {
-		deleteNodes(Selector.AFTER_INDEX_LINK.query);
+		deleteNodes(Selector.AFTER_INDEX_LINK);
 	}
 
 	private static void replaceByBigImages(Elements smallImages) {
@@ -504,8 +506,8 @@ public class JsoupFilter extends BasicFilter {
 	 * ============================================================================================
 	 */
 
-	private Elements selectorQuery(String query) {
-		return document.select(query);
+	private Elements selectorQuery(Selector selector) {
+		return document.select(selector.query);
 	}
 
 	private static void deleteNodes(List<Node> nodes) {
@@ -513,8 +515,8 @@ public class JsoupFilter extends BasicFilter {
 			((Node) node).remove();
 	}
 
-	private void deleteNodes(String query) {
-		selectorQuery(query).remove();
+	private void deleteNodes(Selector selector) {
+		selectorQuery(selector).remove();
 	}
 
 	private static void moveNodesTo(Elements sourceNodes, Element targetElement) {
