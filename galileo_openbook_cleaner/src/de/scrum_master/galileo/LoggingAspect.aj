@@ -16,6 +16,7 @@ privileged aspect LoggingAspect
 	pointcut initialiseTitle()      : execution(* *Filter.initialiseTitle(boolean));
 	pointcut createIndexLink()      : execution(* *Filter.createIndexLink());
 	pointcut fixFaultyLinkTargets() : execution(* *Filter.fixFaultyLinkTargets());
+	pointcut removeFeedbackForm()   : execution(* *Filter.removeFeedbackForm());
 
 	void around(Book book) : processBook() && args(book) {
 		String message = "Book: " + book.unpackDirectory;
@@ -70,6 +71,13 @@ privileged aspect LoggingAspect
 		String message = "TOC file: checking for faulty link targets";
 		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
 		proceed(filter);
+		SimpleLogger.dedent();
+	}
+	
+	void around() : removeFeedbackForm() {
+		String message = "Removing feedback form (if any)";
+		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
+		proceed();
 		SimpleLogger.dedent();
 	}
 }
