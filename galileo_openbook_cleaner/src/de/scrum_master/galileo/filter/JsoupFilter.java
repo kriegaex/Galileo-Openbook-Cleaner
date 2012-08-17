@@ -62,9 +62,7 @@ public class JsoupFilter extends BasicFilter {
 		JUMP_TO_TOP_LINK               ("div:has(a[href=#top])"),
 		GRAPHICAL_PARAGRAPH_SEPARATOR  ("div:has(img[src=common/jupiters.gif])"),
 
-		HR_TAGS                        ("hr"),
 		FEEDBACK_FORM                  ("form[action*=openbook]"),
-		HR_FEEDBACK_FORM               (HR_TAGS.query + " ~ " + FEEDBACK_FORM.query),
 
 		IMAGE_SMALL                    ("img[src*=klein/klein]"),
 		IMAGE_1                        ("div.bildbox img"),
@@ -275,81 +273,76 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	/**
-	 * Remove user feedback form plus all following siblings plus preceding siblings starting at last HR tag
-	 * in document plus optionally BR tag directly preceding the HR tag. So we remove a structure roughly looking
-	 * like this (with no surrounding tags):
+	 * Remove user feedback form plus relevant clutter around it
+	 *   - preceding heading and text
+	 *   - hotizontal separator (HR tag) preceding heading
+	 *   - everything after the feedback form until the rest of the document
+	 */
+	private void removeFeedbackForm() {
+		Element feedbackForm = selectorQuery(Selector.FEEDBACK_FORM.query).first();
+		if (feedbackForm == null) {
+			SimpleLogger.debug("No feedback form found -> nothing to remove");
+			return;
+		}
+		SimpleLogger.debug("Feedback form found");
+		deleteNodes(getFeedbackFormNeigbourhood(feedbackForm));
+		SimpleLogger.debug("Feedback form removed");
+	}
+
+	/**
+	 * Find all nodes around a given user feedback form.
+	 * <p>
+	 * Background info: The feedback form is preceded by an HR tag separating it from the main content, a heading
+	 * and introductory text. It is usually not follwed by any other content, but if so, it will be considered part
+	 * of the feedback form's neighbourhood too. Usually we have a structure roughly looking like this:
 	 * <pre>
 	 *   BR
 	 *   HR
 	 *   ...
-	 *   FORM
-	 *       ...
-	 *       INPUT[name=openbookurl]
+	 *   FORM[action*=openbook]
+	 *       INPUT
+	 *       INPUT
 	 *       ...
 	 *   ...
 	 * </pre>
+	 * There are two known cases in book "dreamewaver_8" (02_kap02_002.htm, 04_kap04_002.htm) for which jsoup
+	 * parsing returns a different DOM structure: The feedback form is garbled in the former and not an HR tag's
+	 * following sibling in the latter case. The jsoup mailing list has been notified about this fact. HTML tidy
+	 * returns the expected ("correct") structure, so this might be a jsoup problem.
+	 * <p>
+	 * <b>Disclaimer:</b> While this implementation can cope with the irregularities in DOM structure concerning
+	 * the feedback form, has no influence on other errors such as garbled text elements occurring in the remainder
+	 * of 02_kap02_002.htm and maybe also in other files (unknown).
+	 *
+	 * @param feedbackForm user feedback form for which to determine the neighbourhood
+	 *
+	 * @return a list of nodes belonging to the feedback form's surrounding neighbourhood (including the feedback
+	 * form itself)
 	 */
-	private void removeFeedbackForm() {
-		Element hrFeedbackForm = selectorQuery(Selector.HR_FEEDBACK_FORM.query).first();
-		if (hrFeedbackForm == null) {
-			// Must be final so as to enable access to it from anonymous NodeVisitor later
-			final Element feedbackForm = selectorQuery(Selector.FEEDBACK_FORM.query).first();
-			if (feedbackForm == null) {
-				SimpleLogger.debug("No feedback form found -> nothing to remove");
-				return;
-			}
-			SimpleLogger.debug("Feedback form found (without a preceding HR sibling)");
-
-			final List<Node> nodesToBeRemoved = new ArrayList<Node>();
-			NodeVisitor removeEverythingAfterFeedbackForm = new NodeVisitor() {
-				private boolean feedbackFormFound = false;
-				private boolean hrTagFound = false;
-
-				@Override
-				public void tail(Node node, int depth) {}
-
-				@Override
-				public void head(Node node, int depth) {
-					if (!feedbackFormFound) {
-						if (node instanceof Element && "hr".equals(node.nodeName())) {
-							hrTagFound = true;
-							nodesToBeRemoved.clear();
-						}
-						else if (node == feedbackForm)
-							feedbackFormFound = true;
-						else if (!hrTagFound)
-							return;
+	private List<Node> getFeedbackFormNeigbourhood(final Element feedbackForm) {
+		final List<Node> neigbourhood = new ArrayList<Node>();
+		NodeVisitor neigbourhoodFinder = new NodeVisitor() {
+			private boolean feedbackFormFound = false;
+			private boolean hrTagFound = false;
+			@Override
+			public void head(Node node, int depth) {
+				if (!feedbackFormFound) {
+					if (node instanceof Element && "hr".equals(node.nodeName())) {
+						hrTagFound = true;
+						neigbourhood.clear();
 					}
-					nodesToBeRemoved.add(node);
+					else if (node == feedbackForm)
+						feedbackFormFound = true;
+					else if (!hrTagFound)
+						return;
 				}
-			};
-			document.traverse(removeEverythingAfterFeedbackForm);
-			deleteNodes(nodesToBeRemoved);
-			SimpleLogger.debug("Feedback form removed by node traversal");
-			return;
-		}
-		SimpleLogger.debug("Feedback form found");
-		Element lastHrTag = selectorQuery(Selector.HR_TAGS.query).last();
-		if (lastHrTag == null) {
-			SimpleLogger.debug("No HR tag found -> feedback form not removed");
-			return;
-		}
-
-		int startIndex = lastHrTag.siblingIndex();
-		if ("br".equals(lastHrTag.previousSibling().nodeName()))
-			startIndex--;
-		if (!lastHrTag.siblingNodes().contains(hrFeedbackForm)) {
-			SimpleLogger.debug("Feedback form is not a sibling node of last HR tag -> not removed");
-			return;
-		}
-		if (hrFeedbackForm.siblingIndex() < startIndex) {
-			SimpleLogger.debug("Feedback form is not preceded by last HR tag -> not removed");
-			return;
-		}
-
-		List<Node> siblings = hrFeedbackForm.parent().childNodes();
-		deleteNodes(siblings.subList(startIndex, siblings.size()));
-		SimpleLogger.debug("Feedback form removed");
+				neigbourhood.add(node);
+			}
+			@Override
+			public void tail(Node node, int depth) {}
+		};
+		document.traverse(neigbourhoodFinder);
+		return neigbourhood;
 	}
 
 	private void removeNonStandardTopNavigation() {
