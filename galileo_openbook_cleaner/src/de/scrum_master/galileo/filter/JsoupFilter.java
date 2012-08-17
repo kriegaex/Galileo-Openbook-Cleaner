@@ -16,6 +16,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
+import org.jsoup.select.NodeVisitor;
 
 import de.scrum_master.galileo.Book;
 import de.scrum_master.util.SimpleLogger;
@@ -62,7 +63,8 @@ public class JsoupFilter extends BasicFilter {
 		GRAPHICAL_PARAGRAPH_SEPARATOR  ("div:has(img[src=common/jupiters.gif])"),
 
 		HR_TAGS                        ("hr"),
-		FEEDBACK_FORM                  ("hr ~ form:has(input[name=openbookurl])"),
+		FEEDBACK_FORM                  ("form[action*=openbook]"),
+		HR_FEEDBACK_FORM               (HR_TAGS.query + " ~ " + FEEDBACK_FORM.query),
 
 		IMAGE_SMALL                    ("img[src*=klein/klein]"),
 		IMAGE_1                        ("div.bildbox img"),
@@ -288,22 +290,66 @@ public class JsoupFilter extends BasicFilter {
 	 * </pre>
 	 */
 	private void removeFeedbackForm() {
-		Element lastHrTag = selectorQuery(Selector.HR_TAGS.query).last();
-		if (lastHrTag == null)
+		Element hrFeedbackForm = selectorQuery(Selector.HR_FEEDBACK_FORM.query).first();
+		if (hrFeedbackForm == null) {
+			// Must be final so as to enable access to it from anonymous NodeVisitor later
+			final Element feedbackForm = selectorQuery(Selector.FEEDBACK_FORM.query).first();
+			if (feedbackForm == null) {
+				SimpleLogger.debug("No feedback form found -> nothing to remove");
+				return;
+			}
+			SimpleLogger.debug("Feedback form found (without a preceding HR sibling)");
+
+			final List<Node> nodesToBeRemoved = new ArrayList<Node>();
+			NodeVisitor removeEverythingAfterFeedbackForm = new NodeVisitor() {
+				private boolean feedbackFormFound = false;
+				private boolean hrTagFound = false;
+
+				@Override
+				public void tail(Node node, int depth) {}
+
+				@Override
+				public void head(Node node, int depth) {
+					if (!feedbackFormFound) {
+						if (node instanceof Element && "hr".equals(node.nodeName())) {
+							hrTagFound = true;
+							nodesToBeRemoved.clear();
+						}
+						else if (node == feedbackForm)
+							feedbackFormFound = true;
+						else if (!hrTagFound)
+							return;
+					}
+					nodesToBeRemoved.add(node);
+				}
+			};
+			document.traverse(removeEverythingAfterFeedbackForm);
+			deleteNodes(nodesToBeRemoved);
+			SimpleLogger.debug("Feedback form removed by node traversal");
 			return;
-		int lastHrTagIndex = lastHrTag.siblingIndex();
-		List<Node> feedbackFormEtc = new ArrayList<Node>();
-		if (!lastHrTag.siblingNodes().contains(selectorQuery(Selector.FEEDBACK_FORM.query).first()))
-			return;
-		for (Node node : lastHrTag.parent().childNodes()) {
-			if (
-				node.siblingIndex() >= lastHrTagIndex ||
-				node.siblingIndex() == lastHrTagIndex - 1 && "br".equals(node.nodeName())
-			)
-				feedbackFormEtc.add(node);
 		}
-		for (Node node : feedbackFormEtc)
-			node.remove();
+		SimpleLogger.debug("Feedback form found");
+		Element lastHrTag = selectorQuery(Selector.HR_TAGS.query).last();
+		if (lastHrTag == null) {
+			SimpleLogger.debug("No HR tag found -> feedback form not removed");
+			return;
+		}
+
+		int startIndex = lastHrTag.siblingIndex();
+		if ("br".equals(lastHrTag.previousSibling().nodeName()))
+			startIndex--;
+		if (!lastHrTag.siblingNodes().contains(hrFeedbackForm)) {
+			SimpleLogger.debug("Feedback form is not a sibling node of last HR tag -> not removed");
+			return;
+		}
+		if (hrFeedbackForm.siblingIndex() < startIndex) {
+			SimpleLogger.debug("Feedback form is not preceded by last HR tag -> not removed");
+			return;
+		}
+
+		List<Node> siblings = hrFeedbackForm.parent().childNodes();
+		deleteNodes(siblings.subList(startIndex, siblings.size()));
+		SimpleLogger.debug("Feedback form removed");
 	}
 
 	private void removeNonStandardTopNavigation() {
@@ -472,13 +518,13 @@ public class JsoupFilter extends BasicFilter {
 		return document.select(query);
 	}
 
-	private static void deleteNodes(Elements nodes) {
-		for (Element element : nodes)
-			element.remove();
+	private static void deleteNodes(List<Node> nodes) {
+		for (Object node : nodes.toArray())
+			((Node) node).remove();
 	}
 
 	private void deleteNodes(String query) {
-		deleteNodes(selectorQuery(query));
+		selectorQuery(query).remove();
 	}
 
 	private static void moveNodesTo(Elements sourceNodes, Element targetElement) {
