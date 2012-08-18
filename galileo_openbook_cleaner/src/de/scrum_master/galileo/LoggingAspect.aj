@@ -3,7 +3,6 @@ package de.scrum_master.galileo;
 import java.io.File;
 
 import de.scrum_master.util.SimpleLogger;
-import de.scrum_master.util.SimpleLogger.IndentMode;
 import de.scrum_master.galileo.filter.*;
 
 privileged aspect LoggingAspect
@@ -17,67 +16,69 @@ privileged aspect LoggingAspect
 	pointcut createIndexLink()      : execution(* *Filter.createIndexLink());
 	pointcut fixFaultyLinkTargets() : execution(* *Filter.fixFaultyLinkTargets());
 	pointcut removeFeedbackForm()   : execution(* *Filter.removeFeedbackForm());
+	
+	// ATTENTION: each new pointcut above must also be added here
+	pointcut catchAll() :
+		processBook() || download() || cleanBook() || cleanChapter() || runFilter() || initialiseTitle() ||
+		createIndexLink() || fixFaultyLinkTargets() || removeFeedbackForm();
+
+	// This advice takes care of indentation, so as to avoid duplicate code in the other ones
+	void around() : catchAll() {
+		SimpleLogger.indent();
+		proceed();
+		SimpleLogger.dedent();
+	}
 
 	void around(Book book) : processBook() && args(book) {
 		String message = "Book: " + book.unpackDirectory;
-		SimpleLogger.echo(message, IndentMode.INDENT_AFTER);
+		SimpleLogger.echo(message);
 		proceed(book);
-		SimpleLogger.echo(message + " - done", IndentMode.DEDENT_BEFORE);
+		SimpleLogger.echo(message + " - done");
 	}
 	
 	void around() : download() {
 		String message = "Downloading, verifying (MD5) and unpacking";
-		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
+		SimpleLogger.verbose(message);
 		proceed();
-		SimpleLogger.verbose(message + " - done", IndentMode.DEDENT_BEFORE);
+		SimpleLogger.verbose(message + " - done");
 	}
 	
 	void around(Book book) : cleanBook() && args(book) {
 		String message = "Filtering";
-		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
+		SimpleLogger.verbose(message);
 		proceed(book);
-		SimpleLogger.verbose(message + " - done", IndentMode.DEDENT_BEFORE);
+		SimpleLogger.verbose(message + " - done");
 	}
 
 	void around(Book book, File origFile) : cleanChapter() && args(book, origFile) {
 		String message = "Chapter: " + origFile.getName();
-		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
+		SimpleLogger.verbose(message);
 		proceed(book, origFile);
-		SimpleLogger.verbose(message + " - done", IndentMode.DEDENT_BEFORE);
+		SimpleLogger.verbose(message + " - done");
 	}
 
 	void around(BasicFilter filter) : runFilter() && this(filter) {
-		String message = filter.getLogMessage();
-		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
+		SimpleLogger.verbose(filter.getLogMessage());
 		proceed(filter);
-		SimpleLogger.dedent();
 	}
 
 	void around(boolean removeBookTitle) : initialiseTitle() && args(removeBookTitle) {
-		String message = "Initialising page title";
-		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
+		SimpleLogger.verbose("Initialising page title");
 		proceed(removeBookTitle);
-		SimpleLogger.dedent();
 	}
 
 	void around() : createIndexLink() {
-		String message = "TOC file: creating index link";
-		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
+		SimpleLogger.verbose("TOC file: creating index link");
 		proceed();
-		SimpleLogger.dedent();
 	}
 
 	void around(BasicFilter filter) : fixFaultyLinkTargets()  && this(filter) {
-		String message = "TOC file: checking for faulty link targets";
-		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
+		SimpleLogger.verbose("TOC file: checking for faulty link targets");
 		proceed(filter);
-		SimpleLogger.dedent();
 	}
 	
 	void around() : removeFeedbackForm() {
-		String message = "Removing feedback form (if any)";
-		SimpleLogger.verbose(message, IndentMode.INDENT_AFTER);
+		SimpleLogger.verbose("Removing feedback form (if any)");
 		proceed();
-		SimpleLogger.dedent();
 	}
 }
