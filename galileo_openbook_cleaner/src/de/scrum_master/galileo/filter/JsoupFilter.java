@@ -127,8 +127,8 @@ public class JsoupFilter extends BasicFilter {
 
 	private void parseDocument() throws Exception {
 		document = Jsoup.parse(in, "windows-1252", "");
-		headTag = selectorQuery(Selector.HEAD).first();
-		bodyTag = selectorQuery(Selector.BODY).first();
+		headTag = findFirstElement(Selector.HEAD);
+		bodyTag = findFirstElement(Selector.BODY);
 		initialiseTitle(true);
 	}
 
@@ -139,7 +139,7 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void initialiseTitle(boolean removeBookTitle) {
-		Element titleTag = (Element) selectorQuery(Selector.TITLE).first();
+		Element titleTag = findFirstElement(Selector.TITLE);
 		if (titleTag == null) {
 			// Should only happen for "teile.html" in book unix_guru
 			SimpleLogger.debug("No page title found");
@@ -221,7 +221,7 @@ public class JsoupFilter extends BasicFilter {
 		if (! (origFile.getName().equals("node429.html") && pageTitle.contains("unix")))
 			return;
 		SimpleLogger.debug("Fixing buggy heading");
-		Element buggyParagraph = selectorQuery(Selector.NODE429_BUGGY_PARAGRAPH).first();
+		Element buggyParagraph = findFirstElement(Selector.NODE429_BUGGY_PARAGRAPH);
 		buggyParagraph.html("<h1><a>unix</a></h1>");
 	}
 
@@ -229,17 +229,17 @@ public class JsoupFilter extends BasicFilter {
 		// Keep JavaScript for source code colouring ('prettyPrint' function) in some books
 		// deleteNodes(Selector.SCRIPTS);
 
-		Elements mainContent = selectorQuery(Selector.NON_STANDARD_MAIN_CONTENT);
+		Elements mainContent = findElements(Selector.NON_STANDARD_MAIN_CONTENT);
 		if (mainContent.size() > 0)
 			hasStandardLayout = false;
 		else {
-			mainContent = selectorQuery(Selector.MAIN_CONTENT_1);
+			mainContent = findElements(Selector.MAIN_CONTENT_1);
 			if (mainContent.size() == 0)
-				mainContent = selectorQuery(Selector.MAIN_CONTENT_2);
+				mainContent = findElements(Selector.MAIN_CONTENT_2);
 		}
 		removeComments();
 		deleteNodes(Selector.BODY_NODES);
-		moveNodesTo(mainContent, bodyTag);
+		moveNodes(mainContent, bodyTag);
 	}
 
 	private void removeComments() {
@@ -272,7 +272,7 @@ public class JsoupFilter extends BasicFilter {
 	 *   - everything after the feedback form until the rest of the document
 	 */
 	private void removeFeedbackForm() {
-		Element feedbackForm = selectorQuery(Selector.FEEDBACK_FORM).first();
+		Element feedbackForm = findFirstElement(Selector.FEEDBACK_FORM);
 		if (feedbackForm == null) {
 			SimpleLogger.debug("No feedback form found -> nothing to remove");
 			return;
@@ -339,7 +339,7 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void removeNonStandardTopNavigation() {
-		Element firstHeading = selectorQuery(Selector.TOP_LEVEL_HEADINGS).first();
+		Element firstHeading = findFirstElement(Selector.TOP_LEVEL_HEADINGS);
 		if (firstHeading == null)
 			return;
 		int firstHeadingIndex = firstHeading.siblingIndex();
@@ -356,12 +356,12 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void fixImages() {
-		replaceByBigImages(selectorQuery(Selector.IMAGE_SMALL));
-		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_1), selectorQuery(Selector.IMAGE_1));
-		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_2), selectorQuery(Selector.IMAGE_2));
-		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_3), selectorQuery(Selector.IMAGE_3));
-		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_4), selectorQuery(Selector.IMAGE_4));
-		replaceBoxesByImages(selectorQuery(Selector.IMAGE_BOX_5), selectorQuery(Selector.IMAGE_5));
+		replaceByBigImages(findElements(Selector.IMAGE_SMALL));
+		replaceBoxesByImages(findElements(Selector.IMAGE_BOX_1), findElements(Selector.IMAGE_1));
+		replaceBoxesByImages(findElements(Selector.IMAGE_BOX_2), findElements(Selector.IMAGE_2));
+		replaceBoxesByImages(findElements(Selector.IMAGE_BOX_3), findElements(Selector.IMAGE_3));
+		replaceBoxesByImages(findElements(Selector.IMAGE_BOX_4), findElements(Selector.IMAGE_4));
+		replaceBoxesByImages(findElements(Selector.IMAGE_BOX_5), findElements(Selector.IMAGE_5));
 	}
 
 	/*
@@ -396,7 +396,7 @@ public class JsoupFilter extends BasicFilter {
 	 * Find out if this page contains a link to the index (stichwort.htm*).
 	 */
 	private boolean hasIndexLink() {
-		return selectorQuery(Selector.INDEX_LINK).size() > 0;
+		return findElements(Selector.INDEX_LINK).size() > 0;
 	}
 
 	/**
@@ -413,7 +413,7 @@ public class JsoupFilter extends BasicFilter {
 			SimpleLogger.debug("Book is an exception - not creating index link (no stichwort.htm*)");
 			return;
 		}
-		Element indexLink = (Element) selectorQuery(Selector.TOC_HEADING_2).first().clone();
+		Element indexLink = findFirstElement(Selector.TOC_HEADING_2).clone();
 		String fileExtension = ".htm";
 		Node ankerNode = null;
 		for (Node node : indexLink.childNodes()) {
@@ -459,7 +459,7 @@ public class JsoupFilter extends BasicFilter {
 		}
 
 		int fixedLinksCount = 0;
-		Elements links = selectorQuery(Selector.ALL_LINKS);
+		Elements links = findElements(Selector.ALL_LINKS);
 		for (Element link : links) {
 			String href = link.attr("href");
 			String text = link.text();
@@ -498,7 +498,7 @@ public class JsoupFilter extends BasicFilter {
 
 	private static void replaceBoxesByImages(Elements smallImageBoxes, Elements smallImages) {
 		for (int i = 0; i < smallImageBoxes.size(); i++)
-			replaceNodeBy(smallImageBoxes.get(i), smallImages.get(i));
+			replaceNode(smallImageBoxes.get(i), smallImages.get(i));
 	}
 
 	/*
@@ -507,8 +507,16 @@ public class JsoupFilter extends BasicFilter {
 	 * ============================================================================================
 	 */
 
-	private Elements selectorQuery(Selector selector) {
+	private Elements findElements(Selector selector) {
 		return document.select(selector.query);
+	}
+
+	private Element findFirstElement(Selector selector) {
+		return findElements(selector).first();
+	}
+
+	private void deleteNodes(Selector selector) {
+		findElements(selector).remove();
 	}
 
 	private static void deleteNodes(List<Node> nodes) {
@@ -516,18 +524,14 @@ public class JsoupFilter extends BasicFilter {
 			((Node) node).remove();
 	}
 
-	private void deleteNodes(Selector selector) {
-		selectorQuery(selector).remove();
-	}
-
-	private static void moveNodesTo(Elements sourceNodes, Element targetElement) {
+	private static void moveNodes(Elements sourceNodes, Element targetElement) {
 		for (Element element : sourceNodes) {
 			element.remove();
 			targetElement.appendChild(element);
 		}
 	}
 
-	private static void replaceNodeBy(Element original, Element replacement) {
+	private static void replaceNode(Element original, Element replacement) {
 		replacement.remove();
 		original.replaceWith(replacement);
 	}
