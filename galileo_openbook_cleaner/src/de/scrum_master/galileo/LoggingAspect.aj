@@ -17,9 +17,9 @@ privileged aspect LoggingAspect
 	pointcut fixFaultyLinkTargets() : execution(* *Filter.fixFaultyLinkTargets());
 	pointcut removeFeedbackForm()   : execution(* *Filter.removeFeedbackForm());
 	
-	// ATTENTION: each new pointcut above must also be added here
+	// ATTENTION: each new pointcut above (except processBook) must also be added here
 	pointcut catchAll() :
-		processBook() || download() || cleanBook() || cleanChapter() || runFilter() || initialiseTitle() ||
+		download() || cleanBook() || cleanChapter() || runFilter() || initialiseTitle() ||
 		createIndexLink() || fixFaultyLinkTargets() || removeFeedbackForm();
 
 	// This advice takes care of indentation, so as to avoid duplicate code in the other ones
