@@ -15,8 +15,6 @@ public class SimpleLogger
 
 	public static boolean LOG_THREAD_ID = false;
 
-	public static enum IndentMode { UNCHANGED, INDENT_BEFORE, INDENT_AFTER, DEDENT_BEFORE, DEDENT_AFTER }
-
 	private static InheritableThreadLocal<Integer> indentLevel =
 		new InheritableThreadLocal<Integer>() {
 			@Override protected Integer initialValue() { return 0; }
@@ -27,15 +25,10 @@ public class SimpleLogger
 			@Override protected String initialValue() { return ""; }
 		};
 
-	public static void echo   (String message) { echo   (message, IndentMode.UNCHANGED); }
-	public static void verbose(String message) { verbose(message, IndentMode.UNCHANGED); }
-	public static void debug  (String message) { debug  (message, IndentMode.UNCHANGED); }
-	public static void error  (String message) { error  (message, IndentMode.UNCHANGED); }
-
-	public static void echo   (String message, IndentMode indentMode) { log(System.out, ECHO,    message, indentMode); }
-	public static void verbose(String message, IndentMode indentMode) { log(System.out, VERBOSE, message, indentMode); }
-	public static void debug  (String message, IndentMode indentMode) { log(System.out, DEBUG,   message, indentMode); }
-	public static void error  (String message, IndentMode indentMode) { log(System.err, ERROR,   message, indentMode); }
+	public static void echo   (String message) { log(System.out, ECHO,    message); }
+	public static void verbose(String message) { log(System.out, VERBOSE, message); }
+	public static void debug  (String message) { log(System.out, DEBUG,   message); }
+	public static void error  (String message) { log(System.err, ERROR,   message); }
 
 	public static void time(String header, long milliSeconds) {
 		log(System.out, TIME, header + ": " + milliSeconds / 1000.0 + " s");
@@ -54,15 +47,8 @@ public class SimpleLogger
 	}
 
 	private static void log(PrintStream channel, boolean isActive, String message) {
-		log(channel, isActive, message, IndentMode.UNCHANGED);
-	}
-	private static void log(PrintStream channel, boolean isActive, String message, IndentMode indentMode) {
 		if (!isActive)
 			return;
-		if (indentMode == IndentMode.INDENT_BEFORE)
-			indent();
-		else if (indentMode == IndentMode.DEDENT_BEFORE)
-			dedent();
 		if (LOG_THREAD_ID) {
 			/* Tab-separated format can be imported into Excel easily via copy & paste.
 			 * Add a header row, convert into table layout and there you go: filtering, sorting etc.
@@ -73,9 +59,5 @@ public class SimpleLogger
 		}
 		else
 			channel.println(indentText.get() + message);
-		if (indentMode == IndentMode.INDENT_AFTER)
-			indent();
-		else if (indentMode == IndentMode.DEDENT_AFTER)
-			dedent();
 	}
 }

@@ -20,7 +20,6 @@ import org.jsoup.select.NodeVisitor;
 
 import de.scrum_master.galileo.Book;
 import de.scrum_master.util.SimpleLogger;
-import de.scrum_master.util.SimpleLogger.IndentMode;
 
 public class JsoupFilter extends BasicFilter {
 	private PrintStream output;                    // Output stream for filtered document
@@ -148,7 +147,8 @@ public class JsoupFilter extends BasicFilter {
 
 		Matcher matcher;
 		pageTitle = titleTag.text();
-		SimpleLogger.debug("Original page title: " + pageTitle, IndentMode.INDENT_AFTER);
+		SimpleLogger.debug("Original page title: " + pageTitle);
+		SimpleLogger.indent();
 
 		if (isTOCFile) {
 			// TOC file (index.htm*) gets preconfigured title
@@ -186,7 +186,8 @@ public class JsoupFilter extends BasicFilter {
 				SimpleLogger.debug("Step 4 Chapter:    " + pageTitle);
 			}
 		}
-		SimpleLogger.debug("Clean page title:    " + pageTitle, IndentMode.DEDENT_BEFORE);
+		SimpleLogger.dedent();
+		SimpleLogger.debug("Clean page title:    " + pageTitle);
 
 		titleTag.text(pageTitle);
 	}
