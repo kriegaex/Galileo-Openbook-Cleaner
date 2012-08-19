@@ -7,6 +7,8 @@ import java.io.PrintStream;
 
 public class SimpleLogger
 {
+	public static enum LogType { ECHO, VERBOSE, DEBUG, ERROR };
+
 	public static boolean ECHO    = true;
 	public static boolean VERBOSE = false;
 	public static boolean DEBUG   = false;
@@ -29,6 +31,17 @@ public class SimpleLogger
 	public static void verbose(String message) { log(System.out, VERBOSE, message); }
 	public static void debug  (String message) { log(System.out, DEBUG,   message); }
 	public static void error  (String message) { log(System.err, ERROR,   message); }
+
+	public static void log(LogType logType, String message) {
+		if (logType == LogType.ECHO)
+			echo(message);
+		else if (logType == LogType.VERBOSE)
+			verbose(message);
+		else if (logType == LogType.DEBUG)
+			debug(message);
+		else if (logType == LogType.ERROR)
+			error(message);
+	}
 
 	public static void time(String header, long milliSeconds) {
 		log(System.out, TIME, header + ": " + milliSeconds / 1000.0 + " s");

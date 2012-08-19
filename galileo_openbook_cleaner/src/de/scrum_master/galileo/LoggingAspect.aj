@@ -1,8 +1,14 @@
 package de.scrum_master.galileo;
 
 import java.io.File;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Method;
+
+import org.aspectj.lang.reflect.AdviceSignature;
 
 import de.scrum_master.util.SimpleLogger;
+import de.scrum_master.util.SimpleLogger.LogType;
 import de.scrum_master.galileo.filter.*;
 
 privileged aspect LoggingAspect
@@ -16,69 +22,79 @@ privileged aspect LoggingAspect
 	pointcut createIndexLink()      : execution(* *Filter.createIndexLink());
 	pointcut fixFaultyLinkTargets() : execution(* *Filter.fixFaultyLinkTargets());
 	pointcut removeFeedbackForm()   : execution(* *Filter.removeFeedbackForm());
-	
+
 	// ATTENTION: each new pointcut above (except processBook) must also be added here
-	pointcut catchAll() :
+	pointcut indentLog() :
 		download() || cleanBook() || cleanChapter() || runFilter() || initialiseTitle() ||
 		createIndexLink() || fixFaultyLinkTargets() || removeFeedbackForm();
 
-	// This advice takes care of indentation, so as to avoid duplicate code in the other ones
-	void around() : catchAll() {
+	void around() : indentLog() {
 		SimpleLogger.indent();
 		proceed();
 		SimpleLogger.dedent();
 	}
 
+	@Retention(RetentionPolicy.RUNTIME)
+	private @interface Log {
+		String  message() default "";
+		LogType type()    default LogType.VERBOSE;
+		boolean logDone() default false;
+	}
+
+	pointcut printLog() : @annotation(Log);
+	
+	void around() : printLog() {
+		Method advice = ((AdviceSignature) thisJoinPointStaticPart.getSignature()).getAdvice();
+		Log logOptions = advice.getAnnotation(Log.class);
+		String message = logOptions.message();
+		if (!"".equals(message))
+			SimpleLogger.log(logOptions.type(), message);
+		proceed();
+		if (logOptions.logDone() && !"".equals(message))
+			SimpleLogger.log(logOptions.type(), message + " - done");
+	}
+
+	// Dynamic, manual logging (messages computed during runtime)
+
+	@Log
 	void around(Book book) : processBook() && args(book) {
 		String message = "Book: " + book.unpackDirectory;
 		SimpleLogger.echo(message);
 		proceed(book);
 		SimpleLogger.echo(message + " - done");
 	}
-	
-	void around() : download() {
-		String message = "Downloading, verifying (MD5) and unpacking";
-		SimpleLogger.verbose(message);
-		proceed();
-		SimpleLogger.verbose(message + " - done");
-	}
-	
-	void around(Book book) : cleanBook() && args(book) {
-		String message = "Filtering";
-		SimpleLogger.verbose(message);
-		proceed(book);
-		SimpleLogger.verbose(message + " - done");
-	}
 
-	void around(Book book, File origFile) : cleanChapter() && args(book, origFile) {
+	@Log
+	void around(File origFile) : cleanChapter() && args(*, origFile) {
 		String message = "Chapter: " + origFile.getName();
 		SimpleLogger.verbose(message);
-		proceed(book, origFile);
+		proceed(origFile);
 		SimpleLogger.verbose(message + " - done");
 	}
 
+	@Log
 	void around(BasicFilter filter) : runFilter() && this(filter) {
 		SimpleLogger.verbose(filter.getLogMessage());
 		proceed(filter);
 	}
 
-	void around(boolean removeBookTitle) : initialiseTitle() && args(removeBookTitle) {
-		SimpleLogger.verbose("Initialising page title");
-		proceed(removeBookTitle);
-	}
+	// Simple, declarative logging (hard-coded messages)
 
-	void around() : createIndexLink() {
-		SimpleLogger.verbose("TOC file: creating index link");
-		proceed();
-	}
+	@Log(message = "Downloading, verifying (MD5) and unpacking", logDone = true)
+	void around() : download() { proceed(); }
 
-	void around(BasicFilter filter) : fixFaultyLinkTargets()  && this(filter) {
-		SimpleLogger.verbose("TOC file: checking for faulty link targets");
-		proceed(filter);
-	}
+	@Log(message = "Filtering", logDone = true)
+	void around() : cleanBook() { proceed(); }
+
+	@Log(message = "Initialising page title")
+	void around() : initialiseTitle() { proceed(); }
+
+	@Log(message = "TOC file: creating index link")
+	void around() : createIndexLink() { proceed(); }
+
+	@Log(message = "TOC file: checking for faulty link targets")
+	void around() : fixFaultyLinkTargets() { proceed(); }
 	
-	void around() : removeFeedbackForm() {
-		SimpleLogger.verbose("Removing feedback form (if any)");
-		proceed();
-	}
+	@Log(message = "Removing feedback form (if any)")
+	void around() : removeFeedbackForm() { proceed(); }
 }
