@@ -13,6 +13,7 @@ import de.scrum_master.util.SimpleLogger.LogType;
 import de.scrum_master.galileo.filter.*;
 
 privileged aspect LoggingAspect
+	percflow(execution(* OpenbookCleaner.main(..)) || runFilter())
 {
 	private Stack<String> messageStack = new Stack<String>();
 	private String message;
