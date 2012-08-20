@@ -113,7 +113,7 @@ public class JsoupFilter extends BasicFilter {
 
 	@Override
 	protected String getLogMessage() {
-		return "Cleaning up HTML, removing clutter (header, footer, navigation, ads), fixing structure";
+		return "Cleaning up HTML, removing clutter, fixing structure";
 	}
 
 	@Override
