@@ -13,10 +13,12 @@ import de.scrum_master.util.SimpleLogger.LogType;
 import de.scrum_master.galileo.filter.*;
 
 privileged aspect LoggingAspect
-	percflow(execution(* OpenbookCleaner.main(..)) || runFilter())
 {
-	private Stack<String> messageStack = new Stack<String>();
-	private String message;
+	private ThreadLocal<Stack<String>> messageStack =
+		new ThreadLocal<Stack<String>>() {
+			@Override protected Stack<String> initialValue() { return new Stack<String>(); }
+		};
+	private ThreadLocal<String> message = new ThreadLocal<String>();
 
 	pointcut processBook()          : execution(* OpenbookCleaner.downloadAndCleanBook(Book));
 	pointcut download()             : execution(* Downloader.download());
@@ -35,17 +37,17 @@ privileged aspect LoggingAspect
 		LogType type()    default LogType.VERBOSE;
 	}
 
-	after() : set(String LoggingAspect.message) {
-		messageStack.push(message);
+	after() : within(LoggingAspect) && call(void java.lang.ThreadLocal.set(Object)) {
+		messageStack.get().push(message.get());
 		Method advice = ((AdviceSignature) thisEnclosingJoinPointStaticPart.getSignature()).getAdvice();
 		Log logOptions = advice.getAnnotation(Log.class);
-		SimpleLogger.log(logOptions.type(), message);
+		SimpleLogger.log(logOptions.type(), message.get());
 		if (logOptions.indent())
 			SimpleLogger.indent();
 	}
 
 	after() : @annotation(Log) {
-		String message = messageStack.pop();
+		String message = messageStack.get().pop();
 		Method advice = ((AdviceSignature) thisJoinPointStaticPart.getSignature()).getAdvice();
 		Log logOptions = advice.getAnnotation(Log.class);
 		if (logOptions.indent())
@@ -55,38 +57,38 @@ privileged aspect LoggingAspect
 	}
 
 	@Log void around(Book book) : processBook() && args(book) {
-		message = "Book: " + book.unpackDirectory; proceed(book);
+		message.set("Book: " + book.unpackDirectory); proceed(book);
 	}
 
 	@Log void around() : download() {
-		message = "Downloading, verifying (MD5) and unpacking"; proceed();
+		message.set("Downloading, verifying (MD5) and unpacking"); proceed();
 	}
 
 	@Log void around() : cleanBook() {
-		message = "Filtering"; proceed();
+		message.set("Filtering"); proceed();
 	}
 
 	@Log void around(File origFile) : cleanChapter() && args(*, origFile) {
-		message = "Chapter: " + origFile.getName(); proceed(origFile);
+		message.set("Chapter: " + origFile.getName()); proceed(origFile);
 	}
 
 	@Log void around(BasicFilter filter) : runFilter() && this(filter) {
-		message = filter.getLogMessage(); proceed(filter);
+		message.set(filter.getLogMessage()); proceed(filter);
 	}
 
 	@Log(logDone = false) void around() : initialiseTitle() {
-		message = "Initialising page title"; proceed();
+		message.set("Initialising page title"); proceed();
 	}
 
 	@Log(logDone = false) void around() : createIndexLink() {
-		message = "TOC file: creating index link"; proceed();
+		message.set("TOC file: creating index link"); proceed();
 	}
 
 	@Log void around() : fixFaultyLinkTargets() {
-		message = "TOC file: checking for faulty link targets"; proceed();
+		message.set("TOC file: checking for faulty link targets"); proceed();
 	}
 	
 	@Log(logDone = false) void around() : removeFeedbackForm() {
-		message = "Removing feedback form (if any)"; proceed();
+		message.set("Removing feedback form (if any)"); proceed();
 	}
 }
