@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
+import java.util.Stack;
 
 import org.aspectj.lang.reflect.AdviceSignature;
 
@@ -13,6 +14,9 @@ import de.scrum_master.galileo.filter.*;
 
 privileged aspect LoggingAspect
 {
+	private Stack<String> messageStack = new Stack<String>();
+	private String message;
+
 	pointcut processBook()          : execution(* OpenbookCleaner.downloadAndCleanBook(Book));
 	pointcut download()             : execution(* Downloader.download());
 	pointcut cleanBook()            : execution(* OpenbookCleaner.cleanBook(Book));
@@ -23,78 +27,65 @@ privileged aspect LoggingAspect
 	pointcut fixFaultyLinkTargets() : execution(* *Filter.fixFaultyLinkTargets());
 	pointcut removeFeedbackForm()   : execution(* *Filter.removeFeedbackForm());
 
-	// ATTENTION: each new pointcut above (except processBook) must also be added here
-	pointcut indentLog() :
-		download() || cleanBook() || cleanChapter() || runFilter() || initialiseTitle() ||
-		createIndexLink() || fixFaultyLinkTargets() || removeFeedbackForm();
-
-	void around() : indentLog() {
-		SimpleLogger.indent();
-		proceed();
-		SimpleLogger.dedent();
-	}
-
 	@Retention(RetentionPolicy.RUNTIME)
 	private @interface Log {
-		String  message() default "";
+		boolean logDone() default true;
+		boolean indent()  default true;
 		LogType type()    default LogType.VERBOSE;
-		boolean logDone() default false;
 	}
 
-	pointcut printLog() : @annotation(Log);
-	
-	void around() : printLog() {
+	after() : set(String LoggingAspect.message) {
+		messageStack.push(message);
+		Method advice = ((AdviceSignature) thisEnclosingJoinPointStaticPart.getSignature()).getAdvice();
+		Log logOptions = advice.getAnnotation(Log.class);
+		SimpleLogger.log(logOptions.type(), message);
+		if (logOptions.indent())
+			SimpleLogger.indent();
+	}
+
+	after() : @annotation(Log) {
+		String message = messageStack.pop();
 		Method advice = ((AdviceSignature) thisJoinPointStaticPart.getSignature()).getAdvice();
 		Log logOptions = advice.getAnnotation(Log.class);
-		String message = logOptions.message();
-		if (!"".equals(message))
-			SimpleLogger.log(logOptions.type(), message);
-		proceed();
-		if (logOptions.logDone() && !"".equals(message))
+		if (logOptions.indent())
+			SimpleLogger.dedent();
+		if (logOptions.logDone())
 			SimpleLogger.log(logOptions.type(), message + " - done");
 	}
 
-	// Dynamic, manual logging (messages computed during runtime)
-
-	@Log
-	void around(Book book) : processBook() && args(book) {
-		String message = "Book: " + book.unpackDirectory;
-		SimpleLogger.echo(message);
-		proceed(book);
-		SimpleLogger.echo(message + " - done");
+	@Log void around(Book book) : processBook() && args(book) {
+		message = "Book: " + book.unpackDirectory; proceed(book);
 	}
 
-	@Log
-	void around(File origFile) : cleanChapter() && args(*, origFile) {
-		String message = "Chapter: " + origFile.getName();
-		SimpleLogger.verbose(message);
-		proceed(origFile);
-		SimpleLogger.verbose(message + " - done");
+	@Log void around() : download() {
+		message = "Downloading, verifying (MD5) and unpacking"; proceed();
 	}
 
-	@Log
-	void around(BasicFilter filter) : runFilter() && this(filter) {
-		SimpleLogger.verbose(filter.getLogMessage());
-		proceed(filter);
+	@Log void around() : cleanBook() {
+		message = "Filtering"; proceed();
 	}
 
-	// Simple, declarative logging (hard-coded messages)
+	@Log void around(File origFile) : cleanChapter() && args(*, origFile) {
+		message = "Chapter: " + origFile.getName(); proceed(origFile);
+	}
 
-	@Log(message = "Downloading, verifying (MD5) and unpacking", logDone = true)
-	void around() : download() { proceed(); }
+	@Log void around(BasicFilter filter) : runFilter() && this(filter) {
+		message = filter.getLogMessage(); proceed(filter);
+	}
 
-	@Log(message = "Filtering", logDone = true)
-	void around() : cleanBook() { proceed(); }
+	@Log(logDone = false) void around() : initialiseTitle() {
+		message = "Initialising page title"; proceed();
+	}
 
-	@Log(message = "Initialising page title")
-	void around() : initialiseTitle() { proceed(); }
+	@Log(logDone = false) void around() : createIndexLink() {
+		message = "TOC file: creating index link"; proceed();
+	}
 
-	@Log(message = "TOC file: creating index link")
-	void around() : createIndexLink() { proceed(); }
-
-	@Log(message = "TOC file: checking for faulty link targets")
-	void around() : fixFaultyLinkTargets() { proceed(); }
+	@Log void around() : fixFaultyLinkTargets() {
+		message = "TOC file: checking for faulty link targets"; proceed();
+	}
 	
-	@Log(message = "Removing feedback form (if any)")
-	void around() : removeFeedbackForm() { proceed(); }
+	@Log(logDone = false) void around() : removeFeedbackForm() {
+		message = "Removing feedback form (if any)"; proceed();
+	}
 }
