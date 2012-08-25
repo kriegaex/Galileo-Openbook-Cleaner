@@ -1,24 +1,25 @@
 package de.scrum_master.galileo;
 
 import java.io.File;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.Method;
-import java.util.Stack;
-
-import org.aspectj.lang.reflect.AdviceSignature;
 
 import de.scrum_master.util.SimpleLogger;
-import de.scrum_master.util.SimpleLogger.LogType;
 import de.scrum_master.galileo.filter.*;
 
 privileged aspect LoggingAspect
 {
-	private ThreadLocal<Stack<String>> messageStack =
-		new ThreadLocal<Stack<String>>() {
-			@Override protected Stack<String> initialValue() { return new Stack<String>(); }
-		};
-	private ThreadLocal<String> message = new ThreadLocal<String>();
+	void around(LogHelper logHelper) : execution(* LogHelper.log()) && this(logHelper) {
+		try {
+			SimpleLogger.log(logHelper.type, logHelper.message);
+			if (logHelper.indent)
+				SimpleLogger.indent();
+			proceed(logHelper);
+		} finally {
+			if (logHelper.indent)
+				SimpleLogger.dedent();
+			if (logHelper.logDone)
+				SimpleLogger.log(logHelper.type, logHelper.message + " - done");
+		}
+	}
 
 	pointcut processBook()          : execution(* OpenbookCleaner.downloadAndCleanBook(Book));
 	pointcut download()             : execution(* Downloader.download());
@@ -30,65 +31,48 @@ privileged aspect LoggingAspect
 	pointcut fixFaultyLinkTargets() : execution(* *Filter.fixFaultyLinkTargets());
 	pointcut removeFeedbackForm()   : execution(* *Filter.removeFeedbackForm());
 
-	@Retention(RetentionPolicy.RUNTIME)
-	private @interface Log {
-		boolean logDone() default true;
-		boolean indent()  default true;
-		LogType type()    default LogType.VERBOSE;
+	void around(final Book book) : processBook() && args(book) {
+		new LogHelper("Book: " + book.unpackDirectory) {
+			void log() { proceed(book); } }.log();
 	}
 
-	after() : within(LoggingAspect) && call(void java.lang.ThreadLocal.set(Object)) {
-		messageStack.get().push(message.get());
-		Method advice = ((AdviceSignature) thisEnclosingJoinPointStaticPart.getSignature()).getAdvice();
-		Log logOptions = advice.getAnnotation(Log.class);
-		SimpleLogger.log(logOptions.type(), message.get());
-		if (logOptions.indent())
-			SimpleLogger.indent();
+	void around() : download() {
+		new LogHelper("Downloading, verifying (MD5) and unpacking") {
+			void log() { proceed(); } }.log();
 	}
 
-	after() : @annotation(Log) {
-		String message = messageStack.get().pop();
-		Method advice = ((AdviceSignature) thisJoinPointStaticPart.getSignature()).getAdvice();
-		Log logOptions = advice.getAnnotation(Log.class);
-		if (logOptions.indent())
-			SimpleLogger.dedent();
-		if (logOptions.logDone())
-			SimpleLogger.log(logOptions.type(), message + " - done");
+	void around() : cleanBook() {
+		new LogHelper("Filtering") {
+			void log() { proceed(); } }.log();
 	}
 
-	@Log void around(Book book) : processBook() && args(book) {
-		message.set("Book: " + book.unpackDirectory); proceed(book);
+	void around(final File origFile) : cleanChapter() && args(*, origFile) {
+		new LogHelper("Chapter: " + origFile.getName()) {
+			void log() { proceed(origFile); } }.log();
 	}
 
-	@Log void around() : download() {
-		message.set("Downloading, verifying (MD5) and unpacking"); proceed();
+	void around(final BasicFilter filter) : runFilter() && this(filter) {
+		new LogHelper(filter.getLogMessage()) {
+			void log() { proceed(filter); } }.log();
 	}
 
-	@Log void around() : cleanBook() {
-		message.set("Filtering"); proceed();
+	void around() : initialiseTitle() {
+		new LogHelper("Initialising page title", false) {
+			void log() { proceed(); } }.log();
 	}
 
-	@Log void around(File origFile) : cleanChapter() && args(*, origFile) {
-		message.set("Chapter: " + origFile.getName()); proceed(origFile);
+	void around() : createIndexLink() {
+		new LogHelper("TOC file: creating index link", false) {
+			void log() { proceed(); } }.log();
 	}
 
-	@Log void around(BasicFilter filter) : runFilter() && this(filter) {
-		message.set(filter.getLogMessage()); proceed(filter);
-	}
-
-	@Log(logDone = false) void around() : initialiseTitle() {
-		message.set("Initialising page title"); proceed();
-	}
-
-	@Log(logDone = false) void around() : createIndexLink() {
-		message.set("TOC file: creating index link"); proceed();
-	}
-
-	@Log void around() : fixFaultyLinkTargets() {
-		message.set("TOC file: checking for faulty link targets"); proceed();
+	void around() : fixFaultyLinkTargets() {
+		new LogHelper("TOC file: checking for faulty link targets") {
+			void log() { proceed(); } }.log();
 	}
 	
-	@Log(logDone = false) void around() : removeFeedbackForm() {
-		message.set("Removing feedback form (if any)"); proceed();
+	void around() : removeFeedbackForm() {
+		new LogHelper("Removing feedback form (if any)", false) {
+			void log() { proceed(); } }.log();
 	}
 }
