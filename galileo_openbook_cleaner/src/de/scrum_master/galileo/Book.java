@@ -7,6 +7,7 @@ public enum Book
 	ACTIONSCRIPT_1_UND_2  ("ActionScript 1 und 2",                    "design_actionscript",                            "f0fce9b57be89d1263ab5aad218f08d9", "9783898422215"),
 	ACTIONSCRIPT_EINSTIEG ("Einstieg in ActionScript",                "design_actionscript_einstieg",                   "d873a2bea68a0184137f8e95370d2dac", "9783898427746"),
 	APPS_IPHONE           ("Apps entwickeln für iPhone und iPad",     "computing_apps_entwickeln_fuer_iphone_und_ipad", "4ec481acdd85478ea58dbc246811732f", "9783836214636"),
+	ASP_NET               ("Einstieg in ASP.NET",                     "computing_asp_net",                              "1809d23d319442eb1df5792d9f86814a", "9783898423021"),
 	C_VON_A_BIS_Z         ("C von A bis Z",                           "computing_c_von_a_bis_z",                        "082b31208caf318669f6577431afaba5", "9783836214117"),
 	DREAMWEAVER_8         ("Dreamweaver 8",                           "design_dreamweaver8",                            "77b4ccc2e734aa69b4f5e0326b176082", "9783898427395"),
 	EXCEL_2007            ("Excel 2007",                              "computing_excel_2007",                           "8a3c67bcce5014de42aed6a887f18b5d", "9783898428644"),
