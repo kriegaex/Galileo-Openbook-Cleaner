@@ -17,26 +17,26 @@ __Usage:__
 
     OpenbookCleaner usage: java ... [options] <book_id>*
 
-    Option                                  Description
-    ------                                  -----------
-    -?, --help                              Display this help text
-    -d, --download-dir <File>               Download directory for openbooks; must
-                                              exist (default: .)
-    -l, --log-level <Integer>               Log level (0=normal, 1=verbose,
-                                              2=debug, 3=trace) (default: 0)
-    -t, --threading <Integer>               Threading mode (0=single, 1=multi);
-                                              single is slower, but better for
-                                              diagnostics) (default: 1)
+    Option                                  Description                            
+    ------                                  -----------                            
+    -?, --help                              Display this help text                 
+    -d, --download-dir <File>               Download directory for openbooks; must 
+                                              exist (default: .)                   
+    -l, --log-level <Integer>               Log level (0=normal, 1=verbose,        
+                                              2=debug, 3=trace) (default: 0)       
+    -t, --threading <Integer>               Threading mode (0=single, 1=multi);    
+                                              single is slower, but better for     
+                                              diagnostics) (default: 1)            
     book_id1 book_id2 ...                   Books to be downloaded & converted
 
     Legal book IDs:
       all (magic value: all books), actionscript_1_und_2, actionscript_einstieg,
-      apps_iphone, c_von_a_bis_z, dreamweaver_8, excel_2007, hdr_fotografie,
+      apps_iphone, asp_net, c_von_a_bis_z, dreamweaver_8, excel_2007, hdr_fotografie,
       it_handbuch, java_7, java_insel, javascript_ajax, joomla_1_5, linux,
       linux_unix_prog, microsoft_netzwerk, oop, photoshop_cs2, photoshop_cs4,
       php_pear, python, ruby_on_rails_2, shell_prog, ubuntu_10_04, ubuntu_11_04,
-      unix_guru, vb_2008, vb_2008_einstieg, vb_2010_einstieg, vcsharp_2008,
-      vcsharp_2010, vmware, windows_server_2008
+      ubuntu_12_04, unix_guru, vb_2008, vb_2008_einstieg, vb_2010_einstieg,
+      vcsharp_2008, vcsharp_2010, vmware, windows_server_2008
 
 __Dependencies:__ Openbook cleaner was developed in Java 7 with compiler compliance level 1.6 (Java 6). So you
 should be fine with a JRE or JDK for Java 6. It also uses a few open source libraries (see
