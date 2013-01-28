@@ -36,6 +36,7 @@ public enum Book
 	VB_2010_EINSTIEG      ("Einstieg in Visual Basic 2010",           "computing_einstieg_vb_2010",                     "825bc75e2779468f49c27e01c1425181", "9783836215411"),
 	VCSHARP_2008          ("Visual C# 2008",                          "computing_visual_csharp",                        "58bfb6559241a96e6155c7becb00902b", "9783836211727"),
 	VCSHARP_2010          ("Visual C# 2010",                          "computing_visual_csharp_2010",                   "b08df7f094e2155273d4b16dfc75b0d0", "9783836215527"),
+	VCSHARP_2012          ("Visual C# 2012",                          "computing_visual_csharp_2012",                   "b8a814cbdb4a35c798015083e6f97ffc", "9783836219976"),
 	VMWARE                ("VMware und Microsoft Virtual Server",     "computing_vmware",                               "c858eff1750f2e3840894a8d1e306a0a", "9783898427012"),
 	WINDOWS_SERVER_2008   ("Windows Server 2008 R2",                  "computing_windows_server_2008",                  "3df493a8dbf04b9fce3c24ba8ed5e995", "9783836215282"),
 	;
