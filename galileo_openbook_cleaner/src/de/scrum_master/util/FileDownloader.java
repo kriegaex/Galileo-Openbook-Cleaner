@@ -104,8 +104,8 @@ public class FileDownloader
 			SimpleLogger.debug("Download done");
 		}
 		finally {
-			try { in.close(); }  catch (IOException e) { }
-			try { out.close(); } catch (IOException e) { }
+			try { in.close(); }  catch (Exception e) { }
+			try { out.close(); } catch (Exception e) { }
 		}
 	}
 }
