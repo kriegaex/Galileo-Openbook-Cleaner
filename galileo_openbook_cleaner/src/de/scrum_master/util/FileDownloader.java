@@ -5,7 +5,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.net.Authenticator;
+import java.net.ConnectException;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
+import java.net.ProtocolException;
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
@@ -21,6 +27,36 @@ public class FileDownloader
 	private File       to;
 	private BigInteger md5;
 	private boolean    doChecksum;
+
+	// Initialise HTTP proxy settings from system properties
+	private static       String proxyHost     = System.getProperty("http.proxyHost");
+	private static       int    proxyPort     = 80;
+	private static final String proxyUser     = System.getProperty("http.proxyUser");
+	private static final String proxyPassword = System.getProperty("http.proxyPassword");
+	private static       Proxy  proxy         = Proxy.NO_PROXY;
+
+	static {
+		String systemProperty = System.getProperty("http.proxyPort");
+		if (systemProperty != null && !"".equals(systemProperty))
+			proxyPort = Integer.parseInt(systemProperty);
+		if (proxyHost != null && !"".equals(proxyHost))
+			proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+		if (proxyUser != null)
+			Authenticator.setDefault(new Authenticator() {
+				public PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(proxyUser, proxyPassword.toCharArray());
+				}
+			});
+	}
+
+	private static final String CONNECTION_ERROR_MESSAGE =
+		"Are your proxy settings for the JVM (Java Virtual Machine) correct?\n" +
+		"Please make sure that http.proxyHost and http.proxyPort are configured correctly.\n" +
+		"You may also need http.proxyUser and http.proxyPassword in case of an authenticating proxy.\n\n" +
+		"Another possible error cause are restrictive firewall settings.\n" +
+		"You may want to try deactivating your (personal) firewall.\n" +
+		"If it works then, fix the configuration by permitting Java to access the internet.\n";
+
 
 	public class MD5MismatchException extends Exception {
 		private File file;
@@ -84,7 +120,24 @@ public class FileDownloader
 				md5Digest = MessageDigest.getInstance("MD5");
 				outStream = new DigestOutputStream(outStream, md5Digest);
 			}
-			in = Channels.newChannel(from.openStream());
+
+			try {
+				in = Channels.newChannel(from.openConnection(proxy).getInputStream());
+			}
+			catch (ConnectException e) {
+				System.err.println(CONNECTION_ERROR_MESSAGE);
+				throw e;
+			}
+			catch (ProtocolException e) {
+				System.err.println(CONNECTION_ERROR_MESSAGE);
+				throw e;
+			}
+			catch (IOException e) {
+				if(e.getMessage().contains(": 407"))
+					System.err.println(CONNECTION_ERROR_MESSAGE);
+				throw e;
+			}
+
 			out = Channels.newChannel(outStream);
 			buffer = ByteBuffer.allocate(1 << 20);  // 1 MB
 
