@@ -115,12 +115,6 @@ public class FileDownloader
 		BigInteger          md5Actual;
 		try {
 			SimpleLogger.debug("Downloading " + from + " ...");
-			outStream = new FileOutputStream(to);
-			if (doChecksum) {
-				md5Digest = MessageDigest.getInstance("MD5");
-				outStream = new DigestOutputStream(outStream, md5Digest);
-			}
-
 			try {
 				in = Channels.newChannel(from.openConnection(proxy).getInputStream());
 			}
@@ -138,6 +132,11 @@ public class FileDownloader
 				throw e;
 			}
 
+			outStream = new FileOutputStream(to);
+			if (doChecksum) {
+				md5Digest = MessageDigest.getInstance("MD5");
+				outStream = new DigestOutputStream(outStream, md5Digest);
+			}
 			out = Channels.newChannel(outStream);
 			buffer = ByteBuffer.allocate(1 << 20);  // 1 MB
 
