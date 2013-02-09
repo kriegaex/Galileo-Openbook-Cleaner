@@ -304,8 +304,10 @@ public class JsoupFilter extends BasicFilter {
 	 * following sibling in the latter case. The jsoup mailing list has been notified about this fact. HTML tidy
 	 * returns the expected ("correct") structure, so this might be a jsoup problem.
 	 * <p>
+	 * The fix also removes one leftover feedback form in "ubuntu_11_04" (linux_18_001.htm).
+	 * <p>
 	 * <b>Disclaimer:</b> While this implementation can cope with the irregularities in DOM structure concerning
-	 * the feedback form, has no influence on other errors such as garbled text elements occurring in the remainder
+	 * the feedback form, it has no influence on other errors such as garbled text elements occurring in the remainder
 	 * of 02_kap02_002.htm and maybe also in other files (unknown).
 	 *
 	 * @param feedbackForm user feedback form for which to determine the neighbourhood
