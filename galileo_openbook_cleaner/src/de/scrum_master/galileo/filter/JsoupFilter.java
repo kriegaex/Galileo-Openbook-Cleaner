@@ -41,15 +41,15 @@ public class JsoupFilter extends BasicFilter {
 		BODY                           ("body"),
 		BODY_NODES                     ("body > *"),
 
-		NON_STANDARD_MAIN_CONTENT      ("td.buchtext > *"),
+		NON_STANDARD_MAIN_CONTENT      ("td.buchtext"),
 		TOP_LEVEL_HEADINGS             ("body h1, h2, h3, h4"),
 		NON_STANDARD_BOTTOM_NAVIGATION ("div.navigation"),
 
 		GREY_TABLE                     ("table[bgcolor=#eeeeee]"),
-		MAIN_CONTENT_1                 (GREY_TABLE.query + " > tr > td > div.main > *, " +
-		                                GREY_TABLE.query + " > tbody > tr > td > div.main > *"),
-		MAIN_CONTENT_2                 (GREY_TABLE.query + " > tr > td > *, " +
-		                                GREY_TABLE.query + " > tbody > tr > td > *"),
+		MAIN_CONTENT_1                 (GREY_TABLE.query + " > tr > td > div.main, " +
+		                                GREY_TABLE.query + " > tbody > tr > td > div.main"),
+		MAIN_CONTENT_2                 (GREY_TABLE.query + " > tr > td, " +
+		                                GREY_TABLE.query + " > tbody > tr > td"),
 
 		JUMP_TO_TOP_LINK               ("div:has(a[href=#top])"),
 		GRAPHICAL_PARAGRAPH_SEPARATOR  ("div:has(img[src=common/jupiters.gif])"),
@@ -528,7 +528,8 @@ public class JsoupFilter extends BasicFilter {
 	private static void moveNodes(Elements sourceNodes, Element targetElement) {
 		for (Element element : sourceNodes) {
 			element.remove();
-			targetElement.appendChild(element);
+			for (Node node : element.childNodes())
+				targetElement.append(node.outerHtml());
 		}
 	}
 
