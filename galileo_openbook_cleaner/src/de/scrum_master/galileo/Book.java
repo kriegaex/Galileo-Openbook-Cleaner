@@ -14,7 +14,7 @@ public enum Book
 	HDR_FOTOGRAFIE        ("HDR-Fotografie",                          "design_hdr_fotografie",                          "05f1f03fddeb2d46ddb6f3dcf6417245", "9783836211031"),
 	IT_HANDBUCH           ("IT-Handbuch für Fachinformatiker",        "computing_it_handbuch",                          "69095040b73028fe6e5b5cf2e1ac3305", "9783836217446"),
 	JAVA_7                ("JavaScript und AJAX",                     "computing_java7",                                "a6c42f70b09fed65c3397e817f3b246d", "9783836215077"),
-	JAVA_INSEL            ("Java 7 - mehr als eine Insel",            "computing_javainsel",                            "3f7fa5da11cbec50e9a2f4c7952f0499", "9783836218023"),
+	JAVA_INSEL            ("Java 7 - mehr als eine Insel",            "computing_javainsel",                            "dbf5dd60502be22fd0ac42d44584309f", "9783836218023"),
 	JAVASCRIPT_AJAX       ("Java ist auch eine Insel",                "computing_javascript_ajax",                      "1fdb716ed9120e26dd9f501356e712a9", "9783898428590"),
 	JOOMLA_1_5            ("Joomla! 1.5",                             "computing_joomla15",                             "81b816d22da3da064d3b23b97266cf2f", "9783898428811"),
 	LINUX                 ("Linux",                                   "computing_linux",                                "d1109e488213c93e5468b444cde7698d", "9783836218221"),
