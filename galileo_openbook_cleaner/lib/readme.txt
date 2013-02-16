@@ -1,7 +1,7 @@
 You need to add the following JAR files here in order to make the Eclipse build work:
 
-  jsoup 1.6.3
-    http://jsoup.org/packages/jsoup-1.6.3.jar
+  jsoup 1.7.2
+    http://jsoup.org/packages/jsoup-1.7.2.jar
 
   JOpt Simple 4.3
     http://central.maven.org/maven2/net/sf/jopt-simple/jopt-simple/4.3/jopt-simple-4.3.jar
