@@ -10,6 +10,9 @@ You need to add the following JAR files here in order to make the Eclipse build 
     http://mirror3.layerjet.com/apache//commons/compress/binaries/commons-compress-1.4.1-bin.zip
     Unpack and use commons-compress-1.4.1.jar
 
+  XStream 1.4.4
+    https://nexus.codehaus.org/content/repositories/releases/com/thoughtworks/xstream/xstream/1.4.4/xstream-1.4.4.jar
+
   AspectJ 1.7.0
     http://www.eclipse.org/downloads/download.php?file=/tools/aspectj/aspectj-1.7.0.jar
     Install AspectJ by double-clicking the JAR installer. After installation make sure that
