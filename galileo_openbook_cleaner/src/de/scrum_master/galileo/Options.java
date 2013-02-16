@@ -34,13 +34,14 @@ class Options extends OptionParser {
 		downloadDir = sp_downloadDir.value(optionSet);
 		logLevel = sp_logLevel.value(optionSet);
 		threading = sp_threading.value(optionSet);
+		Book.readConfig(logLevel > 1);
 		for (String book_id : optionSet.nonOptionArguments()) {
 			if ("all".equalsIgnoreCase(book_id)) {
-				books = asList(Book.values());
+				books = new ArrayList<Book>(Book.books.values());
 				break;
 			}
 			try {
-				books.add(Book.valueOf(book_id.toUpperCase())); }
+				books.add(Book.books.get(book_id.toUpperCase())); }
 			catch (IllegalArgumentException e) {
 				throw new IllegalArgumentException("invalid book ID '" + book_id + "'", e); }
 		}
@@ -72,7 +73,7 @@ class Options extends OptionParser {
 		sink.println("book_id1 book_id2 ...                   Books to be downloaded & converted");
 		sink.println("\nLegal book IDs:");
 		String line = "  all (magic value: all books)";
-		for (Book book : Book.values()) {
+		for (Book book : Book.books.values()) {
 			if (line.length() + book.unpackDirectory.length() < 79)
 				line += ", " + book.unpackDirectory;
 			else {

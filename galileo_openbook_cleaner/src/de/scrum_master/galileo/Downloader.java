@@ -3,6 +3,7 @@ package de.scrum_master.galileo;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 
@@ -45,7 +46,7 @@ class Downloader
 		String archiveName = book.downloadArchive.replaceFirst(".*/", "");
 		File file = new File(downloadDirectory, archiveName);
 		if (! file.exists())
-			new FileDownloader(new URL(book.downloadArchive), file, book.archiveMD5).download();
+			new FileDownloader(new URL(book.downloadArchive), file, new BigInteger(book.archiveMD5, 16)).download();
 	}
 
 	private void unpackBook() throws IOException {
