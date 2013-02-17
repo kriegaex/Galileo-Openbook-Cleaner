@@ -22,9 +22,9 @@ public class Book
 	public String archiveMD5;
 	public String coverImage;
 
-	public final static String CONFIG_FOLDER = "resource";
-	public final static String CONFIG_FILE = "config.xml";
-	public final static XStream XSTREAM = new XStream(new DomDriver());
+	public final static String  CONFIG_FOLDER   = "resource";
+	public final static String  CONFIG_FILE     = "config.xml";
+	public final static XStream XSTREAM         = new XStream(new DomDriver());
 
 	static {
 		XSTREAM.alias("galileo-openbooks", TreeMap.class);
