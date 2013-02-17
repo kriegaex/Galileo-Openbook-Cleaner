@@ -1,11 +1,9 @@
 package de.scrum_master.galileo;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -24,6 +22,7 @@ public class Book
 
 	public final static String  CONFIG_FOLDER   = "resource";
 	public final static String  CONFIG_FILE     = "config.xml";
+	public final static String  CONFIG_ENCODING = "iso-8859-15";
 	public final static XStream XSTREAM         = new XStream(new DomDriver());
 
 	static {
@@ -35,16 +34,16 @@ public class Book
 	public static SortedMap<String, Book> books = new TreeMap<String, Book>();
 
 	public static void writeConfig(boolean debugMode) {
-		OutputStream configFileStream = null;
-		OutputStreamWriter configFileWriter = null;
+		Writer configFileWriter = null;
 		boolean debugModeOrig = SimpleLogger.DEBUG;
 		try {
 			// Activate the debug channel, if specified by caller
 			SimpleLogger.DEBUG = debugMode;
 			SimpleLogger.debug("Writing local configuration file " + CONFIG_FILE);
-			configFileStream = new FileOutputStream(CONFIG_FILE);
-			configFileWriter = new OutputStreamWriter(configFileStream, "iso-8859-15");
+			configFileWriter = new FileWriter(CONFIG_FILE);
+			configFileWriter.write("<?xml version=\"1.0\" encoding=\"" + CONFIG_ENCODING + "\"?>\n");
 			XSTREAM.toXML(books, configFileWriter);
+			configFileWriter.write("\n");
 		} catch (Exception e) {
 			SimpleLogger.debug("Cannot write local configuration file " + CONFIG_FILE);
 			throw new RuntimeException("Cannot write local configuration file " + CONFIG_FILE, e);
@@ -59,7 +58,6 @@ public class Book
 	@SuppressWarnings("unchecked")
 	public static void readConfig(boolean debugMode) {
 		InputStream configFileStream = null;
-		InputStreamReader configFileReader = null;
 		boolean debugModeOrig = SimpleLogger.DEBUG;
 		try {
 			// Activate the debug channel, if specified by caller
@@ -86,8 +84,7 @@ public class Book
 				throw e;
 			}
 			try {
-				configFileReader = new InputStreamReader(configFileStream, "iso-8859-15");
-				books = (SortedMap<String, Book>) XSTREAM.fromXML(configFileReader);
+				books = (SortedMap<String, Book>) XSTREAM.fromXML(configFileStream);
 			} catch (Exception e) {
 				throw new RuntimeException(
 					"Configuration file " + CONFIG_FILE + " could not be read or parsed correctly. " +
@@ -97,7 +94,6 @@ public class Book
 			}
 		}
 		finally {
-			try { if (configFileReader != null) configFileReader.close(); } catch (Exception e) { }
 			try { if (configFileStream != null) configFileStream.close(); } catch (Exception e) { }
 			// Reset debug channel to previously saved state
 			SimpleLogger.DEBUG = debugModeOrig;
