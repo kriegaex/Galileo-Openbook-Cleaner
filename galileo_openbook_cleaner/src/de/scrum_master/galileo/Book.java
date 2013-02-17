@@ -34,7 +34,7 @@ public class Book
 
 	public static SortedMap<String, Book> books = new TreeMap<String, Book>();
 
-	public static void writeConfig() throws Exception {
+	public static void writeConfig() {
 		OutputStream configFileStream = null;
 		OutputStreamWriter configFileWriter = null;
 		try {
@@ -44,7 +44,7 @@ public class Book
 			XSTREAM.toXML(books, configFileWriter);
 		} catch (Exception e) {
 			SimpleLogger.debug("Cannot write local configuration file " + CONFIG_FILE);
-			throw e;
+			throw new RuntimeException("Cannot write local configuration file " + CONFIG_FILE, e);
 		}
 		finally {
 			try { if (configFileWriter != null) configFileWriter.close(); } catch (Exception e) { }
