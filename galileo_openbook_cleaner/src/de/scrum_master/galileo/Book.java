@@ -34,10 +34,13 @@ public class Book
 
 	public static SortedMap<String, Book> books = new TreeMap<String, Book>();
 
-	public static void writeConfig() {
+	public static void writeConfig(boolean debugMode) {
 		OutputStream configFileStream = null;
 		OutputStreamWriter configFileWriter = null;
+		boolean debugModeOrig = SimpleLogger.DEBUG;
 		try {
+			// Activate the debug channel, if specified by caller
+			SimpleLogger.DEBUG = debugMode;
 			SimpleLogger.debug("Writing local configuration file " + CONFIG_FILE);
 			configFileStream = new FileOutputStream(CONFIG_FILE);
 			configFileWriter = new OutputStreamWriter(configFileStream, "iso-8859-15");
@@ -48,7 +51,8 @@ public class Book
 		}
 		finally {
 			try { if (configFileWriter != null) configFileWriter.close(); } catch (Exception e) { }
-			try { if (configFileStream != null) configFileStream.close(); } catch (Exception e) { }
+			// Reset debug channel to previously saved state
+			SimpleLogger.DEBUG = debugModeOrig;
 		}
 	}
 
