@@ -3,7 +3,6 @@
 	<name>Galileo Openbook Cleaner</name>
 	<comment></comment>
 	<projects>
-		<project>JTidy-r938 kriegaex</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
