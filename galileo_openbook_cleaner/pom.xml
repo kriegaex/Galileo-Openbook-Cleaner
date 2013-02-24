@@ -34,8 +34,6 @@
 					<complianceLevel>1.6</complianceLevel>
 					<encoding>UTF-8</encoding>
 					<verbose>false</verbose>
-					<!-- <aspectLibraries> <aspectLibrary> <groupId>org.springframework</groupId> 
-						<artifactId>spring-aspects</artifactId> </aspectLibrary> </aspectLibraries> -->
 				</configuration>
 				<executions>
 					<execution>
