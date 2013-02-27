@@ -65,6 +65,7 @@
 						<configuration>
 							<onejarVersion>0.96</onejarVersion>
 							<mainClass>de.scrum_master.galileo.OpenbookCleaner</mainClass>
+							<attachToBuild>true</attachToBuild>
 						</configuration>
 						<goals>
 							<goal>one-jar</goal>
