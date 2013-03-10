@@ -3,7 +3,7 @@ package de.scrum_master.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.Authenticator;
 import java.net.ConnectException;
@@ -17,7 +17,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.security.DigestOutputStream;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -27,6 +27,7 @@ public class FileDownloader
 	private File       to;
 	private BigInteger md5;
 	private boolean    doChecksum;
+	private boolean    doWriteToFile;
 
 	// Initialise HTTP proxy settings from system properties
 	private static       String proxyHost     = System.getProperty("http.proxyHost");
@@ -80,12 +81,11 @@ public class FileDownloader
 	public FileDownloader(URL from, File to, BigInteger md5) {
 		if (from == null)
 			throw new IllegalArgumentException("Parameter 'from' must not be null");
-		if (to == null)
-			throw new IllegalArgumentException("Parameter 'to' must not be null");
 		this.from = from;
 		this.to = to;
 		this.md5 = md5;
 		this.doChecksum = md5 != null;
+		this.doWriteToFile = to != null;
 	}
 
 	public FileDownloader(String fromURL, String toFile, String md5) throws MalformedURLException {
@@ -107,7 +107,6 @@ public class FileDownloader
 	public void download()
 		throws IOException, NoSuchAlgorithmException, MD5MismatchException
 	{
-		OutputStream        outStream;
 		MessageDigest       md5Digest  = null;
 		ReadableByteChannel in         = null;
 		WritableByteChannel out        = null;
@@ -116,7 +115,12 @@ public class FileDownloader
 		try {
 			SimpleLogger.debug("Downloading " + from + " ...");
 			try {
-				in = Channels.newChannel(from.openConnection(proxy).getInputStream());
+				InputStream inStream = from.openConnection(proxy).getInputStream();
+				if (doChecksum) {
+					md5Digest = MessageDigest.getInstance("MD5");
+					inStream = new DigestInputStream(inStream, md5Digest);
+				}
+				in = Channels.newChannel(inStream);
 			}
 			catch (ConnectException e) {
 				System.err.println(CONNECTION_ERROR_MESSAGE);
@@ -132,18 +136,15 @@ public class FileDownloader
 				throw e;
 			}
 
-			outStream = new FileOutputStream(to);
-			if (doChecksum) {
-				md5Digest = MessageDigest.getInstance("MD5");
-				outStream = new DigestOutputStream(outStream, md5Digest);
-			}
-			out = Channels.newChannel(outStream);
+			if (doWriteToFile)
+				out = Channels.newChannel(new FileOutputStream(to));
 			buffer = ByteBuffer.allocate(1 << 20);  // 1 MB
 
-			// Download file, optionally calculate MD5 while writing output
+			// Download file, optionally calculate MD5
 			while (in.read(buffer) != -1) {
 				buffer.flip();
-				out.write(buffer);
+				if (doWriteToFile)
+					out.write(buffer);
 				buffer.clear();
 			}
 
