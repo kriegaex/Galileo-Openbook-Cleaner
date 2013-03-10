@@ -21,13 +21,23 @@
     </book>
   </entry>
   <entry>
-    <id>APPS_IPHONE</id>
+    <id>APPS_IPHONE_IOS5</id>
     <book>
-      <title>Apps entwickeln für iPhone und iPad</title>
-      <unpackDirectory>apps_iphone</unpackDirectory>
+      <title>Apps entwickeln für iPhone und iPad (iOS 5)</title>
+      <unpackDirectory>apps_iphone_ios5</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_apps_entwickeln_fuer_iphone_und_ipad.zip</downloadArchive>
       <archiveMD5>4ec481acdd85478ea58dbc246811732f</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836214636.jpg</coverImage>
+    </book>
+  </entry>
+  <entry>
+    <id>APPS_IPHONE_IOS6</id>
+    <book>
+      <title>Apps programmieren für iPhone und iPad (iOS 6)</title>
+      <unpackDirectory>apps_iphone_ios6</unpackDirectory>
+      <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_apps_programmieren_fuer_iphone_und_ipad.zip</downloadArchive>
+      <archiveMD5>8140eb718a8708e7cb7247cacd445630</archiveMD5>
+      <coverImage>http://cover.galileo-press.de/9783836219150.jpg</coverImage>
     </book>
   </entry>
   <entry>
@@ -298,6 +308,16 @@
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_einstieg_vb_2010.zip</downloadArchive>
       <archiveMD5>825bc75e2779468f49c27e01c1425181</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836215411.jpg</coverImage>
+    </book>
+  </entry>
+  <entry>
+    <id>VB_2012_EINSTIEG</id>
+    <book>
+      <title>Einstieg in Visual Basic 2012</title>
+      <unpackDirectory>vb_2012_einstieg</unpackDirectory>
+      <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_einstieg_vb_2012.zip</downloadArchive>
+      <archiveMD5>6c2081ba9ec3e8ac53a8858e3dc32b04</archiveMD5>
+      <coverImage>http://cover.galileo-press.de/9783836219594.jpg</coverImage>
     </book>
   </entry>
   <entry>
