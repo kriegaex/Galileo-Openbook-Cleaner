@@ -1,4 +1,114 @@
-Version [###]
+Version 1.1.0
+  New features
+    - New command-line option "-w|--write-config" for writes an editable book list file config.xml
+      to current the current directory. This is an easy way for JAR users to extract the embedded
+      default config.xml to disk and edit it subsequently, e.g. in order to add new books not
+      contained in the upstream version. This way they do not have to wait for me to update the
+      Git repo and the downloadable JAR. User self-service. :-)
+    - New tool class DownloadChecker checks downloads and verifies their MD5. The class has a 'main'
+      method which can be called by advanced users who know it. Attention: This is a long-running
+      operation (~14 minutes on my old PC using 16 Mbit/s downstream DSL) which as of 2013-03-10
+      downloads at least 1.1 Gb of data!
+    - New tool class AvailableBooksChecker compares predefined to online books: This class has a
+      'main' method to be used by advanced users knowing how to interpret the output. Basically two
+      sets of book URLs are compared: the list of known books from config.xml to the lists of books
+      found online on the Galileo Computing and Galileo Design web sites. For each set the orphans,
+      i.e. elements not found in the respective other set, are determined and printed. This helps
+      to discover new, renamed or deleted books. It also helps to spot known books which are still
+      available for download, but no longer listed on the web site.
+    - In verbose logging mode, the removal of feedback forms is now logged.
+    - New books APPS_IPHONE_IOS6, VB_2012_EINSTIEG. I detected the books using the new tool
+      AvailableBooksChecker. :-)
+  Changed features
+    - Update MD5 for VCSHARP_2012 once again
+    - Rename book APPS_IPHONE to APPS_IPHONE_IOS5 to differantiate it from the new *_IOS6 book
+  Internal changes
+    - Add XStream 1.4.4 as a new external library: XStream is a simple library to serialize objects
+      to XML and back again, see http://xstream.codehaus.org. It is used in this project for
+      loading/saving openbook meta data from/to a config file (config.xml, see below).
+    - Make book list configurable: class Book used to be an enum with hard-coded items. Now it is
+      a simple class containing String values which are read from an XML configuration file. In
+      order to make this work in the IDE and as well as in JAR files, the file config.xml (which
+      was created and is parsed by XStream) is searched in three places in this order:
+        1. ./config.xml
+           If this local config file is found in either scenario (IDE or JAR) it will be preferred
+           to other locations, which enables the user to override the default version.
+        2. resource/config.xml
+           This is where the default file is located and found in Eclipse if no local config file
+           exists. From there it will be maintained in Git and, because 'resource' is configured
+            as an Eclipse source folder, added to runnable JARs when creating them from the IDE.
+        3. /config.xml
+           This is where the default file is located and found in the JAR if no local config file
+           exists. From there it will be read as a resource via Class.getResourceAsStream.
+    - Project can be built with Maven now from Eclipse (added Maven nature to Eclipse settings)
+      as well as from cloud services like
+        * BuildHive: https://buildhive.cloudbees.com/job/kriegaex/job/Galileo-Openbook-Cleaner/
+        * CloudBees: https://scrum-master.ci.cloudbees.com/job/galileo-openbook-cleaner/
+      Both of them are in use at the moment, but after a few improvements to the CloudBees version
+      I will probably delete the BuildHive version again because it must copy build artifacts on my
+      personal FTP server while the CloudBees version features its own deployment repository.
+    - Use one-jar Mave plugin to create a JAR of JARs similar to what we had before when creating a
+      "runnable JAR" from Eclipse. 
+    - Upgrade to jsoup-1.7.2
+    - Refactor JsoupFilter for cleaner code
+    - Refactor LoggingAspect several times for cleaner code and thread safety, trying different
+      approaches until as satisfactory solution was found.
+    - JsoupFiter: update JavaDoc info for getFeedbackFormNeigbourhood 
+    - Eclipse .project: remove obsolete reference to JTidy project
+    - FileDownloader: calculate MD5 while reading input, not writing output. This is necessary for
+      making the write-to-file step optional (e.g. for MD5 check only). The constructor now accepts
+      a null value for 'to' and sets the new boolean member 'doWriteToFile' accordingly. The latter
+      is checked later during download.
+
+
+Version 1.0.3
+  New features
+    - New book UBUNTU_12_04 ("Ubuntu 12.04 'Precise Pangolin'")
+    - New book VCSHARP_2012 ("Visual C# 2012")
+  Changed features
+    - Update MD5 for VCSHARP_2012 and JAVA_INSEL: Galileo Press have changed the download files.
+      Maybe they fixed some errata.
+  Bugfixes
+    - If there are download problems, no more files with size 0 bytes will be created anymore
+      (cf. "internal changes").
+    - Make sure to keep non-element nodes: When moving the main content of the nested "grey table"
+      directly under the BODY tag and removing the previously surrounding clutter, only element
+      nodes were moved, but other content (such as dangling text nodes) were ignored and thus lost.
+      This affected content in several books in different degrees:
+        actionscript_1_und_2, actionscript_einstieg, apps_iphone, asp_net, dreamweaver_8,
+        excel_2007, it_handbuch, java_7, java_insel, javascript_ajax, joomla_1_5, linux,
+        linux_unix_prog, microsoft_netzwerk, php_pear, python, ruby_on_rails_2, shell_prog,
+        ubuntu_11_04, ubuntu_12_04, unix_guru, vcsharp_2010
+  Internal changes
+    - Initialise output after input stream for downloads (avoids 0-byte file): In class
+      FileDownloader, FileOutputStream 'outStream' is now only initialised *after* the InputStream
+      on the URL to be downloaded has been opened successfully. This avoids the creation of 0-byte
+      files in case of server, proxy or other connection problems.
+
+
+Version 1.0.2
+  New feature
+    - Add HTTP proxy support incl. authentication if necessary: JVM parameters for host, port, user,
+      password are supported and can be specified on the command line e.g. like this (without line
+      feeds):
+        java
+          -Dhttp.proxyHost=localhost -Dhttp.proxyPort=8080
+          -Dhttp.proxyUser=kriegaex -Dhttp.proxyPassword="test äöüX"
+  Bugfixes
+    - Make debugging easier by de-obfuscating callstacks in FileDownloader (cf. "internal changes")
+  Internal changes
+    - FileDownloader: catch all Exceptions in 'finally' block. Otherwise debugging in cases where
+      'in' or 'out' are null gets difficult because then the application will exit with a
+      NullPointerException thrown from the nested 'try' block inside 'finally' rather than the real
+      exception that happened before.
+
+
+Version 1.0.1
+  New features
+    - New book ASP_NET ("Einstieg in ASP.NET")
+
+
+Version 1.0
   New features
     - The souce code is now explicitly licenced under GPLv3 (see file COPYING).
     - Openbook conversion is now much faster because the switch to jsoup (see "internal changes").
@@ -14,6 +124,7 @@ Version [###]
   Changed features
     - CLI (command line interface)
         * Option '-a' replaced by magic book ID 'all' which can be used instead
+        * Options: show error message + usage info on missing book ID
         * Options '-d'/'-v' replaced by '-l|--log-level=(0|1|2)' with a default of
           0 (normal). 1 is verbose, 2 is debug.
         * New log level 3 (trace) activates a call trace output on System.err (lower log levels
@@ -28,7 +139,6 @@ Version [###]
           because the old filter chain was removed and jsoup introduced. So the flag became redundant
           because jsoup always pretty-prints.
         * Option '-?' can also be written as '--help' now
-  Bugfixes
   Internal changes
     - Rename BookInfo to just Book and add member 'title' containing a book title to be used on the
       TOC page (index.htm*).
