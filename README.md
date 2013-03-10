@@ -4,18 +4,18 @@ HTML cleaner for Galileo openbooks
 This is a tool for cleaning up [Galileo Computing openbooks](http://www.galileocomputing.de/openbook)
 before converting them to EPUB or PDF format.
 
-__Current state of development:__ v1.0.3 is feature complete, i.e. it can download, MD5-verify, unpack
-and convert all 35 openbooks available at release time.
+__Current state of development:__ v1.1.0 is feature complete, i.e. it can download, MD5-verify, unpack
+and convert all 37 openbooks available at release time.
 
 __Download:__ A precompiled, executable JAR file is available
-[here](http://scrum-master.de/download/GalileoOpenbookCleaner/galileo_openbook_cleaner-1.0.3.jar). 
+[here](http://scrum-master.de/download/GalileoOpenbookCleaner/galileo_openbook_cleaner-1.1.0.jar). 
 
 __Usage:__
 
-    $ java -jar galileo_openbook_cleaner-1.0.3.jar --help
+    $ java -jar galileo_openbook_cleaner-1.1.0.jar --help
     
     OpenbookCleaner usage: java ... [options] <book_id>*
-    
+
     Option                                  Description
     ------                                  -----------
     -?, --help                              Display this help text
@@ -26,19 +26,21 @@ __Usage:__
     -t, --threading <Integer>               Threading mode (0=single, 1=multi);
                                               single is slower, but better for
                                               diagnostics) (default: 1)
+    -w, --write-config                      Write editable book list to config.xml
+
     book_id1 book_id2 ...                   Books to be downloaded & converted
-    
+
     Legal book IDs:
       all (magic value: all books), actionscript_1_und_2, actionscript_einstieg,
-      apps_iphone, asp_net, c_von_a_bis_z, dreamweaver_8, excel_2007, hdr_fotografie,
-      it_handbuch, java_7, java_insel, javascript_ajax, joomla_1_5, linux,
-      linux_unix_prog, microsoft_netzwerk, oop, photoshop_cs2, photoshop_cs4,
-      php_pear, python, ruby_on_rails_2, shell_prog, ubuntu_10_04, ubuntu_11_04,
-      ubuntu_12_04, unix_guru, vb_2008, vb_2008_einstieg, vb_2010_einstieg,
-      vcsharp_2008, vcsharp_2010, vcsharp_2012, vmware, windows_server_2008
+      apps_iphone_ios5, apps_iphone_ios6, asp_net, c_von_a_bis_z, dreamweaver_8,
+      excel_2007, hdr_fotografie, it_handbuch, javascript_ajax, java_7, java_insel,
+      joomla_1_5, linux, linux_unix_prog, microsoft_netzwerk, oop, photoshop_cs2,
+      photoshop_cs4, php_pear, python, ruby_on_rails_2, shell_prog, ubuntu_10_04,
+      ubuntu_11_04, ubuntu_12_04, unix_guru, vb_2008, vb_2008_einstieg,
+      vb_2010_einstieg, vb_2012_einstieg, vcsharp_2008, vcsharp_2010, vcsharp_2012,
+      vmware, windows_server_2008
 
-__Dependencies:__ Openbook cleaner was developed in Java 7 with compiler compliance level 1.6 (Java 6). So you
-should be fine with a JRE or JDK for Java 6. It also uses a few open source libraries (see
+__Dependencies:__ Openbook cleaner was developed in Java 6. It also uses a few open source libraries (see
 [readme.txt](https://github.com/kriegaex/Galileo-Openbook-Cleaner/tree/v1.0_stable/galileo_openbook_cleaner/lib)
 for download links and installation instructions):
 
