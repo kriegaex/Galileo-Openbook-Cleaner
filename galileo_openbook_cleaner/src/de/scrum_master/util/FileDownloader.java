@@ -27,6 +27,7 @@ public class FileDownloader
 	private File       to;
 	private BigInteger md5;
 	private boolean    doChecksum;
+	private boolean    doWriteToFile;
 
 	// Initialise HTTP proxy settings from system properties
 	private static       String proxyHost     = System.getProperty("http.proxyHost");
@@ -80,12 +81,11 @@ public class FileDownloader
 	public FileDownloader(URL from, File to, BigInteger md5) {
 		if (from == null)
 			throw new IllegalArgumentException("Parameter 'from' must not be null");
-		if (to == null)
-			throw new IllegalArgumentException("Parameter 'to' must not be null");
 		this.from = from;
 		this.to = to;
 		this.md5 = md5;
 		this.doChecksum = md5 != null;
+		this.doWriteToFile = to != null;
 	}
 
 	public FileDownloader(String fromURL, String toFile, String md5) throws MalformedURLException {
@@ -136,13 +136,15 @@ public class FileDownloader
 				throw e;
 			}
 
-			out = Channels.newChannel(new FileOutputStream(to));
+			if (doWriteToFile)
+				out = Channels.newChannel(new FileOutputStream(to));
 			buffer = ByteBuffer.allocate(1 << 20);  // 1 MB
 
 			// Download file, optionally calculate MD5
 			while (in.read(buffer) != -1) {
 				buffer.flip();
-				out.write(buffer);
+				if (doWriteToFile)
+					out.write(buffer);
 				buffer.clear();
 			}
 
