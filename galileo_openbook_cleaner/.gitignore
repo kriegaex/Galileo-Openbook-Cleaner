@@ -5,7 +5,8 @@ lib/*.jar
 *.xls
 actionscript_1_und_2/**
 actionscript_einstieg/**
-apps_iphone/**
+apps_iphone_ios5/**
+apps_iphone_ios6/**
 asp_net/**
 c_von_a_bis_z/**
 dreamweaver_8/**
@@ -33,8 +34,9 @@ unix_guru/**
 vb_2008/**
 vb_2008_einstieg/**
 vb_2010_einstieg/**
+vb_2012_einstieg/**
 vcsharp_2008/**
 vcsharp_2010/**
 vcsharp_2012/**
 vmware/**
-windows_server_2008/**
+windows_server_2008
