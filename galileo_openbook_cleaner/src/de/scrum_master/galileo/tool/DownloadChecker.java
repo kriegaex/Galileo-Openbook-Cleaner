@@ -16,9 +16,10 @@ public class DownloadChecker {
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
 		Book.readConfig(true);
+		System.out.println("\nChecking book downloads and MD5 checksums:");
 		for (String bookID : Book.books.keySet()) {
 			Book book = Book.books.get(bookID);
-			System.out.print(bookID + " ... ");
+			System.out.print("  " + bookID + " ... ");
 			try {
 				new FileDownloader(new URL(book.downloadArchive), null, new BigInteger(book.archiveMD5, 16)).download();
 				System.out.println("OK");
