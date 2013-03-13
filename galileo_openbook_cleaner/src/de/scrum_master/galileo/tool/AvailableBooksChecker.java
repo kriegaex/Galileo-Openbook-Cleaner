@@ -14,43 +14,44 @@ import de.scrum_master.galileo.Book;
 public class AvailableBooksChecker {
 	public static void main(String[] args) throws Exception {
 		long startTime = System.currentTimeMillis();
-		SortedSet<String> knownURLs = getKnownURLs();
-		SortedSet<String> foundURLs = getFoundURLs();
-		SortedSet<String> knownOrphanURLs = getMyOrphanURLs(knownURLs, foundURLs);
-		SortedSet<String> foundOrphanURLs = getMyOrphanURLs(foundURLs, knownURLs);
-		System.out.println("Known orphan URLs: " + knownOrphanURLs);
-		System.out.println("Found orphan URLs: " + foundOrphanURLs);
+		SortedSet<String> localConfigURLs = getlocalConfigURLs();
+		SortedSet<String> webSiteURLs = getwebSiteURLs();
+		SortedSet<String> localConfigOrphans = getOrphans(localConfigURLs, webSiteURLs);
+		SortedSet<String> webSiteOrphans = getOrphans(webSiteURLs, localConfigURLs);
+		System.out.println("\nOrphan URLs:");
+		System.out.println("  Local config orphans: " + localConfigOrphans);
+		System.out.println("  Web site orphans:     " + webSiteOrphans);
 		System.out.println("\nExecution time: " + (System.currentTimeMillis() - startTime) / 1000.0 + " s");
 	}
 
-	private static SortedSet<String> getKnownURLs() {
+	private static SortedSet<String> getlocalConfigURLs() {
 		Book.readConfig(true);
-		SortedSet<String> knownURLs = new TreeSet<String>();
+		SortedSet<String> localConfigURLs = new TreeSet<String>();
 		for (Book book : Book.books.values())
-			knownURLs.add(book.downloadArchive);
-		return knownURLs;
+			localConfigURLs.add(book.downloadArchive);
+		return localConfigURLs;
 	}
 
-	private static SortedSet<String> getFoundURLs() throws Exception {
+	private static SortedSet<String> getwebSiteURLs() throws Exception {
 		Document webPage;
 		Elements downloadLinks;
-		SortedSet<String> foundURLs = new TreeSet<String>();
+		SortedSet<String> webSiteURLs = new TreeSet<String>();
 		webPage = Jsoup.parse(new URL("http://www.galileocomputing.de/katalog/openbook"), 10000);
 		downloadLinks = webPage.select("a[href*=.zip]");
 		for (Element link : downloadLinks)
-			foundURLs.add(link.attr("href"));
+			webSiteURLs.add(link.attr("href"));
 		webPage = Jsoup.parse(new URL("http://www.galileodesign.de/katalog/openbook"), 10000);
 		downloadLinks = webPage.select("a[href*=.zip]");
 		for (Element link : downloadLinks)
-			foundURLs.add(link.attr("href"));
-		return foundURLs;
+			webSiteURLs.add(link.attr("href"));
+		return webSiteURLs;
 	}
 
-	private static SortedSet<String> getMyOrphanURLs(SortedSet<String> myURLs, SortedSet<String> otherURLs) {
-		SortedSet<String> orphanURLs = new TreeSet<String>();
+	private static SortedSet<String> getOrphans(SortedSet<String> myURLs, SortedSet<String> otherURLs) {
+		SortedSet<String> Orphans = new TreeSet<String>();
 		for (String url : myURLs)
 			if (!otherURLs.contains(url))
-				orphanURLs.add(url);
-		return orphanURLs;
+				Orphans.add(url);
+		return Orphans;
 	}
 }
