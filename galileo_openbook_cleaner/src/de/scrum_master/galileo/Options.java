@@ -12,6 +12,8 @@ import joptsimple.*;
 
 class Options extends OptionParser {
 	boolean showHelp;
+	boolean checkAvail;
+	boolean checkMD5;
 	File downloadDir;
 	int logLevel, prettyPrint, threading;
 	List<Book> books = new ArrayList<Book>();
@@ -23,6 +25,8 @@ class Options extends OptionParser {
 	public OptionSet parse(String... arguments) {
 		// Set up parsing rules
 		OptionSpec<Void>    sp_showHelp    = makeOptionSpec("?", "help",         "Display this help text", null);
+		OptionSpec<Void>    sp_checkAvail  = makeOptionSpec("c", "check-avail",  "Check Galileo homepage for available books, compare with known ones", null);
+		OptionSpec<Void>    sp_checkMD5    = makeOptionSpec("m", "check-md5",    "Download all known books without storing them, verifying their MD5 checksums (slow! >1 Gb download)", null);
 		OptionSpec<File>    sp_downloadDir = makeOptionSpec("d", "download-dir", "Download directory for openbooks; must exist", new File("."));
 		OptionSpec<Integer> sp_logLevel    = makeOptionSpec("l", "log-level",    "Log level (0=normal, 1=verbose, 2=debug, 3=trace)", 0);
 		OptionSpec<Integer> sp_threading   = makeOptionSpec("t", "threading",    "Threading mode (0=single, 1=multi); single is slower, but better for diagnostics)", 1);
@@ -33,6 +37,8 @@ class Options extends OptionParser {
 
 		// Assign parsed values to members for later application access
 		showHelp = optionSet.has(sp_showHelp);
+		checkAvail = optionSet.has(sp_checkAvail);
+		checkMD5 = optionSet.has(sp_checkMD5);
 		downloadDir = sp_downloadDir.value(optionSet);
 		logLevel = sp_logLevel.value(optionSet);
 		threading = sp_threading.value(optionSet);

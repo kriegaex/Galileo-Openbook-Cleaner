@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import de.scrum_master.galileo.filter.*;
+import de.scrum_master.galileo.tool.AvailableBooksChecker;
+import de.scrum_master.galileo.tool.DownloadChecker;
 import de.scrum_master.util.SimpleLogger;
 
 public class OpenbookCleaner
@@ -29,7 +31,7 @@ public class OpenbookCleaner
 			downloadAndCleanBook(book);
 	}
 
-	private static void processArgs(String[] args) throws IOException {
+	private static void processArgs(String[] args) throws Exception {
 		try {
 			options.parse(args); }
 		catch (RuntimeException e) {
@@ -39,6 +41,10 @@ public class OpenbookCleaner
 		SimpleLogger.VERBOSE = options.logLevel > 0;
 		SimpleLogger.DEBUG = options.logLevel > 1;
 		SimpleLogger.LOG_THREAD_ID = options.threading > 0;
+		if (options.checkAvail)
+			AvailableBooksChecker.main(null);
+		if (options.checkMD5)
+			DownloadChecker.main(null);
 	}
 
 	private static void displayUsageAndExit(int exitCode, String errorMessage) throws IOException {
