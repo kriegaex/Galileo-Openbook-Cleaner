@@ -7,6 +7,9 @@ before converting them to EPUB or PDF format.
 __Current state of development:__ v1.1.0 is feature complete, i.e. it can download, MD5-verify, unpack
 and convert all 37 openbooks available at release time.
 
+__History:__ If you want to know details about what has changed in which version, please take a look at the
+[change log](https://github.com/kriegaex/Galileo-Openbook-Cleaner/blob/v1.1.0/galileo_openbook_cleaner/CHANGELOG).
+
 __Download:__ A precompiled, executable JAR file is available
 [here](http://scrum-master.de/download/GalileoOpenbookCleaner/galileo_openbook_cleaner-1.1.0.jar). 
 
@@ -46,7 +49,7 @@ __Usage:__
       vmware, windows_server_2008
 
 __Dependencies:__ Openbook cleaner was developed in Java 6. It also uses a few open source libraries (see
-[readme.txt](https://github.com/kriegaex/Galileo-Openbook-Cleaner/tree/v1.0_stable/galileo_openbook_cleaner/lib)
+[readme.txt](https://github.com/kriegaex/Galileo-Openbook-Cleaner/tree/v1.1.0/galileo_openbook_cleaner/lib)
 for download links and installation instructions):
 
   * __jsoup 1.7.2__ for parsing the "dirty" openbook HTML, selecting DOM elements and editing them, removing
