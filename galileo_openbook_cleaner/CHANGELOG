@@ -1,21 +1,18 @@
 Version 1.1.0
   New features
-    - New command-line option "-w|--write-config" for writes an editable book list file config.xml
+    - New command-line option "-w|--write-config" writes an editable book list file config.xml
       to current the current directory. This is an easy way for JAR users to extract the embedded
       default config.xml to disk and edit it subsequently, e.g. in order to add new books not
       contained in the upstream version. This way they do not have to wait for me to update the
       Git repo and the downloadable JAR. User self-service. :-)
-    - New tool class DownloadChecker checks downloads and verifies their MD5. The class has a 'main'
-      method which can be called by advanced users who know it. Attention: This is a long-running
-      operation (~14 minutes on my old PC using 16 Mbit/s downstream DSL) which as of 2013-03-10
-      downloads at least 1.1 Gb of data!
-    - New tool class AvailableBooksChecker compares predefined to online books: This class has a
-      'main' method to be used by advanced users knowing how to interpret the output. Basically two
-      sets of book URLs are compared: the list of known books from config.xml to the lists of books
-      found online on the Galileo Computing and Galileo Design web sites. For each set the orphans,
-      i.e. elements not found in the respective other set, are determined and printed. This helps
-      to discover new, renamed or deleted books. It also helps to spot known books which are still
-      available for download, but no longer listed on the web site.
+    - New command-line option "-c|--check-avail" checks Galileo homepage for available books,
+      comparing them with known ones, cf. "internal changes" section about AvailableBooksChecker.
+    - New command-line option "-m|--check-md5" downloads all known books without storing them,
+      verifying their MD5 checksums (slow! >1 Gb download), cf. "internal changes" section about
+      DownloadChecker.
+    - The CLI options "--check-avail" and "--check-md5" mentioned above can be combined by
+      experienced users or the GOC author to detect changed download packages and re-test them,
+      new books, deleted books and so forth. 
     - In verbose logging mode, the removal of feedback forms is now logged.
     - New books APPS_IPHONE_IOS6, VB_2012_EINSTIEG. I detected the books using the new tool
       AvailableBooksChecker. :-)
@@ -49,6 +46,17 @@ Version 1.1.0
       personal FTP server while the CloudBees version features its own deployment repository.
     - Use one-jar Mave plugin to create a JAR of JARs similar to what we had before when creating a
       "runnable JAR" from Eclipse. 
+    - New tool class DownloadChecker checks downloads and verifies their MD5. The class has a 'main'
+      method which can be called by advanced users who know it. Attention: This is a long-running
+      operation (~14 minutes on my old PC using 16 Mbit/s downstream DSL) which as of 2013-03-10
+      downloads at least 1.1 Gb of data!
+    - New tool class AvailableBooksChecker compares predefined to online books: This class has a
+      'main' method to be used by advanced users knowing how to interpret the output. Basically two
+      sets of book URLs are compared: the list of known books from config.xml to the lists of books
+      found online on the Galileo Computing and Galileo Design web sites. For each set the orphans,
+      i.e. elements not found in the respective other set, are determined and printed. This helps
+      to discover new, renamed or deleted books. It also helps to spot known books which are still
+      available for download, but no longer listed on the web site.
     - Upgrade to jsoup-1.7.2
     - Refactor JsoupFilter for cleaner code
     - Refactor LoggingAspect several times for cleaner code and thread safety, trying different
