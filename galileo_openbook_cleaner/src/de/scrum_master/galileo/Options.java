@@ -56,7 +56,7 @@ class Options extends OptionParser {
 			catch (IllegalArgumentException e) {
 				throw new IllegalArgumentException("invalid book ID '" + book_id + "'", e); }
 		}
-		if (books.size() == 0 && !showHelp)
+		if (books.size() == 0 && !(showHelp || checkAvail || checkMD5))
 			throw new IllegalArgumentException("you must specify at least one book ID");
 
 		// Validate values
