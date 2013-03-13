@@ -19,10 +19,15 @@ __Usage:__
     Option                                  Description
     ------                                  -----------
     -?, --help                              Display this help text
+    -c, --check-avail                       Check Galileo homepage for available
+                                              books, compare with known ones
     -d, --download-dir <File>               Download directory for openbooks; must
                                               exist (default: .)
     -l, --log-level <Integer>               Log level (0=normal, 1=verbose,
                                               2=debug, 3=trace) (default: 0)
+    -m, --check-md5                         Download all known books without
+                                              storing them, verifying their MD5
+                                              checksums (slow! >1 Gb download)
     -t, --threading <Integer>               Threading mode (0=single, 1=multi);
                                               single is slower, but better for
                                               diagnostics) (default: 1)
