@@ -14,8 +14,8 @@ import de.scrum_master.galileo.Book;
 public class AvailableBooksChecker {
 	public static void main(String[] args) throws Exception {
 		long startTime = System.currentTimeMillis();
-		SortedSet<String> localConfigURLs = getlocalConfigURLs();
-		SortedSet<String> webSiteURLs = getwebSiteURLs();
+		SortedSet<String> localConfigURLs = getLocalConfigURLs();
+		SortedSet<String> webSiteURLs = getWebSiteURLs();
 		SortedSet<String> localConfigOrphans = getOrphans(localConfigURLs, webSiteURLs);
 		SortedSet<String> webSiteOrphans = getOrphans(webSiteURLs, localConfigURLs);
 		System.out.println("\nOrphan URLs:");
@@ -24,7 +24,7 @@ public class AvailableBooksChecker {
 		System.out.println("\nExecution time: " + (System.currentTimeMillis() - startTime) / 1000.0 + " s");
 	}
 
-	private static SortedSet<String> getlocalConfigURLs() {
+	private static SortedSet<String> getLocalConfigURLs() {
 		Book.readConfig(true);
 		SortedSet<String> localConfigURLs = new TreeSet<String>();
 		for (Book book : Book.books.values())
@@ -32,7 +32,7 @@ public class AvailableBooksChecker {
 		return localConfigURLs;
 	}
 
-	private static SortedSet<String> getwebSiteURLs() throws Exception {
+	private static SortedSet<String> getWebSiteURLs() throws Exception {
 		Document webPage;
 		Elements downloadLinks;
 		SortedSet<String> webSiteURLs = new TreeSet<String>();

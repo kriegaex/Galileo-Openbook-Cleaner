@@ -17,8 +17,8 @@ class Downloader
 	private final File targetDirectory;
 
 	private static final FileFilter DIRECTORIES_ONLY = new FileFilter() {
-		public boolean accept(File pathname) {
-			return pathname.isDirectory();
+		public boolean accept(File pathName) {
+			return pathName.isDirectory();
 		}
 	};
 

@@ -12,18 +12,18 @@ import java.io.PrintStream;
  * constructors and methods are being traced.
  * <p>
  * The aspect defines one abstract pointcut for injecting the tracing functionality
- * into any application classes. To use it, provide a subclass that concretizes
+ * into any application classes. To use it, provide a subclass that concretises
  * the abstract pointcut.
  */
 public abstract aspect BasicTracingAspect
 {
 	/**
-	 * There are 3 trace levels (values of TRACELEVEL):
+	 * There are 3 trace levels (values of TRACE_LEVEL):
 	 *   0 - No messages are printed
 	 *   1 - BasicTracingAspect messages are printed, but there is no indentation according to the call stack
 	 *   2 - BasicTracingAspect messages are printed, and they are indented according to the call stack
 	 */
-	public static int TRACELEVEL = 2;
+	public static int TRACE_LEVEL = 2;
 	protected static PrintStream stream = System.err;
 	protected static InheritableThreadLocal<Integer> callDepth =
 		new InheritableThreadLocal<Integer>(){
@@ -43,10 +43,10 @@ public abstract aspect BasicTracingAspect
 	 * It is intended to be called at the beginning of the blocks to be traced.
 	 */
 	public static void traceEntry(String str, Object o) {
-		if (TRACELEVEL == 0)
+		if (TRACE_LEVEL == 0)
 			return;
 		stream.printf("%5d\t%s\n", Thread.currentThread().getId(), indentText.get() + ">> " + str + ": " + o.toString());
-		if (TRACELEVEL == 2) {
+		if (TRACE_LEVEL == 2) {
 			callDepth.set(callDepth.get() + 1);
 			indentText.set(indentText.get() + "  ");
 		}
@@ -57,16 +57,16 @@ public abstract aspect BasicTracingAspect
 	 * It is intended to be called at the end of the blocks to be traced.
 	 */
 	public static void traceExit(String str, Object o) {
-		if (TRACELEVEL == 0)
+		if (TRACE_LEVEL == 0)
 			return;
-		if (TRACELEVEL == 2) {
+		if (TRACE_LEVEL == 2) {
 			callDepth.set(callDepth.get() - 1);
 			indentText.set(indentText.get().substring(2));
 		}
 		stream.printf("%5d\t%s\n", Thread.currentThread().getId(), indentText.get() + "<< " + str + ": " + o.toString());
 	}
 
-	// Concretisise in subclass
+	// Concretise in subclass
 	protected abstract pointcut myClass();
 
 	// Bind "this" to variable "obj" (not applicable for pre-initialisation!) 
@@ -83,12 +83,12 @@ public abstract aspect BasicTracingAspect
 		// TODO: use "&& !cflow(execution(String toString()))" if toString calls other advised methods
 
 	before(): myPreInitConstructor() {
-		// There is no "this" during pre-initialisation -> use "---" as second paramater 
+		// There is no "this" during pre-initialisation -> use "---" as second parameter
 		BasicTracingAspect.traceEntry("[P] " + thisJoinPointStaticPart.getSignature(), "---");
 	}
 
 	after(): myPreInitConstructor() {
-		// There is no "this" during pre-initialisation -> use "---" as second paramater 
+		// There is no "this" during pre-initialisation -> use "---" as second parameter
 		BasicTracingAspect.traceExit("[P] " + thisJoinPointStaticPart.getSignature(), "---");
 	}
 

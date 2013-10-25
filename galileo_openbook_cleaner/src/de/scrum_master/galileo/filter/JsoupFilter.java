@@ -84,10 +84,10 @@ public class JsoupFilter extends BasicFilter {
 
 	private static enum Regex                       // Regex patterns mapped to symbolic names
 	{
-		// Subchapter no. in TOC link target
-		SUBCHAPTER_HREF          ("(.*_[0-9a-h]+_(?:[a-z0-9]+_)*)([0-9]+)(\\.htm.*)"),
-		// Subchapter no. in TOC link title
-		SUBCHAPTER_TEXT          ("^([0-9A-H]+\\.)([0-9]+)(.*)"),
+		// Sub-chapter no. in TOC link target
+		SUB_CHAPTER_HREF         ("(.*_[0-9a-h]+_(?:[a-z0-9]+_)*)([0-9]+)(\\.htm.*)"),
+		// Sub-chapter no. in TOC link title
+		SUB_CHAPTER_TEXT         ("^([0-9A-H]+\\.)([0-9]+)(.*)"),
 
 		// "Kapitel: " between book title and chapter
 		TITLE_INFIX              ("^(.*)(?:Kapitel: )(.*)$"),
@@ -151,7 +151,7 @@ public class JsoupFilter extends BasicFilter {
 		SimpleLogger.indent();
 
 		if (isTOCFile) {
-			// TOC file (index.htm*) gets preconfigured title
+			// TOC file (index.htm*) gets pre-configured title
 			pageTitle = book.title;
 		}
 		else {
@@ -279,7 +279,7 @@ public class JsoupFilter extends BasicFilter {
 			return;
 		}
 		SimpleLogger.debug("Feedback form found");
-		deleteNodes(getFeedbackFormNeigbourhood(feedbackForm));
+		deleteNodes(getFeedbackFormNeighbourhood(feedbackForm));
 		SimpleLogger.debug("Feedback form removed");
 	}
 
@@ -287,7 +287,7 @@ public class JsoupFilter extends BasicFilter {
 	 * Find all nodes around a given user feedback form.
 	 * <p>
 	 * Background info: The feedback form is preceded by an HR tag separating it from the main content, a heading
-	 * and introductory text. It is usually not follwed by any other content, but if so, it will be considered part
+	 * and introductory text. It is usually not followed by any other content, but if so, it will be considered part
 	 * of the feedback form's neighbourhood too. Usually we have a structure roughly looking like this:
 	 * <pre>
 	 *   BR
@@ -315,9 +315,9 @@ public class JsoupFilter extends BasicFilter {
 	 * @return a list of nodes belonging to the feedback form's surrounding neighbourhood (including the feedback
 	 * form itself)
 	 */
-	private List<Node> getFeedbackFormNeigbourhood(final Element feedbackForm) {
-		final List<Node> neigbourhood = new ArrayList<Node>();
-		NodeVisitor neigbourhoodFinder = new NodeVisitor() {
+	private List<Node> getFeedbackFormNeighbourhood(final Element feedbackForm) {
+		final List<Node> neighbourhood = new ArrayList<Node>();
+		NodeVisitor neighbourhoodFinder = new NodeVisitor() {
 			private boolean feedbackFormFound = false;
 			private boolean hrTagFound = false;
 			@Override
@@ -325,20 +325,20 @@ public class JsoupFilter extends BasicFilter {
 				if (!feedbackFormFound) {
 					if (node instanceof Element && "hr".equals(node.nodeName())) {
 						hrTagFound = true;
-						neigbourhood.clear();
+						neighbourhood.clear();
 					}
 					else if (node == feedbackForm)
 						feedbackFormFound = true;
 					else if (!hrTagFound)
 						return;
 				}
-				neigbourhood.add(node);
+				neighbourhood.add(node);
 			}
 			@Override
 			public void tail(Node node, int depth) {}
 		};
-		document.traverse(neigbourhoodFinder);
-		return neigbourhood;
+		document.traverse(neighbourhoodFinder);
+		return neighbourhood;
 	}
 
 	private void removeNonStandardTopNavigation() {
@@ -436,7 +436,7 @@ public class JsoupFilter extends BasicFilter {
 	 * There is a strange quirk in the table of contents (TOC, index.htm*) of
 	 * several (ca. 10) Galileo Openbooks:
 	 *
-	 * Some links for subchapters *.x point to the file for subchapter *.(x-1).
+	 * Some links for sub-chapters *.x point to the file for sub-chapter *.(x-1).
 	 * The problem there is that after we have removed the surrounding clutter,
 	 * there is no more redundant TOC column on the left, so there is no direct way
 	 * to reach the missing chapters which have no reference in the TOC. This also
@@ -450,7 +450,7 @@ public class JsoupFilter extends BasicFilter {
 	 * For chapter x.2.* the href must be corrected to ubuntu_0x_002.htm.
 	 *
 	 * It further complicates the fixing task that there are some (ca. 2) books
-	 * which show a similar one-off behaviour for <i>all</i> subchapters by design,
+	 * which show a similar one-off behaviour for <i>all</i> sub-chapters by design,
 	 * because they have a different numbering scheme. Those books are OK, though,
 	 * thus we need to explicitly exclude them from "fixing". <tt>:-(</tt>
 	 */
@@ -466,8 +466,8 @@ public class JsoupFilter extends BasicFilter {
 		for (Element link : links) {
 			String href = link.attr("href");
 			String text = link.text();
-			Matcher hrefMatcher = Regex.SUBCHAPTER_HREF.pattern.matcher(href);
-			Matcher textMatcher = Regex.SUBCHAPTER_TEXT.pattern.matcher(text);
+			Matcher hrefMatcher = Regex.SUB_CHAPTER_HREF.pattern.matcher(href);
+			Matcher textMatcher = Regex.SUB_CHAPTER_TEXT.pattern.matcher(text);
 			if (hrefMatcher.matches() && textMatcher.matches()) {
 				int hrefNumber = Integer.parseInt(hrefMatcher.group(2));
 				int textNumber = Integer.parseInt(textMatcher.group(2));

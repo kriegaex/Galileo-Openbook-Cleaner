@@ -9,7 +9,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 /**
- * This aspect concretizes the abstract crosscut in BasicTracingAspect, applying the trace
+ * This aspect concretises the abstract crosscut in BasicTracingAspect, applying the trace
  * facility to the application classes.
  */
 public aspect TracingAspect extends BasicTracingAspect
@@ -28,7 +28,7 @@ public aspect TracingAspect extends BasicTracingAspect
 			!within(*Aspect) && !within(Options) && !within(FileFilter+) && !within(Book) && !within(SimpleLogger);
 
 	public static void main(String[] args) throws Exception {
-		BasicTracingAspect.TRACELEVEL = 2;
+		BasicTracingAspect.TRACE_LEVEL = 2;
 		BasicTracingAspect.initStream(
 			new PrintStream(new BufferedOutputStream(new FileOutputStream("tracing.log")))
 		);
