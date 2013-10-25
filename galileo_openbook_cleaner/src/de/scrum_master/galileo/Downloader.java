@@ -28,10 +28,6 @@ class Downloader
 		this.targetDirectory = new File(downloadDirectory, book.unpackDirectory);
 	}
 
-	Downloader(String downloadDirectory, Book book) {
-		this(new File(downloadDirectory), book);
-	}
-
 	void download()
 		throws IOException, NoSuchAlgorithmException, MD5MismatchException
 	{
