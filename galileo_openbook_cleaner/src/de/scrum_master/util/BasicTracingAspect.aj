@@ -45,7 +45,7 @@ public abstract aspect BasicTracingAspect
 	public static void traceEntry(String str, Object o) {
 		if (TRACE_LEVEL == 0)
 			return;
-		stream.printf("%5d\t%s\n", Thread.currentThread().getId(), indentText.get() + ">> " + str + ": " + o.toString());
+		stream.printf("%5d\t%s%n", Thread.currentThread().getId(), indentText.get() + ">> " + str + ": " + o.toString());
 		if (TRACE_LEVEL == 2) {
 			callDepth.set(callDepth.get() + 1);
 			indentText.set(indentText.get() + "  ");
@@ -63,7 +63,7 @@ public abstract aspect BasicTracingAspect
 			callDepth.set(callDepth.get() - 1);
 			indentText.set(indentText.get().substring(2));
 		}
-		stream.printf("%5d\t%s\n", Thread.currentThread().getId(), indentText.get() + "<< " + str + ": " + o.toString());
+		stream.printf("%5d\t%s%n", Thread.currentThread().getId(), indentText.get() + "<< " + str + ": " + o.toString());
 	}
 
 	// Concretise in subclass

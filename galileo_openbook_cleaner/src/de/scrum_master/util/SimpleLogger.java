@@ -68,7 +68,7 @@ public class SimpleLogger
 			 * are at your command, making it easy to see what happens in multi-threaded mode mode.
 			 * TODO: time stamps might be useful - or overkill. No need for them just now.
 			 */
-			channel.printf("%5d\t%s\n", Thread.currentThread().getId(), indentText.get() + message);
+			channel.printf("%5d\t%s%n", Thread.currentThread().getId(), indentText.get() + message);
 		}
 		else
 			channel.println(indentText.get() + message);
