@@ -210,7 +210,7 @@ public class JsoupFilter extends BasicFilter {
 		}
 	}
 
-	private void writeDocument() throws Exception {
+	private void writeDocument() {
 		output.print(document);
 	}
 

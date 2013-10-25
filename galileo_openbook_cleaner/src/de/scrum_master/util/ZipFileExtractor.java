@@ -49,10 +49,12 @@ public class ZipFileExtractor
 				SimpleLogger.debug("  Extracting " + zipEntry);
 				unzippedFile = new File(targetDirectory, zipEntry.getName());
 				if (zipEntry.isDirectory()) {
-					unzippedFile.mkdirs();
+					if (!unzippedFile.mkdirs())
+						throw new IOException("Cannot create directory '" + unzippedFile + "'");
 					continue;
 				}
-				unzippedFile.getParentFile().mkdirs();
+				if (!unzippedFile.getParentFile().mkdirs())
+					throw new IOException("Cannot create directory '" + unzippedFile.getParentFile() + "'");
 				outUnzipped = new BufferedOutputStream(new FileOutputStream(unzippedFile), BUFFER_SIZE);
 				while ((byteCount = zipStream.read(buffer, 0, BUFFER_SIZE)) != -1)
 					outUnzipped.write(buffer, 0, byteCount);
@@ -60,8 +62,14 @@ public class ZipFileExtractor
 			}
 		}
 		finally {
-			try { outUnzipped.close(); } catch (IOException e) { }
-			try { zipStream.close(); }   catch (IOException e) { }
+			try {
+				if (outUnzipped != null)
+					outUnzipped.close();
+			} catch (IOException ignored) {}
+			try {
+				if (zipStream != null)
+					zipStream.close();
+			} catch (IOException ignored) {}
 		}
 		SimpleLogger.debug("Unzipping done");
 	}

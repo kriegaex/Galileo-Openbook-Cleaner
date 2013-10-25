@@ -122,11 +122,7 @@ public class FileDownloader
 				}
 				in = Channels.newChannel(inStream);
 			}
-			catch (ConnectException e) {
-				System.err.println(CONNECTION_ERROR_MESSAGE);
-				throw e;
-			}
-			catch (ProtocolException e) {
+			catch (ConnectException | ProtocolException e) {
 				System.err.println(CONNECTION_ERROR_MESSAGE);
 				throw e;
 			}
@@ -157,8 +153,8 @@ public class FileDownloader
 			SimpleLogger.debug("Download done");
 		}
 		finally {
-			try { in.close(); }  catch (Exception e) { }
-			try { out.close(); } catch (Exception e) { }
+			try { in.close(); }  catch (Exception ignored) { }
+			try { out.close(); } catch (Exception ignored) { }
 		}
 	}
 }

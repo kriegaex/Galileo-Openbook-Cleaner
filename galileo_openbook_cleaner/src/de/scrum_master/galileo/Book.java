@@ -49,7 +49,7 @@ public class Book
 			throw new RuntimeException("Cannot write local configuration file " + CONFIG_FILE, e);
 		}
 		finally {
-			try { if (configFileWriter != null) configFileWriter.close(); } catch (Exception e) { }
+			try { if (configFileWriter != null) configFileWriter.close(); } catch (Exception ignored) { }
 			// Reset debug channel to previously saved state
 			SimpleLogger.DEBUG = debugModeOrig;
 		}
@@ -94,7 +94,7 @@ public class Book
 			}
 		}
 		finally {
-			try { if (configFileStream != null) configFileStream.close(); } catch (Exception e) { }
+			try { if (configFileStream != null) configFileStream.close(); } catch (Exception ignored) { }
 			// Reset debug channel to previously saved state
 			SimpleLogger.DEBUG = debugModeOrig;
 		}

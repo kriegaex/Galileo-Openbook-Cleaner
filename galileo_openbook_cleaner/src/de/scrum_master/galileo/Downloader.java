@@ -52,7 +52,8 @@ class Downloader
 	private void unpackBook() throws IOException {
 		// Create target directory if necessary
 		if (! targetDirectory.exists())
-			targetDirectory.mkdir();
+			if (!targetDirectory.mkdir())
+				throw new IOException("Cannot create directory '" + targetDirectory + "'");
 
 		// If openbook was unpacked previously, we are done
 		if (hasIndexHtml(targetDirectory))
@@ -97,7 +98,8 @@ class Downloader
 	{
 		// Create target directory if necessary
 		if (! targetDirectory.exists())
-			targetDirectory.mkdir();
+			if (!targetDirectory.mkdir())
+				throw new IOException("Cannot create directory '" + targetDirectory + "'");
 
 		String imageName = book.unpackDirectory + File.separator + "cover.jpg";
 		File file = new File(downloadDirectory, imageName);

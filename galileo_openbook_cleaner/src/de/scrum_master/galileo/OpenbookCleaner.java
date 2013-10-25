@@ -72,11 +72,12 @@ public class OpenbookCleaner
 
 	private static void createBackupIfNotExists(File origFile, File backupFile) throws IOException {
 		if (!backupFile.exists())
-			origFile.renameTo(backupFile);
+			if (!origFile.renameTo(backupFile))
+				throw new IOException("Cannot rename file '" + origFile + "' to '" + backupFile + "'");
 	}
 
 	private static FilterChain getFilterChain(Book book, File origFile, File source, File target)
-		throws FileNotFoundException, UnsupportedEncodingException
+		throws FileNotFoundException
 	{
 		Queue<Class<? extends BasicFilter>> filters = new LinkedList<Class<? extends BasicFilter>>();
 		// Currently we have only one filter, but we will keep the FilterChain capability just in case
