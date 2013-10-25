@@ -203,7 +203,7 @@ public class JsoupFilter extends BasicFilter {
 		removeRedundantGreyTable();
 
 		if (isTOCFile) {
-			if (! hasIndexLink())
+			if (missingIndexLink())
 				createIndexLink();
 			fixFaultyLinkTargets();
 			removeContentAfterIndexLink();
@@ -398,8 +398,8 @@ public class JsoupFilter extends BasicFilter {
 	/*
 	 * Find out if this page contains a link to the index (stichwort.htm*).
 	 */
-	private boolean hasIndexLink() {
-		return findElements(Selector.INDEX_LINK).size() > 0;
+	private boolean missingIndexLink() {
+		return findElements(Selector.INDEX_LINK).size() == 0;
 	}
 
 	/**
