@@ -77,8 +77,12 @@
 	</build>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>onejar-maven-plugin.googlecode.com</id>
+			<id>OneJAR googlecode.com</id>
 			<url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>Maven Central</id>
+			<url>http://repo.maven.apache.org/maven2</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
