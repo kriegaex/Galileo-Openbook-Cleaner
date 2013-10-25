@@ -18,9 +18,7 @@ public aspect TracingAspect extends BasicTracingAspect
 	declare precedence: TracingAspect, TimingAspect, LoggingAspect;
 
 	protected static boolean isActive() {
-		return OpenbookCleaner.options == null
-			? false
-			: OpenbookCleaner.options.logLevel > 2;
+		return OpenbookCleaner.options != null && OpenbookCleaner.options.logLevel > 2;
 	}
 
 	protected pointcut myClass():
@@ -34,7 +32,7 @@ public aspect TracingAspect extends BasicTracingAspect
 		);
 		String[] myArgs= {
 			"-d", ".",
-			"-t1", "-l3",
+			"-t0", "-l3",
 			"shell_prog"//, "oop"
 		};
 		OpenbookCleaner.main(myArgs);

@@ -7,7 +7,7 @@ import java.io.PrintStream;
 
 public class SimpleLogger
 {
-	public static enum LogType { ECHO, VERBOSE, DEBUG, ERROR };
+	public static enum LogType { ECHO, VERBOSE, DEBUG, ERROR }
 
 	public static boolean ECHO    = true;
 	public static boolean VERBOSE = false;
