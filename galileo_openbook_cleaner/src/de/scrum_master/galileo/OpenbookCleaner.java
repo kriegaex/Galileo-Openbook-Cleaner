@@ -42,9 +42,9 @@ public class OpenbookCleaner
 		SimpleLogger.DEBUG = options.logLevel > 1;
 		SimpleLogger.LOG_THREAD_ID = options.threading > 0;
 		if (options.checkAvail)
-			AvailableBooksChecker.main(null);
+			AvailableBooksChecker.main(new String[] {});
 		if (options.checkMD5)
-			DownloadChecker.main(null);
+			DownloadChecker.main(new String[] {});
 	}
 
 	private static void displayUsageAndExit(int exitCode, String errorMessage) throws IOException {
