@@ -421,15 +421,19 @@ public class JsoupFilter extends BasicFilter {
 		Node ankerNode = null;
 		for (Node node : indexLink.childNodes()) {
 			if (node.hasAttr("href")) {
-				ankerNode = node;
+				ankerNode = node.clone();
 				if (ankerNode.attr("href").contains(".html"))
 					fileExtension = ".html";
 				break;
 			}
 		}
+		if (ankerNode == null)
+			throw new RuntimeException(
+				"Cannot create index link because no cloneable TOC node has been found (should never happen)"
+			);
 		ankerNode.attr("href", "stichwort" + fileExtension);
 		((Element) ankerNode).text("Index");
-		bodyTag.appendChild(indexLink);
+		bodyTag.appendChild(ankerNode);
 	}
 
 	/**
