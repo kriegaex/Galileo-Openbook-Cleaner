@@ -56,10 +56,19 @@ class Downloader
 			return;
 
 		// Unzip openbook archive
-		new ZipFileExtractor(
-			new File(downloadDirectory, book.downloadArchive.replaceFirst(".*/", "")),
-			targetDirectory
-		).unzip();
+		File zipFile = new File(downloadDirectory, book.downloadArchive.replaceFirst(".*/", ""));
+		ZipFileExtractor zipExtractor = new ZipFileExtractor(zipFile, targetDirectory);
+		try {
+			zipExtractor.unzip();
+		}
+		catch (IOException e) {
+			if (e.getMessage().equals("Truncated ZIP file"))
+				throw new IOException(
+					"Probably the download of '" + zipFile + "' was interrupted. Please delete the file and retry.",
+					e
+				);
+			throw e;
+		}
 
 		// If zip contents like index.htm* are already on top level, we are done
 		if (hasIndexHtml(targetDirectory))
