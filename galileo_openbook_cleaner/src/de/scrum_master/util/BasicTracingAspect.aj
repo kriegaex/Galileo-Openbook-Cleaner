@@ -24,7 +24,7 @@ public abstract aspect BasicTracingAspect
 	 *   2 - BasicTracingAspect messages are printed, and they are indented according to the call stack
 	 */
 	public static int TRACE_LEVEL = 2;
-	protected static PrintStream stream = System.err;
+	private static PrintStream stream = System.err;
 	private static final InheritableThreadLocal<Integer> callDepth =
 		new InheritableThreadLocal<Integer>() {
 			@Override protected Integer initialValue() { return 0; }
