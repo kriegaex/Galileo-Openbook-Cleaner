@@ -18,8 +18,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source />
-					<target />
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -28,10 +28,10 @@
 				<version>1.4</version>
 				<configuration>
 					<showWeaveInfo>true</showWeaveInfo>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 					<Xlint>ignore</Xlint>
-					<complianceLevel>1.6</complianceLevel>
+					<complianceLevel>1.7</complianceLevel>
 					<encoding>UTF-8</encoding>
 					<verbose>false</verbose>
 				</configuration>
