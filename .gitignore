@@ -40,3 +40,8 @@ vcsharp_2010/**
 vcsharp_2012/**
 vmware/**
 windows_server_2008/**
+.idea/workspace.xml
+.idea/dictionaries/
+.idea/uiDesigner.xml
+settings.xml
+target/
