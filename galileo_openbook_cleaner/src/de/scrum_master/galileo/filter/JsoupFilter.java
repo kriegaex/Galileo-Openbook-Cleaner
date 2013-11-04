@@ -92,11 +92,11 @@ public class JsoupFilter extends BasicFilter {
 		// "Kapitel: " between book title and chapter
 		TITLE_INFIX              ("^(.*)(?:Kapitel: )(.*)$"),
 		// "Galileo Computing/Design" prefix and " openbook/index" postfix
-		TITLE_PREFIX_POSTFIX     ("^(?:Galileo (?:Computing|Design)(?: ::|:| [-–]) )?(.*?)(?: (?:[-–]|&ndash;|::)( openbook| index|))?$"),
+		TITLE_PREFIX_POSTFIX     ("^(?:Galileo (?:Computing|Design)(?: ::|:| [-â€“]) )?(.*?)(?: (?:[-â€“]|&ndash;|::)( openbook| index|))?$"),
 		// Text before dash for some books with " - " or " &ndash; " within the book title
-		TITLE_DASHED_BOOK_PREFIX ("^((?:Excel 2007|Java 7|Adobe.+CS4|Joomla! 1.5|Objektor.*mierung) [-–] )(.*)"),
+		TITLE_DASHED_BOOK_PREFIX ("^((?:Excel 2007|Java 7|Adobe.+CS4|Joomla! 1.5|Objektor.*mierung) [-â€“] )(.*)"),
 		// Get book chapter after title and separator
-		TITLE_CHAPTER            ("^(?:.+?) (?:[-–]|&ndash;|&#8211;) (.*)");
+		TITLE_CHAPTER            ("^(?:.+?) (?:[-â€“]|&ndash;|&#8211;) (.*)");
 
 		private final Pattern pattern;
 
