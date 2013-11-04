@@ -19,6 +19,7 @@ public class Book
 
 	public final static String  CONFIG_FOLDER   = "resource";
 	public final static String  CONFIG_FILE     = "config.xml";
+	// TODO: switch config.xml encoding to UTF-8
 	public final static String  CONFIG_ENCODING = "iso-8859-15";
 	public final static XStream XSTREAM         = new XStream(new DomDriver());
 
@@ -37,7 +38,7 @@ public class Book
 			// Activate the debug channel, if specified by caller
 			SimpleLogger.DEBUG = debugMode;
 			SimpleLogger.debug("Writing local configuration file " + CONFIG_FILE);
-			configFileWriter = new FileWriter(CONFIG_FILE);
+			configFileWriter = new OutputStreamWriter(new FileOutputStream(CONFIG_FILE), CONFIG_ENCODING);
 			configFileWriter.write("<?xml version=\"1.0\" encoding=\"" + CONFIG_ENCODING + "\"?>\n");
 			XSTREAM.toXML(books, configFileWriter);
 			configFileWriter.write("\n");

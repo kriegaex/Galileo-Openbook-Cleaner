@@ -27,15 +27,14 @@ public aspect TracingAspect extends BasicTracingAspect
 
 	public static void main(String[] args) throws Exception {
 		BasicTracingAspect.TRACE_LEVEL = 2;
-		BasicTracingAspect.initStream(
-			new PrintStream(new BufferedOutputStream(new FileOutputStream("tracing.log")))
-		);
+		PrintStream out = new PrintStream("tracing.log", "UTF-8");
+		BasicTracingAspect.initStream(out);
 		String[] myArgs= {
 			"-d", ".",
 			"-t0", "-l3",
 			"shell_prog"//, "oop"
 		};
 		OpenbookCleaner.main(myArgs);
-		BasicTracingAspect.stream.close();
+		out.close();
 	}
 }
