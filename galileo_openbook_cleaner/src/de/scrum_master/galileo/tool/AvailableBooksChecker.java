@@ -26,7 +26,7 @@ public class AvailableBooksChecker {
 
 	private static SortedSet<String> getLocalConfigURLs() {
 		Book.readConfig(true);
-		SortedSet<String> localConfigURLs = new TreeSet<String>();
+		SortedSet<String> localConfigURLs = new TreeSet<>();
 		for (Book book : Book.books.values())
 			localConfigURLs.add(book.downloadArchive);
 		return localConfigURLs;
@@ -35,7 +35,7 @@ public class AvailableBooksChecker {
 	private static SortedSet<String> getWebSiteURLs() throws Exception {
 		Document webPage;
 		Elements downloadLinks;
-		SortedSet<String> webSiteURLs = new TreeSet<String>();
+		SortedSet<String> webSiteURLs = new TreeSet<>();
 		webPage = Jsoup.parse(new URL("http://www.galileocomputing.de/katalog/openbook"), 10000);
 		downloadLinks = webPage.select("a[href*=.zip]");
 		for (Element link : downloadLinks)
@@ -48,7 +48,7 @@ public class AvailableBooksChecker {
 	}
 
 	private static SortedSet<String> getOrphans(SortedSet<String> myURLs, SortedSet<String> otherURLs) {
-		SortedSet<String> Orphans = new TreeSet<String>();
+		SortedSet<String> Orphans = new TreeSet<>();
 		for (String url : myURLs)
 			if (!otherURLs.contains(url))
 				Orphans.add(url);

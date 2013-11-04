@@ -28,7 +28,7 @@ public class Book
 		XSTREAM.alias("id", String.class);
 	}
 
-	public static SortedMap<String, Book> books = new TreeMap<String, Book>();
+	public static SortedMap<String, Book> books = new TreeMap<>();
 
 	public static void writeConfig(boolean debugMode) {
 		Writer configFileWriter = null;

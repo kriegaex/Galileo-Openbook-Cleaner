@@ -16,7 +16,7 @@ class Options extends OptionParser {
 	boolean checkMD5;
 	File downloadDir;
 	int logLevel, prettyPrint, threading;
-	List<Book> books = new ArrayList<Book>();
+	List<Book> books = new ArrayList<>();
 	boolean writeConfig;
 
 	Options() { super(); }
@@ -48,7 +48,7 @@ class Options extends OptionParser {
 			Book.writeConfig(logLevel > 1);
 		for (String book_id : optionSet.nonOptionArguments()) {
 			if ("all".equalsIgnoreCase(book_id)) {
-				books = new ArrayList<Book>(Book.books.values());
+				books = new ArrayList<>(Book.books.values());
 				break;
 			}
 			try {

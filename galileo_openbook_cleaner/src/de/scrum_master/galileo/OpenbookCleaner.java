@@ -79,7 +79,7 @@ public class OpenbookCleaner
 	private static FilterChain getFilterChain(Book book, File origFile, File source, File target)
 		throws FileNotFoundException
 	{
-		Queue<Class<? extends BasicFilter>> filters = new LinkedList<Class<? extends BasicFilter>>();
+		Queue<Class<? extends BasicFilter>> filters = new LinkedList<>();
 		// Currently we have only one filter, but we will keep the FilterChain capability just in case
 		filters.add(JsoupFilter.class);
 		return new FilterChain(book, origFile, source, target, options.threading == 1, filters);

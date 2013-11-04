@@ -64,7 +64,7 @@ public class FilterChain implements Runnable {
 	 * BTW: What we would really need here are abstract static methods, but they do not exist in Java.
 	 */
 	public void run() {
-		List<BasicFilter> filterInstances = new LinkedList<BasicFilter>();
+		List<BasicFilter> filterInstances = new LinkedList<>();
 		Class<? extends BasicFilter> filterClass;
 		InputStream in;
 		OutputStream out = null;

@@ -245,7 +245,7 @@ public class JsoupFilter extends BasicFilter {
 
 	private void removeComments() {
 		for (Element element : document.getAllElements()) {
-			List<Node> comments = new ArrayList<Node>();
+			List<Node> comments = new ArrayList<>();
 			for (Node node : element.childNodes()) {
 				if (node instanceof Comment)
 					comments.add(node);
@@ -316,7 +316,7 @@ public class JsoupFilter extends BasicFilter {
 	 * form itself)
 	 */
 	private List<Node> getFeedbackFormNeighbourhood(final Element feedbackForm) {
-		final List<Node> neighbourhood = new ArrayList<Node>();
+		final List<Node> neighbourhood = new ArrayList<>();
 		NodeVisitor neighbourhoodFinder = new NodeVisitor() {
 			private boolean feedbackFormFound = false;
 			private boolean hrTagFound = false;
@@ -346,7 +346,7 @@ public class JsoupFilter extends BasicFilter {
 		if (firstHeading == null)
 			return;
 		int firstHeadingIndex = firstHeading.siblingIndex();
-		List<Node> topNavigationEtc = new ArrayList<Node>();
+		List<Node> topNavigationEtc = new ArrayList<>();
 		for (Node node : firstHeading.parent().childNodes()) {
 			if (node.siblingIndex() < firstHeadingIndex)
 				topNavigationEtc.add(node);
