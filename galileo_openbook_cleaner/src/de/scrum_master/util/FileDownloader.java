@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.net.Authenticator;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.ProtocolException;
 import java.net.Proxy;
@@ -88,54 +87,60 @@ public class FileDownloader
 	public void download()
 		throws IOException, NoSuchAlgorithmException, MD5MismatchException
 	{
-		MessageDigest       md5Digest  = null;
-		ReadableByteChannel in         = null;
-		WritableByteChannel out        = null;
-		ByteBuffer          buffer;
-		BigInteger          md5Actual;
+		ReadableByteChannel in  = null;
+		WritableByteChannel out = null;
 		try {
 			SimpleLogger.debug("Downloading " + from + " ...");
-			try {
-				InputStream inStream = from.openConnection(proxy).getInputStream();
-				if (doChecksum) {
-					md5Digest = MessageDigest.getInstance("MD5");
-					inStream = new DigestInputStream(inStream, md5Digest);
-				}
-				in = Channels.newChannel(inStream);
-			}
-			catch (ConnectException | ProtocolException e) {
-				System.err.println(CONNECTION_ERROR_MESSAGE);
-				throw e;
-			}
-			catch (IOException e) {
-				if(e.getMessage().contains(": 407"))
-					System.err.println(CONNECTION_ERROR_MESSAGE);
-				throw e;
-			}
-
-			if (doWriteToFile)
-				out = Channels.newChannel(new FileOutputStream(to));
-			buffer = ByteBuffer.allocate(1 << 20);  // 1 MB
-
-			// Download file, optionally calculate MD5
-			while (in.read(buffer) != -1) {
-				buffer.flip();
-				if (doWriteToFile)
-					out.write(buffer);
-				buffer.clear();
-			}
-
-			if (doChecksum) {
-				md5Actual = new BigInteger(1, md5Digest.digest());
-				if (! md5Actual.equals(md5))
-					throw new MD5MismatchException(to, md5, md5Actual);
-				SimpleLogger.debug("  MD5 checksum OK");
-			}
+			MessageDigest md5Digest = doChecksum ? MessageDigest.getInstance("MD5") : null;
+			in = getInputChannel(md5Digest);
+			out = getOutputChannel();
+			transferData(in, out);
+			if (doChecksum)
+				calculateChecksum(md5Digest);
 			SimpleLogger.debug("Download done");
 		}
 		finally {
-			try { in.close(); }  catch (Exception ignored) { }
-			try { out.close(); } catch (Exception ignored) { }
+			try { if (in  != null)  in.close(); } catch (IOException ignored) {}
+			try { if (out != null) out.close(); } catch (IOException ignored) {}
 		}
+	}
+
+	private ReadableByteChannel getInputChannel(MessageDigest md5Digest) throws IOException {
+		try {
+			InputStream inStream = from.openConnection(proxy).getInputStream();
+			if (doChecksum)
+				inStream = new DigestInputStream(inStream, md5Digest);
+			return Channels.newChannel(inStream);
+		}
+		catch (ConnectException | ProtocolException e) {
+			System.err.println(CONNECTION_ERROR_MESSAGE);
+			throw e;
+		}
+		catch (IOException e) {
+			if(e.getMessage().contains(": 407"))
+				System.err.println(CONNECTION_ERROR_MESSAGE);
+			throw e;
+		}
+	}
+
+	private WritableByteChannel getOutputChannel() throws FileNotFoundException {
+		return doWriteToFile ? Channels.newChannel(new FileOutputStream(to)) : null;
+	}
+
+	private void transferData(ReadableByteChannel in, WritableByteChannel out) throws IOException {
+		ByteBuffer buffer = ByteBuffer.allocate(1 << 20);  // 1 MB
+		while (in.read(buffer) != -1) {
+			buffer.flip();
+			if (doWriteToFile)
+				out.write(buffer);
+			buffer.clear();
+		}
+	}
+
+	private void calculateChecksum(MessageDigest md5Digest) throws MD5MismatchException {
+		BigInteger md5Actual = new BigInteger(1, md5Digest.digest());
+		if (! md5Actual.equals(md5))
+			throw new MD5MismatchException(to, md5, md5Actual);
+		SimpleLogger.debug("  MD5 checksum OK");
 	}
 }
