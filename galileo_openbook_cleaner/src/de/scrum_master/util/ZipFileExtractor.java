@@ -49,12 +49,13 @@ public class ZipFileExtractor
 				SimpleLogger.debug("  Extracting " + zipEntry);
 				unzippedFile = new File(targetDirectory, zipEntry.getName());
 				if (zipEntry.isDirectory()) {
-					if (!unzippedFile.mkdirs())
+					if (! unzippedFile.exists() && ! unzippedFile.mkdirs())
 						throw new IOException("Cannot create directory '" + unzippedFile + "'");
 					continue;
 				}
-				if (!unzippedFile.getParentFile().mkdirs())
-					throw new IOException("Cannot create directory '" + unzippedFile.getParentFile() + "'");
+				File parentDir = unzippedFile.getParentFile();
+				if (! parentDir.exists() && ! parentDir.mkdirs())
+					throw new IOException("Cannot create directory '" + parentDir + "'");
 				outUnzipped = new BufferedOutputStream(new FileOutputStream(unzippedFile), BUFFER_SIZE);
 				while ((byteCount = zipStream.read(buffer, 0, BUFFER_SIZE)) != -1)
 					outUnzipped.write(buffer, 0, byteCount);
