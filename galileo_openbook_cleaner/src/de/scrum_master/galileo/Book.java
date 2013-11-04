@@ -1,9 +1,6 @@
 package de.scrum_master.galileo;
 
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.Writer;
+import java.io.*;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
