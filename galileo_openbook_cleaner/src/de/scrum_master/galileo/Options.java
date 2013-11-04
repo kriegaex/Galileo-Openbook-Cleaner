@@ -51,10 +51,10 @@ class Options extends OptionParser {
 				books = new ArrayList<>(Book.books.values());
 				break;
 			}
-			try {
-				books.add(Book.books.get(book_id.toUpperCase())); }
-			catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException("invalid book ID '" + book_id + "'", e); }
+			Book book = Book.books.get(book_id.toUpperCase());
+			if (book == null)
+				throw new IllegalArgumentException("invalid book ID '" + book_id + "'");
+			books.add(book);
 		}
 		if (books.size() == 0 && !(showHelp || checkAvail || checkMD5))
 			throw new IllegalArgumentException("you must specify at least one book ID");
