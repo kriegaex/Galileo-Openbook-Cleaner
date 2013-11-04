@@ -49,7 +49,7 @@ class Downloader
 		// Create target directory if necessary
 		if (! targetDirectory.exists())
 			if (!targetDirectory.mkdir())
-				throw new IOException("Cannot create directory '" + targetDirectory + "'");
+				throw new IOException("cannot create directory '" + targetDirectory + "'");
 
 		// If openbook was unpacked previously, we are done
 		if (hasIndexHtml(targetDirectory))
@@ -82,20 +82,19 @@ class Downloader
 		File parentDirectory = subDirectory.getParentFile();
 		File tmpDirectory = new File(parentDirectory + ".tmp");
 		if (! subDirectory.renameTo(tmpDirectory))
-			throw new RuntimeException("Cannot rename directory '" + subDirectory + "' to '" + tmpDirectory + "'");
+			throw new RuntimeException("cannot rename directory '" + subDirectory + "' to '" + tmpDirectory + "'");
 		if (! parentDirectory.delete())
-			throw new RuntimeException("Cannot delete directory '" + parentDirectory + "'");
+			throw new RuntimeException("cannot delete directory '" + parentDirectory + "'");
 		if (! tmpDirectory.renameTo(parentDirectory))
-			throw new RuntimeException("Cannot rename directory '" + tmpDirectory + "' to '" +  parentDirectory + "'");
+			throw new RuntimeException("cannot rename directory '" + tmpDirectory + "' to '" +  parentDirectory + "'");
 	}
 
 	private void downloadCoverImage()
 		throws IOException, NoSuchAlgorithmException, MD5MismatchException
 	{
 		// Create target directory if necessary
-		if (! targetDirectory.exists())
-			if (!targetDirectory.mkdir())
-				throw new IOException("Cannot create directory '" + targetDirectory + "'");
+		if (! targetDirectory.exists() && ! targetDirectory.mkdir())
+			throw new IOException("cannot create directory '" + targetDirectory + "'");
 
 		String imageName = book.unpackDirectory + File.separator + "cover.jpg";
 		File file = new File(downloadDirectory, imageName);

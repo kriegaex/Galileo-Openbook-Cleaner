@@ -30,7 +30,6 @@ public aspect TracingAspect extends BasicTracingAspect
 		PrintStream out = new PrintStream("tracing.log", "UTF-8");
 		BasicTracingAspect.initStream(out);
 		String[] myArgs= {
-			"-d", ".",
 			"-t0", "-l3",
 			"shell_prog"//, "oop"
 		};

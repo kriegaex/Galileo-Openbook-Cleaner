@@ -26,7 +26,7 @@ public abstract aspect BasicTracingAspect
 	public static int TRACE_LEVEL = 2;
 	protected static PrintStream stream = System.err;
 	private static final InheritableThreadLocal<Integer> callDepth =
-		new InheritableThreadLocal<Integer>(){
+		new InheritableThreadLocal<Integer>() {
 			@Override protected Integer initialValue() { return 0; }
 		};
 	private static final InheritableThreadLocal<String> indentText =
