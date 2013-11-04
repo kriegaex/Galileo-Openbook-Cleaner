@@ -96,7 +96,8 @@
       <title>IT-Handbuch für Fachinformatiker</title>
       <unpackDirectory>it_handbuch</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_it_handbuch.zip</downloadArchive>
-      <archiveMD5>69095040b73028fe6e5b5cf2e1ac3305</archiveMD5>
+      <!-- TODO: Check if cleaner still works as expected after archive has changed -->
+      <archiveMD5>c23ed0d6fbd3ad8d5d1482039c0f14e9</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836217446.jpg</coverImage>
     </book>
   </entry>
@@ -236,7 +237,8 @@
       <title>Shell-Programmierung</title>
       <unpackDirectory>shell_prog</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_shell_programmierung.zip</downloadArchive>
-      <archiveMD5>fe8361f8b858f671ae2d57671ad15042</archiveMD5>
+      <!-- TODO: Check if cleaner still works as expected after archive has changed -->
+      <archiveMD5>5d474def306c0cd3dfa7f2409bc0b79b</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898426831.jpg</coverImage>
     </book>
   </entry>
