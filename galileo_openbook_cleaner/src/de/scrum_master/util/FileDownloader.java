@@ -85,22 +85,6 @@ public class FileDownloader
 		this.doWriteToFile = to != null;
 	}
 
-	public FileDownloader(String fromURL, String toFile, String md5) throws MalformedURLException {
-		this(
-			new URL(fromURL),
-			new File(toFile),
-			md5 == null ? null : new BigInteger(md5, 16)
-		);
-	}
-
-	public FileDownloader(URL from, File to) {
-		this(from, to, null);
-	}
-
-	public FileDownloader(String fromURL, String toFile) throws MalformedURLException {
-		this(fromURL, toFile, null);
-	}
-
 	public void download()
 		throws IOException, NoSuchAlgorithmException, MD5MismatchException
 	{
