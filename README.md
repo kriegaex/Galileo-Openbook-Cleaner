@@ -48,7 +48,7 @@ __Usage:__
       vb_2010_einstieg, vb_2012_einstieg, vcsharp_2008, vcsharp_2010, vcsharp_2012,
       vmware, windows_server_2008
 
-__Dependencies:__ Openbook cleaner was developed in Java 6. It also uses a few open source libraries:
+__Dependencies:__ Openbook cleaner was developed in Java 7. It also uses a few open source libraries:
 
   * __jsoup 1.7.2__ for parsing the "dirty" openbook HTML, selecting DOM elements and editing them, removing
     navigation elements, ads and other types of clutter, and finally write a clean, pretty-printed HTML
