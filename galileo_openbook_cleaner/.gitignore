@@ -1,8 +1,22 @@
-bin/
+# Eclipse
+.settings/
+.classpath
+.project
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Maven
 target/
+
+# Other
+bin/
 lib/*.jar
 *.zip
 *.xls
+
+# Books
 actionscript_1_und_2/**
 actionscript_einstieg/**
 apps_iphone_ios5/**
