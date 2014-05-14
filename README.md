@@ -48,9 +48,7 @@ __Usage:__
       vb_2010_einstieg, vb_2012_einstieg, vcsharp_2008, vcsharp_2010, vcsharp_2012,
       vmware, windows_server_2008
 
-__Dependencies:__ Openbook cleaner was developed in Java 6. It also uses a few open source libraries (see
-[readme.txt](https://github.com/kriegaex/Galileo-Openbook-Cleaner/tree/v1.1.0/galileo_openbook_cleaner/lib)
-for download links and installation instructions):
+__Dependencies:__ Openbook cleaner was developed in Java 6. It also uses a few open source libraries:
 
   * __jsoup 1.7.2__ for parsing the "dirty" openbook HTML, selecting DOM elements and editing them, removing
     navigation elements, ads and other types of clutter, and finally write a clean, pretty-printed HTML
@@ -62,8 +60,25 @@ for download links and installation instructions):
   * __XStream 1.4.4__ parsing the *config.xml* file containing openbook meta data
   * __AspectJ 1.7.0__ for cross-cutting concerns like logging, timing, tracing which are not part of the
     main application logic. This helps to keep the core code clean and free from scattered code addressing
-    secondary concerns. The AspectJ runtime is part of the pre-packaged JAR available for download, so you
-    only need to install AspectJ if you want to build the application by yourself.
+    secondary concerns.
+
+__Development environment:__
+
+  * __IDE:__ I originally started developing this project with _Eclipse_ but have switched to _IntelliJ IDEA_
+    which for me personally is preferable because of its superior Maven support. OTOH, _Eclipse_ has better
+    _AspectJ_ integration. So if you want to change any of the aspect code, you might want to use _Eclipse_
+    anyway.
+  * __Git__ support is needed in your IDE of choice (or at least from the command line) if you want to
+    interact with the source code repository and not just download a ZIP archive from _GitHub_. 
+  * __Maven__ is used for dependency management and the whole build and packaging cycle. Any Maven 3 version
+    should be safe, I recommend using the latest stable version. It is totally up to you if you want to build
+    from the command line or via IDE integration. In _IntelliJ IDEA_ you should install the original Maven
+    plugins, for _Eclipse_ you need _m2e_ and also the _AspectJ Maven Configurator_ (can be installed from
+    http://dist.springsource.org/release/AJDT/configurator/). 
+  * __AspectJ__ support is available for both _Eclipse_ (AJDT, AspectJ Development Tools) and _IntelliJ IDEA_.
+    I do not know about Netbeans or other IDEs though. So please make sure to install the corresponding IDE
+    plugins for AspectJ support if you want to edit the aspect code comfortably. But this is optional, because
+    Maven can still build the project, fetching all necessary dependencies including AspectJ.
 
 Because later I might want to use this *Git* repository as a refactoring showcase for my developer workshops,
 I am going to do any refactoring step by step, documenting progress in small, fine-granular *Git* changesets,
