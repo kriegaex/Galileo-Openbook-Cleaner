@@ -453,13 +453,13 @@ public class JsoupFilter extends BasicFilter {
 	 * </pre>
 	 * For chapter x.2.* the href must be corrected to ubuntu_0x_002.htm.
 	 *
-	 * It further complicates the fixing task that there are some (ca. 2) books
+	 * It further complicates the fixing task that there are some (ca. 3) books
 	 * which show a similar one-off behaviour for <i>all</i> sub-chapters by design,
 	 * because they have a different numbering scheme. Those books are OK, though,
 	 * thus we need to explicitly exclude them from "fixing". <tt>:-(</tt>
 	 */
 	private void fixFaultyLinkTargets() {
-		// Exclude the 3 know exceptions and immediately return if one is found
+		// Exclude the 3 known exceptions and immediately return if one is found
 		if (pageTitle.matches(".*(ActionScript 1 und 2|Microsoft-Netzwerk|Shell-Programmierung).*")) {
 			SimpleLogger.debug("Book is an exception - no link fixing done");
 			return;
