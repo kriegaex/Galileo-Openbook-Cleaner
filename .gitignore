@@ -11,10 +11,12 @@
 target/
 
 # Other
+config.xml
 bin/
-lib/*.jar
+*.jar
 *.zip
 *.xls
+*.xlsx
 
 # Books
 actionscript_1_und_2/**
