@@ -9,7 +9,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 /**
- * This aspect concretizes the abstract crosscut in BasicTracingAspect, applying the trace
+ * This aspect concretises the abstract pointcut in BasicTracingAspect, applying the trace
  * facility to the application classes.
  */
 public aspect TracingAspect extends BasicTracingAspect
