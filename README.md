@@ -76,7 +76,7 @@ __Development environment:__
     plugins, for _Eclipse_ you need _m2e_ and also the _AspectJ Maven Configurator_ (can be installed from
     http://dist.springsource.org/release/AJDT/configurator/). 
   * __AspectJ__ support is available for both _Eclipse_ (AJDT, AspectJ Development Tools) and _IntelliJ IDEA_.
-    I do not know about Netbeans or other IDEs though. So please make sure to install the corresponding IDE
+    I do not know about _Netbeans_ or other IDEs though. So please make sure to install the corresponding IDE
     plugins for AspectJ support if you want to edit the aspect code comfortably. But this is optional, because
     Maven can still build the project, fetching all necessary dependencies including AspectJ.
 
