@@ -1,11 +1,11 @@
-HTML cleaner for Galileo openbooks
+HTML cleaner for Rheinwerk openbooks
 ==================================
 
-This is a tool for cleaning up [Galileo Computing openbooks](http://www.galileocomputing.de/openbook)
+This is a tool for cleaning up [Rheinwerk openbooks](https://www.rheinwerk-verlag.de/openbook/)
 before converting them to EPUB or PDF format.
 
 __Current state of development:__ v1.1.0 is feature complete, i.e. it can download, MD5-verify, unpack
-and convert all 37 openbooks available at release time.
+and convert all 36 openbooks available at release time.
 
 __History:__ If you want to know details about what has changed in which version, please take a look at the
 [change log](https://github.com/kriegaex/Galileo-Openbook-Cleaner/blob/v1.1.0/galileo_openbook_cleaner/CHANGELOG).
@@ -22,8 +22,7 @@ __Usage:__
     Option                                  Description
     ------                                  -----------
     -?, --help                              Display this help text
-    -c, --check-avail                       Check Galileo homepage for available
-                                              books, compare with known ones
+    -c, --check-avail                       Check config file
     -d, --download-dir <File>               Download directory for openbooks; must
                                               exist (default: .)
     -l, --log-level <Integer>               Log level (0=normal, 1=verbose,
@@ -43,7 +42,7 @@ __Usage:__
       apps_iphone_ios5, apps_iphone_ios6, asp_net, c_von_a_bis_z, dreamweaver_8,
       excel_2007, hdr_fotografie, it_handbuch, javascript_ajax, java_7, java_insel,
       joomla_1_5, linux, linux_unix_prog, microsoft_netzwerk, oop, photoshop_cs2,
-      photoshop_cs4, php_pear, python, ruby_on_rails_2, shell_prog, ubuntu_10_04,
+      photoshop_cs4, php_pear, ruby_on_rails_2, shell_prog, ubuntu_10_04,
       ubuntu_11_04, ubuntu_12_04, unix_guru, vb_2008, vb_2008_einstieg,
       vb_2010_einstieg, vb_2012_einstieg, vcsharp_2008, vcsharp_2010, vcsharp_2012,
       vmware, windows_server_2008
