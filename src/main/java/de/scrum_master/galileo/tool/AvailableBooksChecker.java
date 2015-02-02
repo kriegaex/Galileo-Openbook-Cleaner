@@ -15,13 +15,14 @@ public class AvailableBooksChecker {
 	public static void main(String[] args) throws Exception {
 		long startTime = System.currentTimeMillis();
 		SortedSet<String> localConfigURLs = getLocalConfigURLs();
-		SortedSet<String> webSiteURLs = getWebSiteURLs();
-		SortedSet<String> localConfigOrphans = getOrphans(localConfigURLs, webSiteURLs);
-		SortedSet<String> webSiteOrphans = getOrphans(webSiteURLs, localConfigURLs);
-		System.out.println("\nOrphan URLs:");
-		System.out.println("  Local config orphans: " + localConfigOrphans);
-		System.out.println("  Web site orphans:     " + webSiteOrphans);
-		System.out.println("\nExecution time: " + (System.currentTimeMillis() - startTime) / 1000.0 + " s");
+                System.out.println("--> Not possible to check available books caused by new OpenBook-Website. Sorry.");
+//		SortedSet<String> webSiteURLs = getWebSiteURLs();
+//		SortedSet<String> localConfigOrphans = getOrphans(localConfigURLs, webSiteURLs);
+//		SortedSet<String> webSiteOrphans = getOrphans(webSiteURLs, localConfigURLs);
+//		System.out.println("\nOrphan URLs:");
+//		System.out.println("  Local config orphans: " + localConfigOrphans);
+//		System.out.println("  Web site orphans:     " + webSiteOrphans);
+//		System.out.println("\nExecution time: " + (System.currentTimeMillis() - startTime) / 1000.0 + " s");
 	}
 
 	private static SortedSet<String> getLocalConfigURLs() {

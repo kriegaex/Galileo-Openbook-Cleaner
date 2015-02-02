@@ -1,3 +1,9 @@
+Version 1.2.0
+  Changed features
+    - Changed MD5 for nearly all books caused by new name of publishing house
+    - Removed Python Book with tearful eyes
+    - Disabled AvailableBooksChecker (Not working with new website)
+
 Version 1.1.0
   New features
     - New command-line option "-w|--write-config" writes an editable book list file config.xml
@@ -101,7 +107,7 @@ Version 1.0.2
       feeds):
         java
           -Dhttp.proxyHost=localhost -Dhttp.proxyPort=8080
-          -Dhttp.proxyUser=kriegaex -Dhttp.proxyPassword="test äöüX"
+          -Dhttp.proxyUser=kriegaex -Dhttp.proxyPassword="test ï¿½ï¿½ï¿½X"
   Bugfixes
     - Make debugging easier by de-obfuscating callstacks in FileDownloader (cf. "internal changes")
   Internal changes
@@ -212,7 +218,7 @@ Version 0.9.1
   Bugfixes
     - Book vcsharp_2008 could not be unpacked because it contains two files with special
       characters (German umlauts). This was due to a character encoding of "Cp437" while
-      Java always expects UTF-8. Thanks to user Dirk Höpfner for notifying me about the bug.
+      Java always expects UTF-8. Thanks to user Dirk Hï¿½pfner for notifying me about the bug.
   Internal changes
     - Option parsing: simplify loop and make it more readable
     - Option parsing: add log output for book_id arguments
