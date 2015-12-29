@@ -28,7 +28,7 @@ public class AvailableBooksChecker {
 		Book.readConfig(true);
 		SortedSet<String> localConfigURLs = new TreeSet<>();
 		for (Book book : Book.books.values())
-			localConfigURLs.add(book.downloadArchive);
+			localConfigURLs.add(book.downloadArchive.replaceAll(".*/galileo[a-z]+_(.+)\\.zip", "$1"));
 		return localConfigURLs;
 	}
 
@@ -36,14 +36,11 @@ public class AvailableBooksChecker {
 		Document webPage;
 		Elements downloadLinks;
 		SortedSet<String> webSiteURLs = new TreeSet<>();
-		webPage = Jsoup.parse(new URL("http://www.galileocomputing.de/katalog/openbook"), 10000);
-		downloadLinks = webPage.select("a[href*=.zip]");
-		for (Element link : downloadLinks)
-			webSiteURLs.add(link.attr("href"));
-		webPage = Jsoup.parse(new URL("http://www.galileodesign.de/katalog/openbook"), 10000);
-		downloadLinks = webPage.select("a[href*=.zip]");
-		for (Element link : downloadLinks)
-			webSiteURLs.add(link.attr("href"));
+		webPage = Jsoup.parse(new URL("https://www.rheinwerk-verlag.de/openbook/"), 10000);
+		downloadLinks = webPage.select("a.btn-primary");
+		for (Element link : downloadLinks) {
+			webSiteURLs.add(link.attr("href").replaceAll(".*/", ""));
+		}
 		return webSiteURLs;
 	}
 
