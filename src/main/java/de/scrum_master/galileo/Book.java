@@ -17,7 +17,7 @@ public class Book
 	public String archiveMD5;
 	public String coverImage;
 
-	public final static String  CONFIG_FOLDER   = "resource";
+	public final static String  CONFIG_FOLDER   = "src/main/resources";
 	public final static String  CONFIG_FILE     = "config.xml";
 	// TODO: switch config.xml encoding to UTF-8
 	public final static String  CONFIG_ENCODING = "iso-8859-15";
