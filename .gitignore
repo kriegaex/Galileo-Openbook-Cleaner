@@ -15,6 +15,9 @@ config.xml
 bin/
 *.jar
 *.zip
+*.zip.*
+*.log
+*.txt
 *.xls
 *.xlsx
 
@@ -40,7 +43,6 @@ oop/**
 photoshop_cs2/**
 photoshop_cs4/**
 php_pear/**
-python/**
 ruby_on_rails_2/**
 shell_prog/**
 ubuntu_10_04/**
@@ -56,3 +58,4 @@ vcsharp_2010/**
 vcsharp_2012/**
 vmware/**
 windows_server_2008/**
+windows_server_2012/**
