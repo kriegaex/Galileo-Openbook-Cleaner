@@ -50,15 +50,15 @@ __Usage:__
 
 __Dependencies:__ Openbook cleaner was developed in Java 7. It also uses a few open source libraries:
 
-  * __jsoup 1.7.2__ for parsing the "dirty" openbook HTML, selecting DOM elements and editing them, removing
+  * __jsoup 1.8.3__ for parsing the "dirty" openbook HTML, selecting DOM elements and editing them, removing
     navigation elements, ads and other types of clutter, and finally write a clean, pretty-printed HTML
     document back to disk
-  * __JOpt Simple 4.3__ for parsing command-line parameters and showing a help page (usage info)
-  * __Apache Commons Compress 1.4.1__ for unzipping downloaded openbook archives. *Note: When Java 7 is
+  * __JOpt Simple 4.9__ for parsing command-line parameters and showing a help page (usage info)
+  * __Apache Commons Compress 1.10__ for unzipping downloaded openbook archives. *Note: When Java 7 is
     available on MacOS, this library might be removed again and we can revert to using the built-in Java
     classes.*
-  * __XStream 1.4.4__ parsing the *config.xml* file containing openbook meta data
-  * __AspectJ 1.7.4__ for cross-cutting concerns like logging, timing, tracing which are not part of the
+  * __XStream 1.4.8__ parsing the *config.xml* file containing openbook meta data
+  * __AspectJ 1.8.7__ for cross-cutting concerns like logging, timing, tracing which are not part of the
     main application logic. This helps to keep the core code clean and free from scattered code addressing
     secondary concerns.
 

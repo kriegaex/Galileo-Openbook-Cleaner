@@ -1,127 +1,195 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>de.scrum_master.galileo</groupId>
 	<artifactId>openbook_cleaner</artifactId>
 	<version>1.2.0-SNAPSHOT</version>
+
 	<name>Galileo Openbook Cleaner</name>
-	<description>Converts downloadable openbooks by Galileo Press into cleaner HTML (without frames, navigation etc.) ready to be converted into e-book versions for mobile devices, e.g. using a tool like Calibre.</description>
+	<description>
+		Converts downloadable openbooks by Galileo Press into cleaner HTML (without frames, navigation etc.)
+		ready to be converted into e-book versions for mobile devices, e.g. using a tool like Calibre.
+	</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.source-target.version>1.7</java.source-target.version>
+		<aspectj.version>1.8.7</aspectj.version>
+		<main-class>de.scrum_master.galileo.OpenbookCleaner</main-class>
+	</properties>
+
 	<build>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.3</version>
+					<configuration>
+						<source>${java.source-target.version}</source>
+						<target>${java.source-target.version}</target>
+						<!-- IMPORTANT -->
+						<useIncrementalCompilation>false</useIncrementalCompilation>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>aspectj-maven-plugin</artifactId>
+					<version>1.8</version>
+					<configuration>
+						<!--<showWeaveInfo>true</showWeaveInfo>-->
+						<source>${java.source-target.version}</source>
+						<target>${java.source-target.version}</target>
+						<Xlint>ignore</Xlint>
+						<complianceLevel>${java.source-target.version}</complianceLevel>
+						<encoding>${project.build.sourceEncoding}</encoding>
+						<!--<verbose>true</verbose>-->
+						<!--<warn>constructorName,packageDefaultMethod,deprecation,maskedCatchBlocks,unusedLocals,unusedArguments,unusedImport</warn>-->
+					</configuration>
+					<executions>
+						<execution>
+							<!-- IMPORTANT -->
+							<phase>process-sources</phase>
+							<goals>
+								<goal>compile</goal>
+								<goal>test-compile</goal>
+							</goals>
+						</execution>
+					</executions>
+					<dependencies>
+						<dependency>
+							<groupId>org.aspectj</groupId>
+							<artifactId>aspectjtools</artifactId>
+							<version>${aspectj.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>1.4.0</version>
+					<configuration>
+						<mainClass>${main-class}</mainClass>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.dstovall</groupId>
+					<artifactId>onejar-maven-plugin</artifactId>
+					<version>1.4.4</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>one-jar</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<onejarVersion>0.96</onejarVersion>
+						<mainClass>de.scrum_master.app.FooBar</mainClass>
+						<attachToBuild>true</attachToBuild>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
-				<version>1.4</version>
-				<configuration>
-					<showWeaveInfo>true</showWeaveInfo>
-					<source>1.7</source>
-					<target>1.7</target>
-					<Xlint>ignore</Xlint>
-					<complianceLevel>1.7</complianceLevel>
-					<encoding>UTF-8</encoding>
-					<verbose>false</verbose>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-							<goal>test-compile</goal>
-						</goals>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.aspectj</groupId>
-						<artifactId>aspectjrt</artifactId>
-						<version>1.7.4</version>
-					</dependency>
-					<dependency>
-						<groupId>org.aspectj</groupId>
-						<artifactId>aspectjtools</artifactId>
-						<version>1.7.4</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.dstovall</groupId>
 				<artifactId>onejar-maven-plugin</artifactId>
-				<version>1.4.4</version>
-				<executions>
-					<execution>
-						<configuration>
-							<onejarVersion>0.96</onejarVersion>
-							<mainClass>de.scrum_master.galileo.OpenbookCleaner</mainClass>
-							<attachToBuild>true</attachToBuild>
-						</configuration>
-						<goals>
-							<goal>one-jar</goal>
-						</goals>
-					</execution>
-				</executions>
+				<configuration>
+					<mainClass>${main-class}</mainClass>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+
 	</build>
+
 	<pluginRepositories>
 		<pluginRepository>
 			<id>OneJAR googlecode.com</id>
 			<url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
 		</pluginRepository>
-		<pluginRepository>
-			<id>Maven Central</id>
-			<url>http://repo.maven.apache.org/maven2</url>
-		</pluginRepository>
 	</pluginRepositories>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>1.10</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>xz</artifactId>
+						<groupId>org.tukaani</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jopt-simple</groupId>
+				<artifactId>jopt-simple</artifactId>
+				<version>4.9</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jsoup</groupId>
+				<artifactId>jsoup</artifactId>
+				<version>1.8.3</version>
+			</dependency>
+			<dependency>
+				<groupId>com.thoughtworks.xstream</groupId>
+				<artifactId>xstream</artifactId>
+				<version>1.4.8</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>xmlpull</artifactId>
+						<groupId>xmlpull</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>xpp3_min</artifactId>
+						<groupId>xpp3</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjrt</artifactId>
+				<version>${aspectj.version}</version>
+				<scope>runtime</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>
-			<version>1.4.1</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>xz</artifactId>
-					<groupId>org.tukaani</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jopt-simple</groupId>
 			<artifactId>jopt-simple</artifactId>
-			<version>4.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.7.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.4.4</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>xmlpull</artifactId>
-					<groupId>xmlpull</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>xpp3_min</artifactId>
-					<groupId>xpp3</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.7.4</version>
 		</dependency>
 	</dependencies>
+
 	<organization>
 		<name>Scrum-Master.de - Agile Project Management</name>
 		<url>http://scrum-master.de</url>

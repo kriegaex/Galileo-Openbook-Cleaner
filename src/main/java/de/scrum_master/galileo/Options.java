@@ -46,7 +46,7 @@ class Options extends OptionParser {
 		Book.readConfig(logLevel > 1);
 		if (writeConfig)
 			Book.writeConfig(logLevel > 1);
-		for (String book_id : optionSet.nonOptionArguments()) {
+		for (String book_id : (List<String>) optionSet.nonOptionArguments()) {
 			if ("all".equalsIgnoreCase(book_id)) {
 				books = new ArrayList<>(Book.books.values());
 				break;
