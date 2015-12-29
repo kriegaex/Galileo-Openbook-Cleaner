@@ -212,16 +212,6 @@
     </book>
   </entry>
   <entry>
-    <id>PYTHON</id>
-    <book>
-      <title>Python</title>
-      <unpackDirectory>python</unpackDirectory>
-      <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_python.zip</downloadArchive>
-      <archiveMD5>802f910e3847565f3d1f981a23ca937f</archiveMD5>
-      <coverImage>http://cover.galileo-press.de/9783836211109.jpg</coverImage>
-    </book>
-  </entry>
-  <entry>
     <id>RUBY_ON_RAILS_2</id>
     <book>
       <title>Ruby on Rails 2</title>
@@ -369,6 +359,16 @@
       <unpackDirectory>windows_server_2008</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_windows_server_2008.zip</downloadArchive>
       <archiveMD5>3df493a8dbf04b9fce3c24ba8ed5e995</archiveMD5>
+      <coverImage>http://cover.galileo-press.de/9783836215282.jpg</coverImage>
+    </book>
+  </entry>
+  <entry>
+    <id>WINDOWS_SERVER_2012</id>
+    <book>
+      <title>Windows Server 2012 R2</title>
+      <unpackDirectory>windows_server_2012</unpackDirectory>
+      <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_windows_server_2012r2.zip</downloadArchive>
+      <archiveMD5>8d8094f20542282184794f15ccbf0e5a</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836215282.jpg</coverImage>
     </book>
   </entry>
