@@ -6,7 +6,7 @@
       <title>ActionScript 1 und 2</title>
       <unpackDirectory>actionscript_1_und_2</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileodesign_actionscript.zip</downloadArchive>
-      <archiveMD5>f0fce9b57be89d1263ab5aad218f08d9</archiveMD5>
+      <archiveMD5>970e01806426c585c41601d3c5e99f62</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898422215.jpg</coverImage>
     </book>
   </entry>
@@ -16,7 +16,7 @@
       <title>Einstieg in ActionScript</title>
       <unpackDirectory>actionscript_einstieg</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileodesign_actionscript_einstieg.zip</downloadArchive>
-      <archiveMD5>d873a2bea68a0184137f8e95370d2dac</archiveMD5>
+      <archiveMD5>2dbf20dad795d7295541ef824a5c0935</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898427746.jpg</coverImage>
     </book>
   </entry>
@@ -26,7 +26,7 @@
       <title>Apps entwickeln für iPhone und iPad (iOS 5)</title>
       <unpackDirectory>apps_iphone_ios5</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_apps_entwickeln_fuer_iphone_und_ipad.zip</downloadArchive>
-      <archiveMD5>4ec481acdd85478ea58dbc246811732f</archiveMD5>
+      <archiveMD5>590a152bd511828f149ad857ec059126</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836214636.jpg</coverImage>
     </book>
   </entry>
@@ -36,7 +36,7 @@
       <title>Apps programmieren für iPhone und iPad (iOS 6)</title>
       <unpackDirectory>apps_iphone_ios6</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_apps_programmieren_fuer_iphone_und_ipad.zip</downloadArchive>
-      <archiveMD5>8140eb718a8708e7cb7247cacd445630</archiveMD5>
+      <archiveMD5>469cea4dd678c2955a2033c9fadb58cd</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836219150.jpg</coverImage>
     </book>
   </entry>
@@ -56,7 +56,7 @@
       <title>C von A bis Z</title>
       <unpackDirectory>c_von_a_bis_z</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_c_von_a_bis_z.zip</downloadArchive>
-      <archiveMD5>082b31208caf318669f6577431afaba5</archiveMD5>
+      <archiveMD5>cf1e30c3057a940ff89c9d96d88c49d4</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836214117.jpg</coverImage>
     </book>
   </entry>
@@ -66,7 +66,7 @@
       <title>Dreamweaver 8</title>
       <unpackDirectory>dreamweaver_8</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileodesign_dreamweaver8.zip</downloadArchive>
-      <archiveMD5>77b4ccc2e734aa69b4f5e0326b176082</archiveMD5>
+      <archiveMD5>930f7053c04706b193943747170b38f</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898427395.jpg</coverImage>
     </book>
   </entry>
@@ -76,7 +76,7 @@
       <title>Excel 2007</title>
       <unpackDirectory>excel_2007</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_excel_2007.zip</downloadArchive>
-      <archiveMD5>8a3c67bcce5014de42aed6a887f18b5d</archiveMD5>
+      <archiveMD5>e2ff0e2425312f0fce8493e08bd5f506</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898428644.jpg</coverImage>
     </book>
   </entry>
@@ -86,7 +86,7 @@
       <title>HDR-Fotografie</title>
       <unpackDirectory>hdr_fotografie</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileodesign_hdr_fotografie.zip</downloadArchive>
-      <archiveMD5>05f1f03fddeb2d46ddb6f3dcf6417245</archiveMD5>
+      <archiveMD5>7ef66b76b7f85030e6bac2e3ef705754</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836211031.jpg</coverImage>
     </book>
   </entry>
@@ -97,7 +97,7 @@
       <unpackDirectory>it_handbuch</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_it_handbuch.zip</downloadArchive>
       <!-- TODO: Check if cleaner still works as expected after archive has changed -->
-      <archiveMD5>c23ed0d6fbd3ad8d5d1482039c0f14e9</archiveMD5>
+      <archiveMD5>7439bb67a30c48b3ecd472cdf74f4e5f</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836217446.jpg</coverImage>
     </book>
   </entry>
@@ -107,7 +107,7 @@
       <title>Java ist auch eine Insel</title>
       <unpackDirectory>javascript_ajax</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_javascript_ajax.zip</downloadArchive>
-      <archiveMD5>1fdb716ed9120e26dd9f501356e712a9</archiveMD5>
+      <archiveMD5>ba76a46a03511fc3daa598d4e3baec70</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898428590.jpg</coverImage>
     </book>
   </entry>
@@ -117,7 +117,7 @@
       <title>JavaScript und AJAX</title>
       <unpackDirectory>java_7</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_java7.zip</downloadArchive>
-      <archiveMD5>a6c42f70b09fed65c3397e817f3b246d</archiveMD5>
+      <archiveMD5>fed3ceb15adba0732ccac2709e344077</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836215077.jpg</coverImage>
     </book>
   </entry>
@@ -127,7 +127,7 @@
       <title>Java 7 - mehr als eine Insel</title>
       <unpackDirectory>java_insel</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_javainsel.zip</downloadArchive>
-      <archiveMD5>dbf5dd60502be22fd0ac42d44584309f</archiveMD5>
+      <archiveMD5>6f6aea7cba1f2f9573663f37f711c9c</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836218023.jpg</coverImage>
     </book>
   </entry>
@@ -137,7 +137,7 @@
       <title>Joomla! 1.5</title>
       <unpackDirectory>joomla_1_5</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_joomla15.zip</downloadArchive>
-      <archiveMD5>81b816d22da3da064d3b23b97266cf2f</archiveMD5>
+      <archiveMD5>ff9d240a4dd5a22c4148a66805d2ea1</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898428811.jpg</coverImage>
     </book>
   </entry>
@@ -147,7 +147,7 @@
       <title>Linux</title>
       <unpackDirectory>linux</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_linux.zip</downloadArchive>
-      <archiveMD5>d1109e488213c93e5468b444cde7698d</archiveMD5>
+      <archiveMD5>bb4c200e4a1fcb331461fda7ab42a63f</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836218221.jpg</coverImage>
     </book>
   </entry>
@@ -157,7 +157,7 @@
       <title>Linux-UNIX-Programmierung</title>
       <unpackDirectory>linux_unix_prog</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_linux_unix_programmierung.zip</downloadArchive>
-      <archiveMD5>c4d37159abde2c2f9757d6c37d45b0d7</archiveMD5>
+      <archiveMD5>86ccaa589af575ba5be9943ac445d94e</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836213660.jpg</coverImage>
     </book>
   </entry>
@@ -167,7 +167,7 @@
       <title>Microsoft-Netzwerk Integrationshandbuch</title>
       <unpackDirectory>microsoft_netzwerk</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_microsoft_netzwerk.zip</downloadArchive>
-      <archiveMD5>814a46492426ca26ad82cc61b80f12c9</archiveMD5>
+      <archiveMD5>37512cafe5c9f74cb4606604e8fdde90</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898428477.jpg</coverImage>
     </book>
   </entry>
@@ -177,7 +177,7 @@
       <title>Objektorientierte Programmierung</title>
       <unpackDirectory>oop</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_oop.zip</downloadArchive>
-      <archiveMD5>0151c9177aba7007ac74b63ded2c7c05</archiveMD5>
+      <archiveMD5>e7d237daf640b136e64864599abb7639</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836214018.jpg</coverImage>
     </book>
   </entry>
@@ -187,7 +187,7 @@
       <title>Adobe Photoshop CS2</title>
       <unpackDirectory>photoshop_cs2</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileodesign_photoshop_cs2.zip</downloadArchive>
-      <archiveMD5>19dfce0450057f826b2470b219d44496</archiveMD5>
+      <archiveMD5>beb28fb8ad0dac043c4ec159e3940525</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898427005.jpg</coverImage>
     </book>
   </entry>
@@ -197,7 +197,7 @@
       <title>Adobe Photoshop CS4</title>
       <unpackDirectory>photoshop_cs4</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileodesign_photoshop_cs4.zip</downloadArchive>
-      <archiveMD5>d1577a92737b79d334c078a588019bf8</archiveMD5>
+      <archiveMD5>e97c0985b3594db9dc2755f77baa8816</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836212373.jpg</coverImage>
     </book>
   </entry>
@@ -207,7 +207,7 @@
       <title>PHP PEAR</title>
       <unpackDirectory>php_pear</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_php_pear.zip</downloadArchive>
-      <archiveMD5>10e51e01cbb003c5931d881c2c367740</archiveMD5>
+      <archiveMD5>73a6df32c1ec412abc6c0c38bedce063</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898425803.jpg</coverImage>
     </book>
   </entry>
@@ -217,7 +217,7 @@
       <title>Ruby on Rails 2</title>
       <unpackDirectory>ruby_on_rails_2</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_ruby_on_rails.zip</downloadArchive>
-      <archiveMD5>53684c91088ba485f0d716673f66237f</archiveMD5>
+      <archiveMD5>c25c98ab604a74f972be781aa9592862</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898427791.jpg</coverImage>
     </book>
   </entry>
@@ -228,7 +228,7 @@
       <unpackDirectory>shell_prog</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_shell_programmierung.zip</downloadArchive>
       <!-- TODO: Check if cleaner still works as expected after archive has changed -->
-      <archiveMD5>5d474def306c0cd3dfa7f2409bc0b79b</archiveMD5>
+      <archiveMD5>3269c2bab0b5cd1220cd8266296c5bc9</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898426831.jpg</coverImage>
     </book>
   </entry>
@@ -238,7 +238,7 @@
       <title>Ubuntu 10.04 LTS &apos;Lucid Lynx&apos;</title>
       <unpackDirectory>ubuntu_10_04</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_ubuntu_1004.zip</downloadArchive>
-      <archiveMD5>4f93012ba0196f7bc6db17d67d657c79</archiveMD5>
+      <archiveMD5>21787fb5ba11222159a289ef23dec6e6</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836216548.jpg</coverImage>
     </book>
   </entry>
@@ -248,7 +248,7 @@
       <title>Ubuntu 11.04 &apos;Natty Narwhal&apos;</title>
       <unpackDirectory>ubuntu_11_04</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_ubuntu_1104.zip</downloadArchive>
-      <archiveMD5>8b0b98e4e076278c728ad89692544cd7</archiveMD5>
+      <archiveMD5>1eaf3c174d117bc24a029b453215a4fa</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836217651.jpg</coverImage>
     </book>
   </entry>
@@ -258,7 +258,7 @@
       <title>Ubuntu 12.04 &apos;Precise Pangolin&apos;</title>
       <unpackDirectory>ubuntu_12_04</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_ubuntu.zip</downloadArchive>
-      <archiveMD5>fd17a9647efff78a358364def4400e63</archiveMD5>
+      <archiveMD5>a69c854e8da0f9ab9e33bfe581a7905c</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836219457.jpg</coverImage>
     </book>
   </entry>
@@ -268,7 +268,7 @@
       <title>Wie werde ich UNIX-Guru?</title>
       <unpackDirectory>unix_guru</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_unix_guru.zip</downloadArchive>
-      <archiveMD5>eeca900fe5144ea39e63620a5e45032a</archiveMD5>
+      <archiveMD5>4bf065511d8767ebac28700ea910f579</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898422406.jpg</coverImage>
     </book>
   </entry>
@@ -278,7 +278,7 @@
       <title>Visual Basic 2008</title>
       <unpackDirectory>vb_2008</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_visualbasic_2008.zip</downloadArchive>
-      <archiveMD5>766474d8b583a88d346801a77748c654</archiveMD5>
+      <archiveMD5>8b8106d926a93c56d6fce63b17ed8604</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836211710.jpg</coverImage>
     </book>
   </entry>
@@ -288,7 +288,7 @@
       <title>Einstieg in Visual Basic 2008</title>
       <unpackDirectory>vb_2008_einstieg</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_einstieg_vb_2008.zip</downloadArchive>
-      <archiveMD5>319a48ff5ed8da00fbdbafb4e904a263</archiveMD5>
+      <archiveMD5>8fa8cc7311f99bf403fb23ac21d04b0a</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836211925.jpg</coverImage>
     </book>
   </entry>
@@ -298,7 +298,7 @@
       <title>Einstieg in Visual Basic 2010</title>
       <unpackDirectory>vb_2010_einstieg</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_einstieg_vb_2010.zip</downloadArchive>
-      <archiveMD5>825bc75e2779468f49c27e01c1425181</archiveMD5>
+      <archiveMD5>372d983c0fbe9130c74da326fab6c7f2</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836215411.jpg</coverImage>
     </book>
   </entry>
@@ -308,7 +308,7 @@
       <title>Einstieg in Visual Basic 2012</title>
       <unpackDirectory>vb_2012_einstieg</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_einstieg_vb_2012.zip</downloadArchive>
-      <archiveMD5>6c2081ba9ec3e8ac53a8858e3dc32b04</archiveMD5>
+      <archiveMD5>bfaaee69f3c83950178ccf221c8d86a9</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836219594.jpg</coverImage>
     </book>
   </entry>
@@ -318,7 +318,7 @@
       <title>Visual C# 2008</title>
       <unpackDirectory>vcsharp_2008</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_visual_csharp.zip</downloadArchive>
-      <archiveMD5>58bfb6559241a96e6155c7becb00902b</archiveMD5>
+      <archiveMD5>56867b49e1de13a84bac0891a9e41ee5</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836211727.jpg</coverImage>
     </book>
   </entry>
@@ -328,7 +328,7 @@
       <title>Visual C# 2010</title>
       <unpackDirectory>vcsharp_2010</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_visual_csharp_2010.zip</downloadArchive>
-      <archiveMD5>b08df7f094e2155273d4b16dfc75b0d0</archiveMD5>
+      <archiveMD5>6bcde9ba5b357e0675a695707f4bc312</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836215527.jpg</coverImage>
     </book>
   </entry>
@@ -338,7 +338,7 @@
       <title>Visual C# 2012</title>
       <unpackDirectory>vcsharp_2012</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_visual_csharp_2012.zip</downloadArchive>
-      <archiveMD5>7fdb3a25a51da2a4bb58ebf10edcd16f</archiveMD5>
+      <archiveMD5>172e10aec169340daa92b9b1de9cf9b4</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836219976.jpg</coverImage>
     </book>
   </entry>
@@ -348,7 +348,7 @@
       <title>VMware und Microsoft Virtual Server</title>
       <unpackDirectory>vmware</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_vmware.zip</downloadArchive>
-      <archiveMD5>c858eff1750f2e3840894a8d1e306a0a</archiveMD5>
+      <archiveMD5>53d31675f6ea0bfcbd1dec58f00a144c</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898427012.jpg</coverImage>
     </book>
   </entry>
@@ -358,7 +358,7 @@
       <title>Windows Server 2008 R2</title>
       <unpackDirectory>windows_server_2008</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_windows_server_2008.zip</downloadArchive>
-      <archiveMD5>3df493a8dbf04b9fce3c24ba8ed5e995</archiveMD5>
+      <archiveMD5>8ddcec81045c1566b8ee7584ef78ef66</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836215282.jpg</coverImage>
     </book>
   </entry>
@@ -369,7 +369,7 @@
       <unpackDirectory>windows_server_2012</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_windows_server_2012r2.zip</downloadArchive>
       <archiveMD5>8d8094f20542282184794f15ccbf0e5a</archiveMD5>
-      <coverImage>http://cover.galileo-press.de/9783836215282.jpg</coverImage>
+      <coverImage>http://cover.galileo-press.de/9783836220132.jpg</coverImage>
     </book>
   </entry>
 </galileo-openbooks>
