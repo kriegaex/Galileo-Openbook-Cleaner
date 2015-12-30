@@ -16,37 +16,37 @@ __Download:__ A precompiled, executable JAR file is available
 __Usage:__
 
     $ java -jar galileo_openbook_cleaner-1.1.0.jar --help
-    
+
     OpenbookCleaner usage: java ... [options] <book_id>*
 
-    Option                                  Description
-    ------                                  -----------
-    -?, --help                              Display this help text
-    -c, --check-avail                       Check Galileo homepage for available
-                                              books, compare with known ones
-    -d, --download-dir <File>               Download directory for openbooks; must
-                                              exist (default: .)
-    -l, --log-level <Integer>               Log level (0=normal, 1=verbose,
-                                              2=debug, 3=trace) (default: 0)
-    -m, --check-md5                         Download all known books without
-                                              storing them, verifying their MD5
-                                              checksums (slow! >1 Gb download)
-    -t, --threading <Integer>               Threading mode (0=single, 1=multi);
-                                              single is slower, but better for
-                                              diagnostics) (default: 1)
-    -w, --write-config                      Write editable book list to config.xml
+    Option                     Description                           
+    ------                     -----------                           
+    -?, --help                 Display this help text                
+    -c, --check-avail          Check Galileo homepage for available  
+                                 books, compare with known ones      
+    -d, --download-dir <File>  Download directory for openbooks; must
+                                 exist (default: .)                  
+    -l, --log-level <Integer>  Log level (0=normal, 1=verbose,       
+                                 2=debug, 3=trace) (default: 0)      
+    -m, --check-md5            Download all known books without      
+                                 storing them, verifying their MD5   
+                                 checksums (slow! >1 Gb download)    
+    -t, --threading <Integer>  Threading mode (0=single, 1=multi);   
+                                 single is slower, but better for    
+                                 diagnostics) (default: 1)           
+    -w, --write-config         Write editable book list to config.xml
 
-    book_id1 book_id2 ...                   Books to be downloaded & converted
+    book_id1 book_id2 ...      Books to be downloaded & converted
 
     Legal book IDs:
       all (magic value: all books), actionscript_1_und_2, actionscript_einstieg,
       apps_iphone_ios5, apps_iphone_ios6, asp_net, c_von_a_bis_z, dreamweaver_8,
       excel_2007, hdr_fotografie, it_handbuch, javascript_ajax, java_7, java_insel,
       joomla_1_5, linux, linux_unix_prog, microsoft_netzwerk, oop, photoshop_cs2,
-      photoshop_cs4, php_pear, python, ruby_on_rails_2, shell_prog, ubuntu_10_04,
+      photoshop_cs4, php_pear, ruby_on_rails_2, shell_prog, ubuntu_10_04,
       ubuntu_11_04, ubuntu_12_04, unix_guru, vb_2008, vb_2008_einstieg,
       vb_2010_einstieg, vb_2012_einstieg, vcsharp_2008, vcsharp_2010, vcsharp_2012,
-      vmware, windows_server_2008
+      vmware, windows_server_2008, windows_server_2012
 
 __Dependencies:__ Openbook cleaner was developed in Java 7. It also uses a few open source libraries:
 
