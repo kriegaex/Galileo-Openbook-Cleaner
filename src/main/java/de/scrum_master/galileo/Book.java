@@ -19,8 +19,7 @@ public class Book
 
 	public final static String  CONFIG_FOLDER   = "src/main/resources";
 	public final static String  CONFIG_FILE     = "config.xml";
-	// TODO: switch config.xml encoding to UTF-8
-	public final static String  CONFIG_ENCODING = "iso-8859-15";
+	public final static String  CONFIG_ENCODING = "UTF-8";
 	public final static XStream XSTREAM         = new XStream(new DomDriver());
 
 	static {

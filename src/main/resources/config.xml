@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <galileo-openbooks>
   <entry>
     <id>ACTIONSCRIPT_1_UND_2</id>
@@ -23,7 +23,7 @@
   <entry>
     <id>APPS_IPHONE_IOS5</id>
     <book>
-      <title>Apps entwickeln für iPhone und iPad (iOS 5)</title>
+      <title>Apps entwickeln fÃŒr iPhone und iPad (iOS 5)</title>
       <unpackDirectory>apps_iphone_ios5</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_apps_entwickeln_fuer_iphone_und_ipad.zip</downloadArchive>
       <archiveMD5>590a152bd511828f149ad857ec059126</archiveMD5>
@@ -33,7 +33,7 @@
   <entry>
     <id>APPS_IPHONE_IOS6</id>
     <book>
-      <title>Apps programmieren für iPhone und iPad (iOS 6)</title>
+      <title>Apps programmieren fÃŒr iPhone und iPad (iOS 6)</title>
       <unpackDirectory>apps_iphone_ios6</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_apps_programmieren_fuer_iphone_und_ipad.zip</downloadArchive>
       <archiveMD5>469cea4dd678c2955a2033c9fadb58cd</archiveMD5>
@@ -93,7 +93,7 @@
   <entry>
     <id>IT_HANDBUCH</id>
     <book>
-      <title>IT-Handbuch für Fachinformatiker</title>
+      <title>IT-Handbuch fÃŒr Fachinformatiker</title>
       <unpackDirectory>it_handbuch</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_it_handbuch.zip</downloadArchive>
       <!-- TODO: Check if cleaner still works as expected after archive has changed -->
