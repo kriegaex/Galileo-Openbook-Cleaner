@@ -30,7 +30,7 @@ class Options extends OptionParser {
 		OptionSpec<File>    sp_downloadDir = makeOptionSpec("d", "download-dir", "Download directory for openbooks; must exist", new File("."));
 		OptionSpec<Integer> sp_logLevel    = makeOptionSpec("l", "log-level",    "Log level (0=normal, 1=verbose, 2=debug, 3=trace)", 0);
 		OptionSpec<Integer> sp_threading   = makeOptionSpec("t", "threading",    "Threading mode (0=single, 1=multi); single is slower, but better for diagnostics)", 1);
-		OptionSpec<Void>    sp_writeConfig = makeOptionSpec("w", "write-config", "Write editable book list to config.xml", null);
+		OptionSpec<Void>    sp_writeConfig = makeOptionSpec("w", "write-config", "Write editable book list to config.xml, enabling you to update MD5 checksums or add new books", null);
 
 		// Parse options
 		OptionSet optionSet = super.parse(arguments);
