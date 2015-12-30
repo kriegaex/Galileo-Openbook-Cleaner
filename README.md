@@ -4,18 +4,18 @@ HTML cleaner for Rheinwerk (ex-Galileo) openbooks
 This is a tool for cleaning up [Rheinwerk openbooks](https://www.rheinwerk-verlag.de/openbook/)
 (formerly known as Galileo openbooks) before converting them to EPUB or PDF format.
 
-__Current state of development:__ v1.1.0 is feature complete, i.e. it can download, MD5-verify, unpack
+__Current state of development:__ v1.2.0-SNAPSHOT is feature complete, i.e. it can download, MD5-verify, unpack
 and convert all 37 openbooks available at release time.
 
 __History:__ If you want to know details about what has changed in which version, please take a look at the
-[change log](https://github.com/kriegaex/Galileo-Openbook-Cleaner/blob/v1.1.0/galileo_openbook_cleaner/CHANGELOG).
+[change log](https://raw.githubusercontent.com/kriegaex/Galileo-Openbook-Cleaner/master/CHANGELOG).
 
 __Download:__ A precompiled, executable JAR file is available
-[here](http://scrum-master.de/download/GalileoOpenbookCleaner/galileo_openbook_cleaner-1.1.0.jar). 
+[here](http://scrum-master.de/download/GalileoOpenbookCleaner/openbook_cleaner-1.2.0-SNAPSHOT.jar). 
 
 __Usage:__
 
-    $ java -jar galileo_openbook_cleaner-1.1.0.jar --help
+    $ java -jar openbook_cleaner-1.2.0-SNAPSHOT.jar --help
 
     OpenbookCleaner usage: java ... [options] <book_id>*
 
