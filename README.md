@@ -1,8 +1,8 @@
-HTML cleaner for Galileo openbooks
-==================================
+HTML cleaner for Rheinwerk (ex-Galileo) openbooks
+=================================================
 
-This is a tool for cleaning up [Galileo Computing openbooks](http://www.galileocomputing.de/openbook)
-before converting them to EPUB or PDF format.
+This is a tool for cleaning up [Rheinwerk openbooks](https://www.rheinwerk-verlag.de/openbook/)
+(formerly known as Galileo openbooks) before converting them to EPUB or PDF format.
 
 __Current state of development:__ v1.1.0 is feature complete, i.e. it can download, MD5-verify, unpack
 and convert all 37 openbooks available at release time.
