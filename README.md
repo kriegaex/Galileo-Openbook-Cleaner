@@ -11,7 +11,7 @@ __History:__ If you want to know details about what has changed in which version
 [change log](https://raw.githubusercontent.com/kriegaex/Galileo-Openbook-Cleaner/master/CHANGELOG).
 
 __Download:__ A precompiled, executable JAR file is available
-[here](http://scrum-master.de/download/GalileoOpenbookCleaner/openbook_cleaner-1.2.0-SNAPSHOT.jar). 
+[here](http://scrum-master.de/download/GalileoOpenbookCleaner/openbook_cleaner-1.2.0-SNAPSHOT.jar).
 
 __Usage:__
 
@@ -19,24 +19,24 @@ __Usage:__
 
     OpenbookCleaner usage: java ... [options] <book_id>*
 
-    Option                     Description                           
-    ------                     -----------                           
-    -?, --help                 Display this help text                
-    -c, --check-avail          Check Galileo homepage for available  
-                                 books, compare with known ones      
-    -d, --download-dir <File>  Download directory for openbooks; must
-                                 exist (default: .)                  
-    -l, --log-level <Integer>  Log level (0=normal, 1=verbose,       
-                                 2=debug, 3=trace) (default: 0)      
-    -m, --check-md5            Download all known books without      
-                                 storing them, verifying their MD5   
-                                 checksums (slow! >1 Gb download)    
-    -t, --threading <Integer>  Threading mode (0=single, 1=multi);   
-                                 single is slower, but better for    
-                                 diagnostics) (default: 1)           
-    -w, --write-config         Write editable book list to config.xml
+    Option                       Description
+    ------                       -----------
+    -?, --help                   Display this help text
+    -c, --check-avail            Check Galileo homepage for available books,
+                                   compare with known ones
+    -d, --download-dir <File>    Download directory for openbooks; must exist
+                                   (default: .)
+    -l, --log-level <Integer>    Log level (0=normal, 1=verbose, 2=debug, 3=trace)
+                                   (default: 0)
+    -m, --check-md5              Download all known books without storing them,
+                                   verifying their MD5 checksums (slow! >1 Gb
+                                   download)
+    -t, --threading <Integer>    Threading mode (0=single, 1=multi); single is
+                                   slower, but better for diagnostics) (default: 1)
+    -w, --write-config           Write editable book list to config.xml, enabling
+                                   you to update MD5 checksums or add new books
 
-    book_id1 book_id2 ...      Books to be downloaded & converted
+    book_id1 book_id2 ...        Books to be downloaded & converted
 
     Legal book IDs:
       all (magic value: all books), actionscript_1_und_2, actionscript_einstieg,
@@ -69,12 +69,12 @@ __Development environment:__
     _AspectJ_ integration. So if you want to change any of the aspect code, you might want to use _Eclipse_
     anyway.
   * __Git__ support is needed in your IDE of choice (or at least from the command line) if you want to
-    interact with the source code repository and not just download a ZIP archive from _GitHub_. 
+    interact with the source code repository and not just download a ZIP archive from _GitHub_.
   * __Maven__ is used for dependency management and the whole build and packaging cycle. Any Maven 3 version
     should be safe, I recommend using the latest stable version. It is totally up to you if you want to build
     from the command line or via IDE integration. In _IntelliJ IDEA_ you should install the original Maven
     plugins, for _Eclipse_ you need _m2e_ and also the _AspectJ Maven Configurator_ (can be installed from
-    http://dist.springsource.org/release/AJDT/configurator/). 
+    http://dist.springsource.org/release/AJDT/configurator/).
   * __AspectJ__ support is available for both _Eclipse_ (AJDT, AspectJ Development Tools) and _IntelliJ IDEA_.
     I do not know about _Netbeans_ or other IDEs though. So please make sure to install the corresponding IDE
     plugins for AspectJ support if you want to edit the aspect code comfortably. But this is optional, because

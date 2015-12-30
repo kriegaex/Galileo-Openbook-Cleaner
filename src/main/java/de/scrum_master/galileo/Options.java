@@ -80,8 +80,11 @@ class Options extends OptionParser {
 
 	public void printHelpOn(PrintStream sink, String errorMessage) throws IOException {
 		sink.println(OpenbookCleaner.class.getSimpleName() + " usage: java ... [options] <book_id>*\n");
+		// TODO: As soon as https://github.com/pholser/jopt-simple/issues/85 is fixed,
+		// remove this call or correct it to '...new BuiltinHelpFormatter(80, 4)'
+		formatHelpWith(new BuiltinHelpFormatter(106, 4));
 		printHelpOn(sink);
-		sink.println("\nbook_id1 book_id2 ...      Books to be downloaded & converted");
+		sink.println("\nbook_id1 book_id2 ...        Books to be downloaded & converted");
 		sink.println("\nLegal book IDs:");
 		String line = "  all (magic value: all books)";
 		for (Book book : Book.books.values()) {
