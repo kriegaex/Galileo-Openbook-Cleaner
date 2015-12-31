@@ -29,7 +29,7 @@ privileged aspect LoggingAspect
 	pointcut initialiseTitle()      : execution(* *Filter.initialiseTitle(boolean));
 	pointcut createIndexLink()      : execution(* *Filter.createIndexLink());
 	pointcut fixFaultyLinkTargets() : execution(* *Filter.fixFaultyLinkTargets());
-	pointcut removeFeedbackForm()   : execution(* *Filter.removeFeedbackForm());
+	pointcut removeFeedbackForm()   : execution(* *Filter.removeFeedbackForm()) || execution(* *Filter.removeFeedbackLink());
 
 	void around(final Book book) : processBook() && args(book) {
 		new LogHelper("Book: " + book.unpackDirectory) {
@@ -70,9 +70,9 @@ privileged aspect LoggingAspect
 		new LogHelper("TOC file: checking for faulty link targets") {
 			void log() { proceed(); } }.log();
 	}
-	
+
 	void around() : removeFeedbackForm() {
-		new LogHelper("Removing feedback form (if any)", false) {
+		new LogHelper("Removing feedback form/link (if any)", false) {
 			void log() { proceed(); } }.log();
 	}
 }

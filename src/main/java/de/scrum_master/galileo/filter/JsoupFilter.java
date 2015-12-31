@@ -55,6 +55,7 @@ public class JsoupFilter extends BasicFilter {
 		GRAPHICAL_PARAGRAPH_SEPARATOR  ("div:has(img[src=common/jupiters.gif])"),
 
 		FEEDBACK_FORM                  ("form[action*=openbook]"),
+		FEEDBACK_LINK                  ("a[href*=/feedback/produkt/]"),
 
 		IMAGE_SMALL                    ("img[src*=klein/klein]"),
 		IMAGE_1                        ("div.bildbox img"),
@@ -259,6 +260,7 @@ public class JsoupFilter extends BasicFilter {
 			deleteNodes(Selector.JUMP_TO_TOP_LINK);
 			deleteNodes(Selector.GRAPHICAL_PARAGRAPH_SEPARATOR);
 			removeFeedbackForm();
+			removeFeedbackLink();
 		}
 		else {
 			removeNonStandardTopNavigation();
@@ -279,16 +281,34 @@ public class JsoupFilter extends BasicFilter {
 			return;
 		}
 		SimpleLogger.debug("Feedback form found");
-		deleteNodes(getFeedbackFormNeighbourhood(feedbackForm));
+		deleteNodes(getFeedbackElementNeighbourhood(feedbackForm));
 		SimpleLogger.debug("Feedback form removed");
 	}
 
 	/**
-	 * Find all nodes around a given user feedback form.
+	 * Remove user feedback link plus relevant clutter around it
+	 *   - preceding heading and text
+	 *   - hotizontal separator (HR tag) preceding heading
+	 *   - everything after the feedback link until the rest of the document
+	 */
+	private void removeFeedbackLink() {
+		Element feedbackLink = findFirstElement(Selector.FEEDBACK_LINK);
+		if (feedbackLink == null) {
+			SimpleLogger.debug("No feedback link found -> nothing to remove");
+			return;
+		}
+		SimpleLogger.debug("Feedback link found");
+		deleteNodes(getFeedbackElementNeighbourhood(feedbackLink));
+		SimpleLogger.debug("Feedback link removed");
+	}
+
+	/**
+	 * Find all nodes around a given user feedback form/link.
 	 * <p>
-	 * Background info: The feedback form is preceded by an HR tag separating it from the main content, a heading
+	 * Background info: The feedback element is preceded by an HR tag separating it from the main content, a heading
 	 * and introductory text. It is usually not followed by any other content, but if so, it will be considered part
-	 * of the feedback form's neighbourhood too. Usually we have a structure roughly looking like this:
+	 * of the feedback element's neighbourhood too. Usually we have a structure roughly looking like this for the
+	 * feedback form
 	 * <pre>
 	 *   BR
 	 *   HR
@@ -297,6 +317,14 @@ public class JsoupFilter extends BasicFilter {
 	 *       INPUT
 	 *       INPUT
 	 *       ...
+	 *   ...
+	 * </pre>
+	 * or like this for the feedback link
+	 * <pre>
+	 *   BR
+	 *   HR
+	 *   ...
+	 *   A[HREF*=/feedback/produkt/]
 	 *   ...
 	 * </pre>
 	 * There are two known cases in book "dreamewaver_8" (02_kap02_002.htm, 04_kap04_002.htm) for which jsoup
@@ -310,12 +338,12 @@ public class JsoupFilter extends BasicFilter {
 	 * the feedback form, it has no influence on other errors such as garbled text elements occurring in the remainder
 	 * of 02_kap02_002.htm and maybe also in other files (unknown).
 	 *
-	 * @param feedbackForm user feedback form for which to determine the neighbourhood
+	 * @param feedbackElement user feedback form/link for which to determine the neighbourhood
 	 *
-	 * @return a list of nodes belonging to the feedback form's surrounding neighbourhood (including the feedback
-	 * form itself)
+	 * @return a list of nodes belonging to the feedback element's surrounding neighbourhood (including the feedback
+	 * element itself)
 	 */
-	private List<Node> getFeedbackFormNeighbourhood(final Element feedbackForm) {
+	private List<Node> getFeedbackElementNeighbourhood(final Element feedbackElement) {
 		final List<Node> neighbourhood = new ArrayList<>();
 		NodeVisitor neighbourhoodFinder = new NodeVisitor() {
 			private boolean feedbackFormFound = false;
@@ -327,7 +355,7 @@ public class JsoupFilter extends BasicFilter {
 						hrTagFound = true;
 						neighbourhood.clear();
 					}
-					else if (node == feedbackForm)
+					else if (node == feedbackElement)
 						feedbackFormFound = true;
 					else if (!hrTagFound)
 						return;
