@@ -49,8 +49,8 @@ class Downloader
 					"Possible download problem detected: MD5 checksum mismatch." +
 						"\n  Book title:    " + book.title +
 						"\n  Download file: " + e.getFile() +
-						"\n  MD5 expected:  " + e.getMD5Expected() +
-						"\n  MD5 actual:    " + e.getMD5Actual() +
+						"\n  MD5 expected:  " + e.getMD5Expected().toString(16) +
+						"\n  MD5 actual:    " + e.getMD5Actual().toString(16) +
 						"\n\nPossible reasons are:" +
 						"\n  - corrupt download file due to incomplete download process" +
 						"\n  - download file was updated on server" +
