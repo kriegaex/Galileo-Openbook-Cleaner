@@ -42,7 +42,32 @@ class Downloader
 		String archiveName = book.downloadArchive.replaceFirst(".*/", "");
 		File file = new File(downloadDirectory, archiveName);
 		if (! file.exists())
-			new FileDownloader(new URL(book.downloadArchive), file, new BigInteger(book.archiveMD5, 16)).download();
+			try {
+				new FileDownloader(new URL(book.downloadArchive), file, new BigInteger(book.archiveMD5, 16)).download();
+			} catch (MD5MismatchException e) {
+				System.err.println(
+					"Possible download problem detected: MD5 checksum mismatch." +
+						"\n  Book title:    " + book.title +
+						"\n  Download file: " + e.getFile() +
+						"\n  MD5 expected:  " + e.getMD5Expected() +
+						"\n  MD5 actual:    " + e.getMD5Actual() +
+						"\n\nPossible reasons are:" +
+						"\n  - corrupt download file due to incomplete download process" +
+						"\n  - download file was updated on server" +
+						"\n\nThe program will try to unpack and clean the download archive anyway." +
+						"\n\nIn case of problems you have the following options:" +
+						"\n  - If you think the download file is corrupt, just delete it and restart the" +
+						"\n    program so as to get a fresh download." +
+						"\n  - If you think that the download file is okay but the cleanup does not work" +
+						"\n    correctly, please notify the program author by creating a ticket at" +
+						"\n    https://github.com/kriegaex/Galileo-Openbook-Cleaner/issues, but only if" +
+						"\n    an equivalent ticket does not already exist." +
+						"\n  - If the cleanup works correctly even despite the MD5 mismatch, please also" +
+						"\n    notify the author as explained above. Meanwhile you can avoid this error" +
+						"\n    message by using the --write-config option first and afterwards update the" +
+						"\n    MD5 checksum for the corresponding openbook manually in config.xml.\n"
+				);
+			}
 	}
 
 	private void unpackBook() throws IOException {
