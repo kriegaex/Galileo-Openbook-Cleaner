@@ -13,8 +13,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.source-target.version>1.7</java.source-target.version>
-		<aspectj.version>1.8.7</aspectj.version>
+		<java.source-target.version>1.8</java.source-target.version>
+		<aspectj.version>1.8.9</aspectj.version>
 		<main-class>de.scrum_master.galileo.OpenbookCleaner</main-class>
 	</properties>
 
@@ -61,6 +61,11 @@
 						<dependency>
 							<groupId>org.aspectj</groupId>
 							<artifactId>aspectjtools</artifactId>
+							<version>${aspectj.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.aspectj</groupId>
+							<artifactId>aspectjweaver</artifactId>
 							<version>${aspectj.version}</version>
 						</dependency>
 					</dependencies>
