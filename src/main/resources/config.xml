@@ -104,7 +104,7 @@
   <entry>
     <id>JAVASCRIPT_AJAX</id>
     <book>
-      <title>Java ist auch eine Insel</title>
+      <title>JavaScript und AJAX</title>
       <unpackDirectory>javascript_ajax</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_javascript_ajax.zip</downloadArchive>
       <archiveMD5>ba76a46a03511fc3daa598d4e3baec70</archiveMD5>
@@ -114,7 +114,7 @@
   <entry>
     <id>JAVA_7</id>
     <book>
-      <title>JavaScript und AJAX</title>
+      <title>Java 7 - mehr als eine Insel</title>
       <unpackDirectory>java_7</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_java7.zip</downloadArchive>
       <archiveMD5>fed3ceb15adba0732ccac2709e344077</archiveMD5>
@@ -124,7 +124,7 @@
   <entry>
     <id>JAVA_INSEL</id>
     <book>
-      <title>Java 7 - mehr als eine Insel</title>
+      <title>Java ist auch eine Insel</title>
       <unpackDirectory>java_insel</unpackDirectory>
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_javainsel.zip</downloadArchive>
       <archiveMD5>6f6aea7cba1f2f9573663f37f711c9c</archiveMD5>
