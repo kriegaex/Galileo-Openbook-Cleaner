@@ -58,7 +58,7 @@ __Dependencies:__ Openbook cleaner was developed in Java 7. It also uses a few o
     available on MacOS, this library might be removed again and we can revert to using the built-in Java
     classes.*
   * __XStream 1.4.8__ parsing the *config.xml* file containing openbook meta data
-  * __AspectJ 1.8.7__ for cross-cutting concerns like logging, timing, tracing which are not part of the
+  * __AspectJ 1.8.13__ for cross-cutting concerns like logging, timing, tracing which are not part of the
     main application logic. This helps to keep the core code clean and free from scattered code addressing
     secondary concerns.
 

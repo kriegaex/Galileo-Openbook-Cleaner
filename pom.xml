@@ -14,7 +14,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.source-target.version>1.8</java.source-target.version>
-		<aspectj.version>1.8.9</aspectj.version>
+		<aspectj.version>1.8.13</aspectj.version>
 		<main-class>de.scrum_master.galileo.OpenbookCleaner</main-class>
 	</properties>
 
@@ -36,7 +36,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>aspectj-maven-plugin</artifactId>
-					<version>1.8</version>
+					<version>1.11</version>
 					<configuration>
 						<!--<showWeaveInfo>true</showWeaveInfo>-->
 						<source>${java.source-target.version}</source>
