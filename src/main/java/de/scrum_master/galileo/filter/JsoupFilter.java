@@ -36,6 +36,7 @@ public class JsoupFilter extends BasicFilter {
 	{
 		HEAD                           ("head"),
 		TITLE                          ("head > title"),
+		TITLE_META                     ("head > meta[name=title]"),
 		SCRIPTS                        ("script"),
 
 		BODY                           ("body"),
@@ -51,7 +52,7 @@ public class JsoupFilter extends BasicFilter {
 		MAIN_CONTENT_2                 (GREY_TABLE.query + " > tr > td, " +
 		                                GREY_TABLE.query + " > tbody > tr > td"),
 
-		JUMP_TO_TOP_LINK               ("div:has(a[href=#top])"),
+		JUMP_TO_TOP_LINK               ("div[align=center]:has(a[href=#top])"),
 		GRAPHICAL_PARAGRAPH_SEPARATOR  ("div:has(img[src=common/jupiters.gif])"),
 
 		FEEDBACK_FORM                  ("form[action*=openbook]"),
@@ -93,7 +94,7 @@ public class JsoupFilter extends BasicFilter {
 		// "Kapitel: " between book title and chapter
 		TITLE_INFIX              ("^(.*)(?:Kapitel: )(.*)$"),
 		// "Galileo Computing/Design" prefix and " openbook/index" postfix
-		TITLE_PREFIX_POSTFIX     ("^(?:Galileo (?:Computing|Design)(?: ::|:| [-–]) )?(.*?)(?: (?:[-–]|&ndash;|::)( openbook| index|))?$"),
+		TITLE_PREFIX_POSTFIX     ("^(?:Galileo|Rheinwerk (?:Computing|Design)(?: ::|:| [-–]) )?(.*?)(?: (?:[-–]|&ndash;|::)( openbook| index|))?$"),
 		// Text before dash for some books with " - " or " &ndash; " within the book title
 		TITLE_DASHED_BOOK_PREFIX ("^((?:Excel 2007|Java 7|Adobe.+CS4|Joomla! 1.5|Objektor.*mierung) [-–] )(.*)"),
 		// Get book chapter after title and separator
@@ -108,7 +109,6 @@ public class JsoupFilter extends BasicFilter {
 
 	public JsoupFilter(InputStream in, OutputStream out, Book book, File origFile) throws UnsupportedEncodingException {
 		super(in, out, book, origFile);
-		output = new PrintStream(out, false, "windows-1252");
 		isTOCFile = origFile.getName().startsWith("index.htm");
 	}
 
@@ -126,10 +126,13 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void parseDocument() throws Exception {
-		document = Jsoup.parse(in, "windows-1252", "");
+		document = Jsoup.parse(in, null, "");
 		headTag = findFirstElement(Selector.HEAD);
 		bodyTag = findFirstElement(Selector.BODY);
 		initialiseTitle(true);
+		String charset = document.charset().name();
+		SimpleLogger.debug("Character set = " + charset);
+		output = new PrintStream(out, false, charset);
 	}
 
 	private void removeClutter() {
@@ -139,7 +142,13 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void initialiseTitle(boolean removeBookTitle) {
+		boolean hasTitleTag = true;
 		Element titleTag = findFirstElement(Selector.TITLE);
+		if (titleTag == null) {
+			// Newer books crawled via HTTrack or similar do not have <title> tags anymore, but <meta name="title">
+			hasTitleTag = false;
+			titleTag = findFirstElement(Selector.TITLE_META);
+		}
 		if (titleTag == null) {
 			// Should only happen for "teile.html" in book unix_guru
 			SimpleLogger.debug("No page title found");
@@ -147,7 +156,7 @@ public class JsoupFilter extends BasicFilter {
 		}
 
 		Matcher matcher;
-		pageTitle = titleTag.text();
+		pageTitle = hasTitleTag ? titleTag.text() : titleTag.attr("content");
 		SimpleLogger.debug("Original page title: " + pageTitle);
 		SimpleLogger.indent();
 
@@ -190,7 +199,10 @@ public class JsoupFilter extends BasicFilter {
 		SimpleLogger.dedent();
 		SimpleLogger.debug("Clean page title:    " + pageTitle);
 
-		titleTag.text(pageTitle);
+		if (hasTitleTag)
+			titleTag.text(pageTitle);
+		else
+			titleTag.attr("content", pageTitle);
 	}
 
 	private void fixStructure() {
