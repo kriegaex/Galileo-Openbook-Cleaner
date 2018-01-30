@@ -1,3 +1,27 @@
+Version 1.2.0-SNAPSHOT
+  New features
+    - Verbose error & info message in case of MD5 mismatch (closes #25)
+    - Remove links to online feedback forms (not just the forms themselves) from 29 books in 4,271
+      files. Inline feedback forms are now only left in 2 books (SHELL_PROG and VB_2008) and 191
+      files, in the other books they have been replaced by the publisher.
+  Changed features
+    - Several changes to support publisher's re-branding from Galileo to Rheinwerk
+    - Add book WINDOWS_SERVER_2012, remove unavailable book PYTHON
+    - Enhancement: handle truncated (partly downloaded) ZIP file gracefully. Throw exception with
+      message: "Probably the download of <zipFile> was interrupted. Please delete the file and
+      retry."
+    - Bugfix: handle illegal book ID correctly
+    - Bugfix: titles of Java_Insel and Javascript books were swapped in config.xml
+  Internal changes
+    - Improve error handling/logging for failed file system operations such as creating directories
+      or renaming files
+    - Upgrade Java/AspectJ source/target levels to 1.8.
+    - Upgrade AspectJ 1.8.13 and AspectJ Maven 1.11
+    - Change project directory layout to Maven default
+    - Switch to com.jolira Fork or One-JAR plugin available on Maven Central because the original
+      org.dstovall plugin repository is no longer available
+
+
 Version 1.1.0
   New features
     - New command-line option "-w|--write-config" writes an editable book list file config.xml
@@ -12,7 +36,7 @@ Version 1.1.0
       DownloadChecker.
     - The CLI options "--check-avail" and "--check-md5" mentioned above can be combined by
       experienced users or the GOC author to detect changed download packages and re-test them,
-      new books, deleted books and so forth. 
+      new books, deleted books and so forth.
     - In verbose logging mode, the removal of feedback forms is now logged.
     - New books APPS_IPHONE_IOS6, VB_2012_EINSTIEG. I detected the books using the new tool
       AvailableBooksChecker. :-)
@@ -44,8 +68,8 @@ Version 1.1.0
       Both of them are in use at the moment, but after a few improvements to the CloudBees version
       I will probably delete the BuildHive version again because it must copy build artifacts on my
       personal FTP server while the CloudBees version features its own deployment repository.
-    - Use one-jar Mave plugin to create a JAR of JARs similar to what we had before when creating a
-      "runnable JAR" from Eclipse. 
+    - Use one-jar Maven plugin to create a JAR of JARs similar to what we had before when creating a
+      "runnable JAR" from Eclipse.
     - New tool class DownloadChecker checks downloads and verifies their MD5. The class has a 'main'
       method which can be called by advanced users who know it. Attention: This is a long-running
       operation (~14 minutes on my old PC using 16 Mbit/s downstream DSL) which as of 2013-03-10
@@ -61,7 +85,7 @@ Version 1.1.0
     - Refactor JsoupFilter for cleaner code
     - Refactor LoggingAspect several times for cleaner code and thread safety, trying different
       approaches until as satisfactory solution was found.
-    - JsoupFiter: update JavaDoc info for getFeedbackFormNeigbourhood 
+    - JsoupFiter: update JavaDoc info for getFeedbackFormNeigbourhood
     - Eclipse .project: remove obsolete reference to JTidy project
     - FileDownloader: calculate MD5 while reading input, not writing output. This is necessary for
       making the write-to-file step optional (e.g. for MD5 check only). The constructor now accepts
@@ -101,7 +125,7 @@ Version 1.0.2
       feeds):
         java
           -Dhttp.proxyHost=localhost -Dhttp.proxyPort=8080
-          -Dhttp.proxyUser=kriegaex -Dhttp.proxyPassword="test äöüX"
+          -Dhttp.proxyUser=kriegaex -Dhttp.proxyPassword="test ï¿½ï¿½ï¿½X"
   Bugfixes
     - Make debugging easier by de-obfuscating callstacks in FileDownloader (cf. "internal changes")
   Internal changes
@@ -120,7 +144,7 @@ Version 1.0
   New features
     - The souce code is now explicitly licenced under GPLv3 (see file COPYING).
     - Openbook conversion is now much faster because the switch to jsoup (see "internal changes").
-    - For the same reason the runnable JAR file is now smaller, containing fewer libraries. 
+    - For the same reason the runnable JAR file is now smaller, containing fewer libraries.
     - Not a new feature, but a new requirement for developers wishing to edit the code or build
       the program from source: The Eclipse project is no longer a plain Java project, but an
       AspectJ project because I now use AOP (aspect-oriented programming) techniques for
@@ -138,7 +162,7 @@ Version 1.0
         * New log level 3 (trace) activates a call trace output on System.err (lower log levels
           still go to System.out). This is implemented via AspectJ and prints constructor and method
           signatures. So the trace output is very technical, but a nice toy if you want to avoid
-          debugging the source code in an IDE, but still be able to see what is going on internally. 
+          debugging the source code in an IDE, but still be able to see what is going on internally.
         * download_dir is no longer a positional parameter, but a named option
          '-d|--download-dir' with default '.' (current directory)
         * Option '-s' replaced by '-t|--threading=(0|1)' with a default of 1 (multi)
@@ -212,7 +236,7 @@ Version 0.9.1
   Bugfixes
     - Book vcsharp_2008 could not be unpacked because it contains two files with special
       characters (German umlauts). This was due to a character encoding of "Cp437" while
-      Java always expects UTF-8. Thanks to user Dirk Höpfner for notifying me about the bug.
+      Java always expects UTF-8. Thanks to user Dirk Hï¿½pfner for notifying me about the bug.
   Internal changes
     - Option parsing: simplify loop and make it more readable
     - Option parsing: add log output for book_id arguments
@@ -252,7 +276,7 @@ Version 0.9
         * Former book path (subdirectory) is now a book ID
         * New mandatory parameter download directory (also base directory for book subdirectories)
           is needed because of the new download feature and must be inserted as the first
-          non-option parameter before the book ID. 
+          non-option parameter before the book ID.
   Changed features
     - Books are now unpacked into subdirectories with predefined names which might be different
       from the download archive names. E.g. archive galileocomputing_shell_programmierung.zip
