@@ -21,16 +21,6 @@
     </book>
   </entry>
   <entry>
-    <id>APPS_IPHONE_IOS5</id>
-    <book>
-      <title>Apps entwickeln für iPhone und iPad (iOS 5)</title>
-      <unpackDirectory>apps_iphone_ios5</unpackDirectory>
-      <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_apps_entwickeln_fuer_iphone_und_ipad.zip</downloadArchive>
-      <archiveMD5>590a152bd511828f149ad857ec059126</archiveMD5>
-      <coverImage>http://cover.galileo-press.de/9783836214636.jpg</coverImage>
-    </book>
-  </entry>
-  <entry>
     <id>APPS_IPHONE_IOS6</id>
     <book>
       <title>Apps programmieren für iPhone und iPad (iOS 6)</title>
@@ -126,9 +116,9 @@
     <book>
       <title>Java ist auch eine Insel</title>
       <unpackDirectory>java_insel</unpackDirectory>
-      <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_javainsel.zip</downloadArchive>
-      <archiveMD5>6f6aea7cba1f2f9573663f37f711c9c</archiveMD5>
-      <coverImage>http://cover.galileo-press.de/9783836218023.jpg</coverImage>
+      <downloadArchive>http://dummy/galileocomputing_javainsel.zip</downloadArchive>
+      <archiveMD5>dummy</archiveMD5>
+      <coverImage>https://s3-eu-west-1.amazonaws.com/cover2.galileo-press.de/print/9783836241199_800.png</coverImage>
     </book>
   </entry>
   <entry>
@@ -283,26 +273,6 @@
     </book>
   </entry>
   <entry>
-    <id>VB_2008_EINSTIEG</id>
-    <book>
-      <title>Einstieg in Visual Basic 2008</title>
-      <unpackDirectory>vb_2008_einstieg</unpackDirectory>
-      <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_einstieg_vb_2008.zip</downloadArchive>
-      <archiveMD5>8fa8cc7311f99bf403fb23ac21d04b0a</archiveMD5>
-      <coverImage>http://cover.galileo-press.de/9783836211925.jpg</coverImage>
-    </book>
-  </entry>
-  <entry>
-    <id>VB_2010_EINSTIEG</id>
-    <book>
-      <title>Einstieg in Visual Basic 2010</title>
-      <unpackDirectory>vb_2010_einstieg</unpackDirectory>
-      <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_einstieg_vb_2010.zip</downloadArchive>
-      <archiveMD5>372d983c0fbe9130c74da326fab6c7f2</archiveMD5>
-      <coverImage>http://cover.galileo-press.de/9783836215411.jpg</coverImage>
-    </book>
-  </entry>
-  <entry>
     <id>VB_2012_EINSTIEG</id>
     <book>
       <title>Einstieg in Visual Basic 2012</title>
@@ -310,26 +280,6 @@
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_einstieg_vb_2012.zip</downloadArchive>
       <archiveMD5>bfaaee69f3c83950178ccf221c8d86a9</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783836219594.jpg</coverImage>
-    </book>
-  </entry>
-  <entry>
-    <id>VCSHARP_2008</id>
-    <book>
-      <title>Visual C# 2008</title>
-      <unpackDirectory>vcsharp_2008</unpackDirectory>
-      <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_visual_csharp.zip</downloadArchive>
-      <archiveMD5>56867b49e1de13a84bac0891a9e41ee5</archiveMD5>
-      <coverImage>http://cover.galileo-press.de/9783836211727.jpg</coverImage>
-    </book>
-  </entry>
-  <entry>
-    <id>VCSHARP_2010</id>
-    <book>
-      <title>Visual C# 2010</title>
-      <unpackDirectory>vcsharp_2010</unpackDirectory>
-      <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_visual_csharp_2010.zip</downloadArchive>
-      <archiveMD5>6bcde9ba5b357e0675a695707f4bc312</archiveMD5>
-      <coverImage>http://cover.galileo-press.de/9783836215527.jpg</coverImage>
     </book>
   </entry>
   <entry>
@@ -350,16 +300,6 @@
       <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_vmware.zip</downloadArchive>
       <archiveMD5>53d31675f6ea0bfcbd1dec58f00a144c</archiveMD5>
       <coverImage>http://cover.galileo-press.de/9783898427012.jpg</coverImage>
-    </book>
-  </entry>
-  <entry>
-    <id>WINDOWS_SERVER_2008</id>
-    <book>
-      <title>Windows Server 2008 R2</title>
-      <unpackDirectory>windows_server_2008</unpackDirectory>
-      <downloadArchive>http://download2.galileo-press.de/openbook/galileocomputing_windows_server_2008.zip</downloadArchive>
-      <archiveMD5>8ddcec81045c1566b8ee7584ef78ef66</archiveMD5>
-      <coverImage>http://cover.galileo-press.de/9783836215282.jpg</coverImage>
     </book>
   </entry>
   <entry>

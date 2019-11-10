@@ -20,6 +20,10 @@ public class DownloadChecker {
 		for (String bookID : Book.books.keySet()) {
 			Book book = Book.books.get(bookID);
 			System.out.print("  " + bookID + " ... ");
+			if (book.downloadArchive.contains("//dummy/")) {
+				System.out.println("skipped (online-only book)");
+				continue;
+			}
 			try {
 				new FileDownloader(new URL(book.downloadArchive), null, new BigInteger(book.archiveMD5, 16)).download();
 				System.out.println("OK");

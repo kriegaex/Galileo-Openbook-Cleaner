@@ -41,6 +41,11 @@ public class AvailableBooksChecker {
 		for (Element link : downloadLinks) {
 			webSiteURLs.add(link.attr("href").replaceAll(".*/", ""));
 		}
+		/*
+		Orphan URLs:
+  Local config orphans: [apps_entwickeln_fuer_iphone_und_ipad, asp_net, einstieg_vb_2008, einstieg_vb_2010, java8, visual_csharp, visual_csharp_2010, windows_server_2008]
+  Web site orphans:     []
+		 */
 		return webSiteURLs;
 	}
 

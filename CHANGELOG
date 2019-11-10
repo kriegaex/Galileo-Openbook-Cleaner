@@ -1,5 +1,9 @@
 Version 1.2.0-SNAPSHOT
   New features
+    - Support (offline copies of) online-only openbooks such as the new Java 8 version of "Java
+      Insel", 12th edition (closes #33). The new book edition is named JAVA_8 and comes with a
+      special hint about the need to manually crawl the publisher's website (e.g. via HTTrack) and
+      manually create a ZIP archive to be processed by GOC.
     - Verbose error & info message in case of MD5 mismatch (closes #25)
     - Remove links to online feedback forms (not just the forms themselves) from 29 books in 4,271
       files. Inline feedback forms are now only left in 2 books (SHELL_PROG and VB_2008) and 191
@@ -15,6 +19,11 @@ Version 1.2.0-SNAPSHOT
   Internal changes
     - Improve error handling/logging for failed file system operations such as creating directories
       or renaming files
+    - Recognise titles in meta tags and not just in explicit title tags
+    - Recognise "Rheinwerk" in titles addition to "Galileo"
+    - Automatically determine the HTML character set via jsoup instead of setting a fixed charset,
+      because the "Java Insel" book for Java 8 uses UTF-8 instead of ISO-8859-1 or windows-1252.
+      The output stream's charset is adjusted accordingly *after* the document was parsed.
     - Upgrade Java/AspectJ source/target levels to 1.8.
     - Upgrade AspectJ 1.8.13 and AspectJ Maven 1.11
     - Change project directory layout to Maven default

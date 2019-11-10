@@ -13,8 +13,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.source-target.version>1.8</java.source-target.version>
-		<aspectj.version>1.8.13</aspectj.version>
+		<java.source-target.version>8</java.source-target.version>
+		<aspectj.version>1.9.2</aspectj.version>
 		<main-class>de.scrum_master.galileo.OpenbookCleaner</main-class>
 	</properties>
 
@@ -157,6 +157,11 @@
 				</exclusions>
 			</dependency>
 			<dependency>
+				<groupId>edu.uci.ics</groupId>
+				<artifactId>crawler4j</artifactId>
+				<version>4.3</version>
+			</dependency>
+			<dependency>
 				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjrt</artifactId>
 				<version>${aspectj.version}</version>
@@ -183,6 +188,10 @@
 			<artifactId>xstream</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>edu.uci.ics</groupId>
+			<artifactId>crawler4j</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 		</dependency>
@@ -190,6 +199,6 @@
 
 	<organization>
 		<name>Scrum-Master.de - Agile Project Management</name>
-		<url>http://scrum-master.de</url>
+		<url>https://scrum-master.de</url>
 	</organization>
 </project>
