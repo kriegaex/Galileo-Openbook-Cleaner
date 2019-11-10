@@ -69,13 +69,13 @@ public abstract aspect BasicTracingAspect
 	// Concretise in subclass
 	protected abstract pointcut myClass();
 
-	// Bind "this" to variable "obj" (not applicable for pre-initialisation!) 
+	// Bind "this" to variable "obj" (not applicable for pre-initialisation!)
 	pointcut myClass_This(Object obj): this(obj) && myClass();
 
 	// We cannot use "this" in object pre-initialisation (it does not exist yet)
 	pointcut myPreInitConstructor(): myClass() && preinitialization(new(..));
 
-	// We can use "this" in object initialisation, constructor and method execution 
+	// We can use "this" in object initialisation, constructor and method execution
 	pointcut myInitConstructor(Object obj): myClass_This(obj) && initialization(new(..));
 	pointcut myConstructor(Object obj): myClass_This(obj) && execution(new(..));
 	pointcut myMethod(Object obj): myClass_This(obj) && execution(* *(..))
@@ -84,20 +84,20 @@ public abstract aspect BasicTracingAspect
 
 	before(): myPreInitConstructor() {
 		// There is no "this" during pre-initialisation -> use "---" as second parameter
-		BasicTracingAspect.traceEntry("[P] " + thisJoinPointStaticPart.getSignature(), "---");
+		traceEntry("[P] " + thisJoinPointStaticPart.getSignature(), "---");
 	}
 
 	after(): myPreInitConstructor() {
 		// There is no "this" during pre-initialisation -> use "---" as second parameter
-		BasicTracingAspect.traceExit("[P] " + thisJoinPointStaticPart.getSignature(), "---");
+		traceExit("[P] " + thisJoinPointStaticPart.getSignature(), "---");
 	}
 
 	before(Object obj): myInitConstructor(obj) {
-		BasicTracingAspect.traceEntry("[I] " + thisJoinPointStaticPart.getSignature(), obj);
+		traceEntry("[I] " + thisJoinPointStaticPart.getSignature(), obj);
 	}
 
 	after(Object obj): myInitConstructor(obj) {
-		BasicTracingAspect.traceExit("[I] " + thisJoinPointStaticPart.getSignature(), obj);
+		traceExit("[I] " + thisJoinPointStaticPart.getSignature(), obj);
 	}
 
 	before(Object obj): myConstructor(obj) {
