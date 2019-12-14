@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Document.OutputSettings;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
@@ -224,6 +225,7 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void writeDocument() {
+		document.outputSettings().prettyPrint(false);
 		output.print(document);
 	}
 
@@ -572,11 +574,8 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private static void moveNodes(Elements sourceNodes, Element targetElement) {
-		for (Element element : sourceNodes) {
-			element.remove();
-			for (Node node : element.childNodes())
-				targetElement.append(node.outerHtml());
-		}
+		for (Element element : sourceNodes)
+			targetElement.insertChildren(-1, element.childNodes());
 	}
 
 	private static void replaceNode(Element original, Element replacement) {
