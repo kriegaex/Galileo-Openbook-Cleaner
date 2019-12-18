@@ -572,11 +572,8 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private static void moveNodes(Elements sourceNodes, Element targetElement) {
-		for (Element element : sourceNodes) {
-			element.remove();
-			for (Node node : element.childNodes())
-				targetElement.append(node.outerHtml());
-		}
+		for (Element element : sourceNodes)
+			targetElement.insertChildren(-1, element.childNodes());
 	}
 
 	private static void replaceNode(Element original, Element replacement) {
