@@ -1,15 +1,7 @@
 package de.scrum_master.galileo.filter;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import de.scrum_master.galileo.Book;
+import de.scrum_master.util.SimpleLogger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Document;
@@ -18,8 +10,11 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.jsoup.select.NodeVisitor;
 
-import de.scrum_master.galileo.Book;
-import de.scrum_master.util.SimpleLogger;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class JsoupFilter extends BasicFilter {
 	private PrintStream output;                    // Output stream for filtered document
@@ -71,6 +66,7 @@ public class JsoupFilter extends BasicFilter {
 		IMAGE_BOX_5                    ("a[onclick*=OpenWin]:has(img)"),
 
 		NODE429_BUGGY_PARAGRAPH        ("p:containsOwn(gpGlossar18133)"),
+		DIV_LISTING                    ("div.listing"),
 
 		TOC_HEADING_2                  ("h2:has(a)"),
 		INDEX_LINK                     ("a[href*=stichwort.htm]"),
@@ -224,6 +220,37 @@ public class JsoupFilter extends BasicFilter {
 	}
 
 	private void writeDocument() {
+		if (hasPrettyPrintExceptions()) {
+			SimpleLogger.debug("Preserve some original formatting, avoid pretty-printing for certain nodes");
+
+			// Currently there is no easy way to locally override HTML pretty-printing in jsoup for certain tags,
+			// there is only a document-global setting. Thus, the only way to partially un-apply pretty-printing
+			// is the following:
+
+			// 1. Get + preserve pretty-printed content
+			String prettyPrintedContent = document.toString();
+
+			// 2. Get + preserve content in original formatting
+			document.outputSettings().prettyPrint(false);
+			String originallyFormattedContent = document.toString();
+			Document originallyFormattedDocument = Jsoup.parse(originallyFormattedContent, document.baseUri());
+			originallyFormattedDocument.outputSettings().prettyPrint(false);
+
+			// 3. Assign pretty-printed content to document + avoid further pretty-printing
+			document = Jsoup.parse(prettyPrintedContent, document.baseUri());
+			document.outputSettings().prettyPrint(false);
+
+			// 4. Replace falsely pretty-printed content by preserved original content
+			Elements elementsToBeFixed = findElements(Selector.DIV_LISTING);
+			Elements originalElements = originallyFormattedDocument.select(Selector.DIV_LISTING.query);
+			assert elementsToBeFixed.size() == originalElements.size();
+			for (int i = 0; i < elementsToBeFixed.size(); i++)
+				elementsToBeFixed.get(i).replaceWith(originalElements.get(i));
+
+			// Conclusion: This is ugly because the same document which has already been parsed + cleaned up before
+			// needs to be re-parsed two more times, i.e. we have a total of 3 Jsoup.parse(..) calls.
+			// But - it works. :-/
+		}
 		output.print(document);
 	}
 
@@ -237,6 +264,29 @@ public class JsoupFilter extends BasicFilter {
 		SimpleLogger.debug("Fixing buggy heading");
 		Element buggyParagraph = findFirstElement(Selector.NODE429_BUGGY_PARAGRAPH);
 		buggyParagraph.html("<h1><a>unix</a></h1>");
+	}
+
+	private boolean hasPrettyPrintExceptions() {
+		Elements divListingElements = findElements(Selector.DIV_LISTING);
+
+		for (Element divListingElement : divListingElements) {
+			// Usually DIV.listing contains a single PRE element as a child node.
+			// This is fine because jsoup automatically retains originally formatted content inside PRE.
+			//
+			// If however anything else is inside DIV.listing, it needs to be exempted from pretty-printing
+			// due to the CSS specifying "white-space: pre-wrap". This currently only happens for the JAVA_8
+			// online book but we want to detect it dynamically, not by book ID.
+
+			List<Node> divListingChildren = divListingElement.childNodes();
+			if (divListingChildren.size() != 1)
+				return true;
+			Node firstChild = divListingChildren.get(0);
+			if (!(firstChild instanceof Element))
+				return true;
+			if (!((Element) firstChild).tagName().equalsIgnoreCase("pre"))
+				return true;
+		}
+		return false;
 	}
 
 	private void removeClutterAroundMainContent() {
