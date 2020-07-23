@@ -16,7 +16,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<java.source-target.version>8</java.source-target.version>
-		<aspectj.version>1.9.2</aspectj.version>
+		<aspectj.version>1.9.6</aspectj.version>
 		<main-class>de.scrum_master.galileo.OpenbookCleaner</main-class>
 	</properties>
 
