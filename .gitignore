@@ -20,6 +20,7 @@ bin/
 *.txt
 *.xls
 *.xlsx
+*.bak
 
 # Books
 actionscript_1_und_2/**
