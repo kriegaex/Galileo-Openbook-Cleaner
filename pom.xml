@@ -16,7 +16,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<java.source-target.version>8</java.source-target.version>
-		<aspectj.version>1.9.6</aspectj.version>
+		<aspectj.version>1.9.8.RC1</aspectj.version>
 		<main-class>de.scrum_master.galileo.OpenbookCleaner</main-class>
 	</properties>
 
@@ -34,9 +34,9 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>com.nickwongdev</groupId>
+					<groupId>dev.aspectj</groupId>
 					<artifactId>aspectj-maven-plugin</artifactId>
-					<version>1.12.1</version>
+					<version>1.13.1</version>
 					<configuration>
 						<!--<showWeaveInfo>true</showWeaveInfo>-->
 						<source>${maven.compiler.source}</source>
@@ -100,7 +100,7 @@
 
 		<plugins>
 			<plugin>
-				<groupId>com.nickwongdev</groupId>
+				<groupId>dev.aspectj</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
