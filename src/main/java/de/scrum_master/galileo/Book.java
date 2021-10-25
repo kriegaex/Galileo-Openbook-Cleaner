@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import de.scrum_master.util.SimpleLogger;
 
 public class Book
@@ -23,6 +24,7 @@ public class Book
 	public final static XStream XSTREAM         = new XStream(new DomDriver());
 
 	static {
+		XSTREAM.addPermission(AnyTypePermission.ANY);
 		XSTREAM.alias("galileo-openbooks", TreeMap.class);
 		XSTREAM.alias("book", Book.class);
 		XSTREAM.alias("id", String.class);
