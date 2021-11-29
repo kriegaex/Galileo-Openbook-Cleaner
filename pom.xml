@@ -156,11 +156,24 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+
+			<!--
+				TODO:
+					Upgrade to more recent release of crawler4j. 4.4.0 depends on com.sleepycat:je:5.0.84 which is no longer
+					available on Maven Central. See https://github.com/yasserg/crawler4j/issues/456. Subsequently, also remove the
+					extra managed version of com.sleepycat:je.
+			-->
 			<dependency>
 				<groupId>edu.uci.ics</groupId>
 				<artifactId>crawler4j</artifactId>
-				<version>4.3</version>
+				<version>4.4.0</version>
 			</dependency>
+			<dependency>
+				<groupId>com.sleepycat</groupId>
+				<artifactId>je</artifactId>
+				<version>18.3.12</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjrt</artifactId>
@@ -187,10 +200,13 @@
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 		</dependency>
+		<!-- TODO: Either remove or reactivate when deciding to implement a crawler -->
+		<!--
 		<dependency>
 			<groupId>edu.uci.ics</groupId>
 			<artifactId>crawler4j</artifactId>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
