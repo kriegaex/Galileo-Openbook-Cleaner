@@ -16,7 +16,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<java.source-target.version>8</java.source-target.version>
-		<aspectj.version>1.9.8.RC1</aspectj.version>
+		<aspectj.version>1.9.8</aspectj.version>
 		<main-class>de.scrum_master.galileo.OpenbookCleaner</main-class>
 	</properties>
 
@@ -49,10 +49,18 @@
 					</configuration>
 					<executions>
 						<execution>
+							<id>aj-compile</id>
 							<!-- IMPORTANT -->
 							<phase>process-sources</phase>
 							<goals>
 								<goal>compile</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>aj-test-compile</id>
+							<!-- IMPORTANT -->
+							<phase>process-test-sources</phase>
+							<goals>
 								<goal>test-compile</goal>
 							</goals>
 						</execution>
@@ -61,11 +69,6 @@
 						<dependency>
 							<groupId>org.aspectj</groupId>
 							<artifactId>aspectjtools</artifactId>
-							<version>${aspectj.version}</version>
-						</dependency>
-						<dependency>
-							<groupId>org.aspectj</groupId>
-							<artifactId>aspectjweaver</artifactId>
 							<version>${aspectj.version}</version>
 						</dependency>
 					</dependencies>
@@ -178,7 +181,6 @@
 				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjrt</artifactId>
 				<version>${aspectj.version}</version>
-				<scope>runtime</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
