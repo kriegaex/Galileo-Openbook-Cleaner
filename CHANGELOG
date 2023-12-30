@@ -51,7 +51,7 @@ Version 1.1.0
       AvailableBooksChecker. :-)
   Changed features
     - Update MD5 for VCSHARP_2012 once again
-    - Rename book APPS_IPHONE to APPS_IPHONE_IOS5 to differantiate it from the new *_IOS6 book
+    - Rename book APPS_IPHONE to APPS_IPHONE_IOS5 to differentiate it from the new *_IOS6 book
   Internal changes
     - Add XStream 1.4.4 as a new external library: XStream is a simple library to serialize objects
       to XML and back again, see http://xstream.codehaus.org. It is used in this project for
@@ -134,7 +134,7 @@ Version 1.0.2
       feeds):
         java
           -Dhttp.proxyHost=localhost -Dhttp.proxyPort=8080
-          -Dhttp.proxyUser=kriegaex -Dhttp.proxyPassword="test ���X"
+          -Dhttp.proxyUser=kriegaex -Dhttp.proxyPassword="test XYZ"
   Bugfixes
     - Make debugging easier by de-obfuscating callstacks in FileDownloader (cf. "internal changes")
   Internal changes
@@ -211,7 +211,7 @@ Version 1.0
           in-/dedent before/after printing in one method call. This helps to
           keep AOP around() advice code a bit shorter.
         * Corrected some minor indenting issues in filter classes
-    - Downloader: rename & refactor moveDirectoryContents, closing a TODO: Now for books which are
+    - Downloader: rename & refactor moveDirectoryContents, closing a to-do: Now for books which are
       unzipped one directory level too deep it is no longer necessary to rename all files one by
       one, but the whole subdirectory is moved in three steps:
         1) move download_dir/book_id/subdir -> download_dir/book_id.tmp
@@ -245,7 +245,7 @@ Version 0.9.1
   Bugfixes
     - Book vcsharp_2008 could not be unpacked because it contains two files with special
       characters (German umlauts). This was due to a character encoding of "Cp437" while
-      Java always expects UTF-8. Thanks to user Dirk H�pfner for notifying me about the bug.
+      Java always expects UTF-8. Thanks to user Dirk Höpfner for notifying me about the bug.
   Internal changes
     - Option parsing: simplify loop and make it more readable
     - Option parsing: add log output for book_id arguments
