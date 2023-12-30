@@ -1,11 +1,11 @@
-HTML cleaner for Rheinwerk (ex-Galileo) openbooks
+HTML cleaner for Rheinwerk (ex-Galileo) Openbooks
 =================================================
 
-This is a tool for cleaning up [Rheinwerk openbooks](https://www.rheinwerk-verlag.de/openbook/)
-(formerly known as Galileo openbooks) before converting them to EPUB or PDF format.
+This is a tool for cleaning up [Rheinwerk Openbooks](https://www.rheinwerk-verlag.de/openbook/)
+(formerly known as Galileo Openbooks) before converting them to EPUB or PDF format.
 
 __Current state of development:__ v1.2.0-SNAPSHOT is feature complete, i.e. it can download, MD5-verify, unpack
-and convert all 37 openbooks available at release time.
+and convert all 37 Openbooks available at release time.
 
 __History:__ If you want to know details about what has changed in which version, please take a look at the
 [change log](https://raw.githubusercontent.com/kriegaex/Galileo-Openbook-Cleaner/master/CHANGELOG).
@@ -15,7 +15,11 @@ __Download:__ A precompiled, executable JAR file is available
 
 __Usage:__
 
+    # JDK 8 to 15
     $ java -jar openbook_cleaner-1.2.0-SNAPSHOT.jar --help
+
+    # JDK 16+ needs '--add-opens' because of the XStream library
+    $ java --add-opens java.base/java.util=ALL-UNNAMED -jar openbook_cleaner-1.2.0-SNAPSHOT.jar --help
 
     OpenbookCleaner usage: java ... [options] <book_id>*
 
@@ -40,25 +44,25 @@ __Usage:__
 
     Legal book IDs:
       all (magic value: all books), actionscript_1_und_2, actionscript_einstieg,
-      apps_iphone_ios5, apps_iphone_ios6, asp_net, c_von_a_bis_z, dreamweaver_8,
-      excel_2007, hdr_fotografie, it_handbuch, javascript_ajax, java_7, java_insel,
-      joomla_1_5, linux, linux_unix_prog, microsoft_netzwerk, oop, photoshop_cs2,
-      photoshop_cs4, php_pear, ruby_on_rails_2, shell_prog, ubuntu_10_04,
-      ubuntu_11_04, ubuntu_12_04, unix_guru, vb_2008, vb_2008_einstieg,
-      vb_2010_einstieg, vb_2012_einstieg, vcsharp_2008, vcsharp_2010, vcsharp_2012,
-      vmware, windows_server_2008, windows_server_2012
+      apps_iphone_ios6, asp_net, c_von_a_bis_z, dreamweaver_8, excel_2007,
+      hdr_fotografie, it_handbuch, javascript_ajax, java_7, java_insel, joomla_1_5,
+      linux, linux_unix_prog, microsoft_netzwerk, oop, photoshop_cs2, photoshop_cs4,
+      php_pear, ruby_on_rails_2, shell_prog, ubuntu_10_04, ubuntu_11_04,
+      ubuntu_12_04, unix_guru, vb_2008, vb_2012_einstieg, vcsharp_2012, vmware,
+      windows_server_2012
 
-__Dependencies:__ Openbook cleaner was developed in Java 7. It also uses a few open source libraries:
+__Dependencies:__ Openbook cleaner needs at least JDK 8 to run and JDK 17 to build.
+It also uses a few open source libraries:
 
-  * __jsoup 1.8.3__ for parsing the "dirty" openbook HTML, selecting DOM elements and editing them, removing
+  * __jsoup 1.17.2__ for parsing the "dirty" Openbook HTML, selecting DOM elements and editing them, removing
     navigation elements, ads and other types of clutter, and finally write a clean, pretty-printed HTML
     document back to disk
-  * __JOpt Simple 4.9__ for parsing command-line parameters and showing a help page (usage info)
-  * __Apache Commons Compress 1.10__ for unzipping downloaded openbook archives. *Note: When Java 7 is
+  * __JOpt Simple 5.0.4__ for parsing command-line parameters and showing a help page (usage info)
+  * __Apache Commons Compress 1.25.0__ for unzipping downloaded Openbook archives. *Note: When Java 7 is
     available on MacOS, this library might be removed again and we can revert to using the built-in Java
     classes.*
-  * __XStream 1.4.8__ parsing the *config.xml* file containing openbook meta data
-  * __AspectJ 1.8.13__ for cross-cutting concerns like logging, timing, tracing which are not part of the
+  * __XStream 1.4.20__ parsing the *config.xml* file containing Openbook meta data
+  * __AspectJ 1.9.21__ for cross-cutting concerns like logging, timing, tracing which are not part of the
     main application logic. This helps to keep the core code clean and free from scattered code addressing
     secondary concerns.
 
@@ -85,6 +89,6 @@ I am going to do any refactoring step by step, documenting progress in small, fi
 so later on I can review the evolutionary progress with others.
 
 As you can see, I am mostly doing this little project for myself, but I like to share the results and
-receive some user feedback. I hope the openbook cleaner is useful to you. Enjoy! :-)
+receive some user feedback. I hope the Openbook cleaner is useful to you. Enjoy! :-)
 
 Alexander Kriegisch
