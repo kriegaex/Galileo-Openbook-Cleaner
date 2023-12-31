@@ -15,7 +15,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<java.source-target.version>8</java.source-target.version>
 		<aspectj.version>1.9.21</aspectj.version>
 		<main-class>de.scrum_master.galileo.OpenbookCleaner</main-class>
 	</properties>
@@ -28,38 +27,38 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.12.1</version>
-					<configuration>
-						<!-- IMPORTANT -->
-						<useIncrementalCompilation>false</useIncrementalCompilation>
-					</configuration>
+					<!-- Deactivate in favour of AspectJ Maven -->
+					<executions>
+						<execution>
+							<id>default-compile</id>
+							<phase>none</phase>
+						</execution>
+						<execution>
+							<id>default-testCompile</id>
+							<phase>none</phase>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>dev.aspectj</groupId>
 					<artifactId>aspectj-maven-plugin</artifactId>
 					<version>1.13.1</version>
 					<configuration>
-						<!--<showWeaveInfo>true</showWeaveInfo>-->
-						<source>${maven.compiler.source}</source>
-						<target>${maven.compiler.target}</target>
-						<Xlint>ignore</Xlint>
 						<complianceLevel>${maven.compiler.target}</complianceLevel>
 						<encoding>${project.build.sourceEncoding}</encoding>
+						<Xlint>ignore</Xlint>
+						<!--<showWeaveInfo>true</showWeaveInfo>-->
 						<!--<verbose>true</verbose>-->
-						<!--<warn>constructorName,packageDefaultMethod,deprecation,maskedCatchBlocks,unusedLocals,unusedArguments,unusedImport</warn>-->
 					</configuration>
 					<executions>
 						<execution>
 							<id>aj-compile</id>
-							<!-- IMPORTANT -->
-							<phase>process-sources</phase>
 							<goals>
 								<goal>compile</goal>
 							</goals>
 						</execution>
 						<execution>
 							<id>aj-test-compile</id>
-							<!-- IMPORTANT -->
-							<phase>process-test-sources</phase>
 							<goals>
 								<goal>test-compile</goal>
 							</goals>
